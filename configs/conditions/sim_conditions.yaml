@@ -1,0 +1,53 @@
+# Conditions for the PyBullet Panda pick-place simulation (backend: pybullet_panda).
+# Every parameter is bounded and the draw is reproducible: the adapter derives an independent
+# RNG stream from (trial seed, condition kind), so the same seed gives the same draw.
+#
+# IMPORTANT (scope of these conditions): the scripted controllers read simulator STATE (block
+# pose), not pixels. A scripted state-based controller is therefore NOT expected to react to the
+# visual-only shifts (lighting, background, occlusion), and a pass under them says NOTHING about
+# the visual robustness of a learned policy. They exist so a learned policy can later be compared
+# under the same schedule and so the pipeline carries the condition metadata end to end.
+- name: nominal
+  kind: nominal
+  version: "1"
+  affects_controller_state: false
+  description: >-
+    Block starts at the fixed nominal pose (x=0.50 m, y=-0.15 m, yaw 0) on the table; default
+    light, table and floor colors, no occlusion.
+- name: object_position
+  kind: object_position
+  version: "1"
+  params: {max_offset_m: 0.04}
+  affects_controller_state: true
+  description: >-
+    Block start (x, y) = nominal + a seeded uniform offset, each axis within +/-0.04 m (yaw stays
+    0). Changes the block pose the state-based controller reads. Bounded and reproducible per seed.
+- name: lighting
+  kind: lighting
+  version: "1"
+  params: {intensity_min: 0.3, intensity_max: 1.0, azimuth_deg_max: 80.0}
+  affects_controller_state: false
+  description: >-
+    Rendered-image light only: seeded light direction (azimuth within +/-80 deg of nominal) and
+    diffuse/ambient intensity scale in [0.3, 1.0]. Physics and controller state are unchanged; a
+    scripted state-based controller is not expected to react. No claim about learned-policy
+    robustness.
+- name: background
+  kind: background
+  version: "1"
+  params: {color_delta: 0.35}
+  affects_controller_state: false
+  description: >-
+    Rendered-image only: table and floor RGB colors perturbed by a seeded delta within +/-0.35 per
+    channel (clipped to [0,1]). Physics unchanged; a scripted state-based controller is not
+    expected to react. No claim about learned-policy robustness.
+- name: occlusion
+  kind: occlusion
+  version: "1"
+  params: {patch_frac_min: 0.10, patch_frac_max: 0.25}
+  affects_controller_state: false
+  description: >-
+    A gray rectangular patch (side fraction of the 320x240 frame in [0.10, 0.25], seeded position)
+    is painted over the RENDERED image only; the simulator state and the scripted controller are
+    unchanged. A scripted state-based controller is not expected to react. No claim about
+    learned-policy robustness.

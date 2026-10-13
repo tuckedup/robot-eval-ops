@@ -17,7 +17,8 @@ from robotevalops.schemas import Provenance, RecordingSummary, TraceHeader, Trac
 
 class TrialRecorder:
     """Usage: rec = TrialRecorder(out_dir, fps, state_names, action_names, provenance, frame_size=(w,h));
-    rec.add(t, image_rgb_or_None, state_vec, action_vec) per control step; summary = rec.close(expected_steps)."""
+    rec.add(t, image_rgb_or_None, state_vec, action_vec) per control step;
+    summary = rec.close(expected_steps)."""
 
     def __init__(
         self,
@@ -47,16 +48,22 @@ class TrialRecorder:
             import imageio_ffmpeg
 
             self._writer = imageio_ffmpeg.write_frames(
-                str(self.out_dir / "video.mp4"), frame_size, fps=self.fps, codec="libx264",
-                pix_fmt_in="rgb24", macro_block_size=1, quality=7,
+                str(self.out_dir / "video.mp4"),
+                frame_size,
+                fps=self.fps,
+                codec="libx264",
+                pix_fmt_in="rgb24",
+                macro_block_size=1,
+                quality=7,
             )
             self._writer.send(None)
 
     def add(self, t: float, image: np.ndarray | None, state: list[float], action: list[float]) -> None:
         if self._closed:
             raise RuntimeError("recorder is closed")
-        row = TraceRow(i=self._rows, t=float(t), state=[float(x) for x in state],
-                       action=[float(x) for x in action])
+        row = TraceRow(
+            i=self._rows, t=float(t), state=[float(x) for x in state], action=[float(x) for x in action]
+        )
         # allow_nan=True is intentional: real non-finite values must reach QA, not be hidden here.
         self._trace.write(json.dumps(row.model_dump(), allow_nan=True) + "\n")
         self._rows += 1

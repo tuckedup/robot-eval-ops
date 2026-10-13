@@ -1,0 +1,13 @@
+# Smoke evaluation in PyBullet Panda simulation: 2 controllers x 5 conditions x 1 trial = 10 planned trials.
+# Simulation only (Panda, not SO-101); says nothing about real-hardware performance.
+name: eval_smoke_sim
+provenance: simulation
+backend: pybullet_panda
+trials_per_condition: 1
+base_seed: 1234
+task:
+  task_id: pick_place_block_v1
+  attempt_timeout_s: 30.0
+  dwell_required_s: 2.0
+controllers_from: configs/controllers/sim_scripted.yaml
+conditions_from: configs/conditions/sim_conditions.yaml

@@ -1,0 +1,26 @@
+name: ci
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  offline-tests:
+    # Offline, CPU-only, no credentials, no robot, no paid APIs.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --extra dev --extra dashboard --extra s3 --python 3.11
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy src
+      - run: uv run pytest -m "not physics and not s3_real and not hardware" -q
+      - run: uv run robotevalops --help
+  physics-smoke:
+    runs-on: ubuntu-latest
+    needs: offline-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: sudo apt-get update && sudo apt-get install -y build-essential
+      - run: uv sync --extra dev --extra sim --python 3.11
+      - run: uv run pytest -m physics -q

@@ -1,0 +1,23 @@
+# Conditions for the MOCK fixture backend (backend: mock). Mock results are fixture output,
+# never robotics performance evidence. `difficulty` only shifts the documented hash-based
+# outcome rule (see adapters/mock.py); it does not model any physical effect.
+- name: nominal
+  kind: nominal
+  version: "1"
+  params: {difficulty: 0.0}
+  affects_controller_state: false
+  description: Mock fixture, no difficulty offset. Not performance evidence.
+- name: mock_state_shift
+  kind: object_position
+  version: "1"
+  params: {difficulty: 0.15}
+  affects_controller_state: true
+  description: Mock fixture standing in for a state-affecting shift (difficulty 0.15). Not performance evidence.
+- name: mock_visual_shift
+  kind: lighting
+  version: "1"
+  params: {difficulty: 0.05}
+  affects_controller_state: false
+  description: >-
+    Mock fixture standing in for a visual-only shift (difficulty 0.05). Not performance evidence;
+    says nothing about learned-policy robustness.

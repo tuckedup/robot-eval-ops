@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
 import logging
@@ -82,10 +83,8 @@ def atomic_write_bytes(path: str | Path, data: bytes) -> None:
             os.fsync(f.fileno())
         os.replace(tmp, path)
     except BaseException:
-        try:
+        with contextlib.suppress(OSError):
             os.unlink(tmp)
-        except OSError:
-            pass
         raise
 
 
@@ -98,7 +97,8 @@ def safe_relpath(rel: str) -> str:
     if not rel or "\\" in rel or "\x00" in rel:
         raise PathTraversalError(f"invalid artifact path {rel!r}: must be non-empty POSIX relative")
     p = PurePosixPath(rel)
-    if p.is_absolute() or (len(rel) > 1 and rel[1] == ":") or ".." in p.parts or "." in p.parts:
+    segments = rel.split("/")  # PurePosixPath silently drops "." and "//", so check raw segments
+    if p.is_absolute() or (len(rel) > 1 and rel[1] == ":") or any(seg in ("", ".", "..") for seg in segments):
         raise PathTraversalError(f"artifact path {rel!r} must be relative without '.'/'..' segments")
     check_not_forbidden(p)
     return p.as_posix()
@@ -140,12 +140,20 @@ def software_versions() -> dict[str, str]:
     from importlib import metadata
 
     vers = {"python": sys.version.split()[0], "platform": platform.platform()}
-    for pkg in ("robotevalops", "numpy", "pandas", "pydantic", "pybullet", "opencv-python-headless",
-                "boto3", "streamlit", "lerobot", "torch"):
-        try:
+    for pkg in (
+        "robotevalops",
+        "numpy",
+        "pandas",
+        "pydantic",
+        "pybullet",
+        "opencv-python-headless",
+        "boto3",
+        "streamlit",
+        "lerobot",
+        "torch",
+    ):
+        with contextlib.suppress(metadata.PackageNotFoundError):
             vers[pkg] = metadata.version(pkg)
-        except metadata.PackageNotFoundError:
-            pass
     return vers
 
 

@@ -9,7 +9,9 @@ import typer
 from robotevalops import __version__
 from robotevalops.cli import data_cmds, demo_cmds, report_cmds, robot_cmds, session_cmds
 
-app = typer.Typer(help="RobotEvalOps: reproducible robot-policy evaluation and data QA.", no_args_is_help=True)
+app = typer.Typer(
+    help="RobotEvalOps: reproducible robot-policy evaluation and data QA.", no_args_is_help=True
+)
 app.add_typer(session_cmds.app, name="session")
 app.add_typer(robot_cmds.app, name="robot")
 app.add_typer(data_cmds.app, name="data")

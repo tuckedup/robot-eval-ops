@@ -1,0 +1,47 @@
+# SO-101 follower + leader configuration (EXAMPLE; copy to so101.yaml and edit).
+# NOTHING in this repository has been verified against real hardware. All values are placeholders.
+# Docs: https://huggingface.co/docs/lerobot/so101  and  https://huggingface.co/docs/lerobot/il_robots
+
+# --- device identity -------------------------------------------------------------------------
+# ids: letters, digits, '_' and '-' only (max 64). The id names the JOINT calibration file.
+follower_id: my_follower_arm
+leader_id: my_leader_arm
+# Serial ports: find yours with `lerobot-find-port` (unplug/replug the USB cable when asked).
+# Windows: COM3 ...   Linux: /dev/ttyACM0 ...   macOS: /dev/tty.usbmodem...
+follower_port: COM3
+leader_port: COM4
+device_id: so101_bench_1        # lock key so two runners cannot drive the same arm
+
+# --- JOINT calibration (motor positions / ranges; made by `lerobot-calibrate`) ----------------
+# By default LeRobot stores <id>.json under
+#   $HF_LEROBOT_CALIBRATION (default ~/.cache/huggingface/lerobot/calibration)/robots/so_follower/
+#   .../teleoperators/so_leader/
+# This wrapper REFUSES to launch teleoperate/record/rollout unless those files already exist,
+# because lerobot would otherwise start motor calibration automatically.
+# Optional explicit directories (file must be <dir>/<id>.json):
+# follower_calibration_dir: /path/to/follower_calibration
+# leader_calibration_dir: /path/to/leader_calibration
+
+# --- CAMERAS (opencv / intelrealsense) --------------------------------------------------------
+# Passed to lerobot as --robot.cameras. Find indices with `lerobot-find-cameras opencv`.
+cameras:
+  front:
+    type: opencv
+    index_or_path: 0
+    width: 640
+    height: 480
+    fps: 30
+# CAMERA calibration (intrinsics/extrinsics) is a SEPARATE concern from joint calibration. LeRobot
+# does not consume it; keep your own record and reference it here (informational only):
+# camera_calibration_ref: calibration/front_camera_intrinsics.json
+
+# --- task / dataset ---------------------------------------------------------------------------
+task: "Pick the block and place it inside the target region."
+dataset_repo_id: local/so101_eval      # <user>/<name>; push_to_hub is always false
+# dataset_root: data/lerobot/so101_eval   # lerobot refuses to write into an existing directory
+num_episodes: 1
+episode_time_s: 30
+reset_time_s: 10
+fps: 30
+display_data: false
+# policy_path: /path/to/trained/policy      # only for supervised rollout of a LEARNED policy

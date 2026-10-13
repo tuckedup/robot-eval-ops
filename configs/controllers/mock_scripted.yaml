@@ -1,0 +1,12 @@
+# Mock fixture controllers (backend: mock). `skill` = base success probability in the documented
+# mock hash rule (adapters/mock.py). These are fixtures, not robotics controllers.
+- controller_id: mock_scripted_a
+  type: scripted
+  version: "1"
+  config: {skill: 0.8, steps: 30}
+  description: Mock fixture controller A (skill 0.8). Not a robotics result.
+- controller_id: mock_scripted_b
+  type: scripted
+  version: "1"
+  config: {skill: 0.5, steps: 30}
+  description: Mock fixture controller B (skill 0.5). Not a robotics result.

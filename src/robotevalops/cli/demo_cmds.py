@@ -1,3 +1,204 @@
+"""`robotevalops demo run`: one command that exercises the whole offline workflow end to end.
+
+Lead-owned integration. Everything printed/written comes from the executed steps; nothing is canned.
+Default backend is the MOCK fixture (fast, fixture-only, never performance evidence). `--backend sim`
+uses the PyBullet Panda simulation (needs the `sim` extra).
+"""
+
+from __future__ import annotations
+
+import json
+import time
+from pathlib import Path
+from typing import Any
+
 import typer
 
-app = typer.Typer(help="demo commands", no_args_is_help=True)
+from robotevalops.core.runner import Runner
+from robotevalops.core.service import EvalService
+from robotevalops.errors import RobotEvalOpsError
+from robotevalops.schemas import EvalConfig, Provenance, QAReport, TrialRecord
+from robotevalops.util import atomic_write_text
+
+app = typer.Typer(help="Run the end-to-end demo workflow.", no_args_is_help=True)
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+
+MOCK_BANNER = "MOCK FIXTURE - not evidence of robotics performance"
+
+
+def _step(name: str, fn: Any, log: list[dict[str, Any]], echo: bool) -> Any:
+    t0 = time.perf_counter()
+    try:
+        result = fn()
+        ok, err = True, None
+    except RobotEvalOpsError as e:
+        result, ok, err = None, False, str(e)
+    log.append({"step": name, "ok": ok, "seconds": round(time.perf_counter() - t0, 3), "error": err})
+    if echo:
+        typer.echo(f"[{'ok' if ok else 'FAIL'}] {name} ({log[-1]['seconds']}s){'' if ok else ': ' + str(err)}")
+    if not ok:
+        raise typer.Exit(1)
+    return result
+
+
+def _make_runner(svc: EvalService, backend: str, mock_faults: set[str] | None = None) -> Runner:
+    from robotevalops.adapters.registry import get_adapter, get_controller
+    from robotevalops.qa.trial_qa import qa_trial
+    from robotevalops.recording.manifest import write_manifest
+
+    def adapter_factory(session: Any) -> Any:
+        if backend == "mock" and mock_faults:
+            from robotevalops.adapters.mock import MockAdapter
+
+            return MockAdapter(faults=set(mock_faults))
+        return get_adapter(backend, session)
+
+    def qa_hook(trial: TrialRecord, run_dir: Path) -> QAReport:
+        manifest = svc.export_manifest(trial.session_id)
+        entry = next(e for e in manifest.trials if e.trial_id == trial.trial_id)
+        report = qa_trial(run_dir, entry)
+        atomic_write_text(run_dir / "qa" / f"{trial.trial_id}.qa.json", report.model_dump_json(indent=2))
+        return report
+
+    def manifest_hook(session_id: str) -> None:
+        write_manifest(svc.run_dir(session_id) / "manifest.json", svc.export_manifest(session_id))
+
+    return Runner(
+        svc,
+        adapter_factory,
+        lambda spec: get_controller(spec, backend),
+        qa_hook=qa_hook,
+        manifest_hook=manifest_hook,
+    )
+
+
+@app.command("run")
+def run(
+    home: Path = typer.Option(Path("data/demo"), help="Fresh data root for the demo (reused if present)."),
+    backend: str = typer.Option("mock", help="mock | sim (PyBullet Panda; needs the sim extra)."),
+    config: Path | None = typer.Option(None, help="Eval config YAML (default depends on --backend)."),
+    out: Path = typer.Option(Path("docs/demo"), help="Where to copy the demo report and logs."),
+    skip_faults: bool = typer.Option(False, help="Skip the ten-case fault-injection run."),
+    quiet: bool = typer.Option(False, help="Only print the final JSON summary."),
+) -> None:
+    """Plan, run, QA, package, verify and report a small evaluation, then run the fault cases."""
+    from robotevalops.config import load_eval_config
+    from robotevalops.faults import registry as fault_registry
+    from robotevalops.integration import apply_transfer_report
+    from robotevalops.faults import report as fault_report
+    from robotevalops.recording.manifest import read_manifest
+    from robotevalops.reporting.export import export_summary
+    from robotevalops.storage.local import LocalArtifactStore
+    from robotevalops.storage.package import upload_run, verify_run
+
+    echo = not quiet
+    steps: list[dict[str, Any]] = []
+    sim = backend in ("sim", "pybullet_panda")
+    real_backend = "pybullet_panda" if sim else "mock"
+    cfg_path = config or REPO_ROOT / "configs" / ("eval_smoke_sim.yaml" if sim else "eval_smoke_mock.yaml")
+    if not cfg_path.exists():
+        raise typer.BadParameter(f"config {cfg_path} not found (run from the repository root)")
+    cfg: EvalConfig = load_eval_config(cfg_path)
+    home.mkdir(parents=True, exist_ok=True)
+    svc = EvalService(home)
+    label = "simulation (PyBullet Panda, rendered simulator frames)" if sim else MOCK_BANNER
+    if echo:
+        typer.echo(f"Demo backend: {label}")
+
+    session = _step(
+        "create session",
+        lambda: svc.create_session(
+            f"demo-{cfg.name}-{int(time.time())}",
+            cfg.provenance,
+            cfg.backend,
+            eval_config=cfg,
+            purpose="evaluation",
+            notes="Generated by `robotevalops demo run`.",
+        ),
+        steps,
+        echo,
+    )
+    sid = session.session_id
+    trials = _step("plan trials", lambda: svc.plan_trials(sid, cfg), steps, echo)
+    report = _step("run trials", lambda: _make_runner(svc, real_backend).run_session(sid), steps, echo)
+
+    session_ids = [sid]
+    if not sim:
+        # Second, tiny MOCK session with injected faults so failed/aborted/unscored/never-attempted
+        # trials are visible in the report next to the normal ones.
+        mini = cfg.model_copy(
+            update={
+                "name": cfg.name + "-fault-injection",
+                "conditions": cfg.conditions[:2],
+                "controllers": cfg.controllers[:1],
+                "trials_per_condition": 2,
+            }
+        )
+        fs = _step(
+            "create fault-injection mock session",
+            lambda: svc.create_session(
+                f"demo-{mini.name}-{int(time.time())}", mini.provenance, mini.backend, eval_config=mini,
+                notes="Mock fixture with injected recording failure; shows failures stay in the denominators.",
+            ),
+            steps,
+            echo,
+        )
+        _step("plan fault-injection trials", lambda: svc.plan_trials(fs.session_id, mini), steps, echo)
+        _step(
+            "run fault-injection trials (recording_failure injected; 1 trial left unattempted)",
+            lambda: _make_runner(svc, "mock", {"recording_failure"}).run_session(fs.session_id, max_trials=3),
+            steps,
+            echo,
+        )
+        session_ids.append(fs.session_id)
+
+    store = LocalArtifactStore(home / "store")
+    transfer: dict[str, Any] = {}
+    for s in session_ids:
+        run_dir = svc.run_dir(s)
+        rep = _step(f"package+upload {s[:8]}", lambda rd=run_dir, s=s: upload_run(store, rd, s), steps, echo)
+        ver = _step(
+            f"download+verify SHA-256 {s[:8]}",
+            lambda rd=run_dir, s=s: verify_run(store, rd, s),
+            steps,
+            echo,
+        )
+        transfer[s] = {"upload": json.loads(json.dumps(rep, default=lambda o: getattr(o, "__dict__", str(o)))),
+                       "verify": json.loads(json.dumps(ver, default=lambda o: getattr(o, "__dict__", str(o))))}
+        apply_transfer_report(svc, s, ver)
+        mf = run_dir / "manifest.json"
+        if mf.exists():
+            read_manifest(mf)  # schema round-trip check
+
+    report_dir = home / "reports" / sid
+    written = _step("export reports", lambda: export_summary(svc, [sid], report_dir), steps, echo)
+    for extra in session_ids[1:]:
+        _step(
+            f"export fault-injection session report {extra[:8]}",
+            lambda extra=extra: export_summary(svc, [extra], home / "reports" / extra),
+            steps,
+            echo,
+        )
+
+    fault_summary: dict[str, Any] | None = None
+    if not skip_faults:
+        results = _step("run ten fault cases", lambda: fault_registry.run_all(home / "fault_work"), steps, echo)
+        fault_summary = fault_report.write_report(
+            results, report_dir / "fault-injection-report.md", report_dir / "fault-injection-report.json"
+        )
+
+    out.mkdir(parents=True, exist_ok=True)
+    summary = {
+        "backend_label": label,
+        "session_ids": session_ids,
+        "planned": len(trials),
+        "run_report": json.loads(json.dumps(report, default=lambda o: getattr(o, "__dict__", str(o)))),
+        "reports": {k: str(v) for k, v in written.items()},
+        "fault_summary": fault_summary,
+        "steps": steps,
+        "home": str(home),
+        "provenance": [Provenance(cfg.provenance).value],
+    }
+    atomic_write_text(report_dir / "demo-summary.json", json.dumps(summary, indent=2, default=str) + "\n")
+    typer.echo(json.dumps({k: summary[k] for k in ("backend_label", "session_ids", "planned", "reports")}, indent=2))

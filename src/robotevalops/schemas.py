@@ -188,8 +188,14 @@ class ControllerSpec(_M):
 
     @property
     def config_hash(self) -> str:
-        return config_hash({"id": self.controller_id, "type": self.type.value,
-                            "version": self.version, "config": self.config})
+        return config_hash(
+            {
+                "id": self.controller_id,
+                "type": self.type.value,
+                "version": self.version,
+                "config": self.config,
+            }
+        )
 
     @model_validator(mode="after")
     def _learned_needs_artifact(self) -> ControllerSpec:
@@ -457,8 +463,18 @@ class RunManifest(_M):
 # Required (non-null) TrialManifestEntry fields per provenance. Simulation/mock never require
 # physical calibration. Hardware additionally requires a calibration reference.
 COMMON_REQUIRED = (
-    "trial_id", "state", "task_outcome", "termination_reason", "recording_quality", "intervention",
-    "condition_name", "controller_id", "controller_type", "controller_config_hash", "seed", "provenance",
+    "trial_id",
+    "state",
+    "task_outcome",
+    "termination_reason",
+    "recording_quality",
+    "intervention",
+    "condition_name",
+    "controller_id",
+    "controller_type",
+    "controller_config_hash",
+    "seed",
+    "provenance",
 )
 REQUIRED_FIELDS_BY_PROVENANCE: dict[Provenance, tuple[str, ...]] = {
     Provenance.MOCK: COMMON_REQUIRED,

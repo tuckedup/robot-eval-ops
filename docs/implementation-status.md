@@ -8,12 +8,12 @@ Subagent tool access is by `tools:` allowlist; ownership is enforced by instruct
 |---|---|---|---|---|---|---|
 | L1 | Inspect env (py3.11 venv, pybullet+Panda+TinyRenderer verified) | lead | - | done | pybullet 3.2.7 built, Panda loads, 64x64 render ok | - |
 | L2 | Shared contracts, pyproject, CLI skeleton, agents | lead | L1 | done | docs/contracts.md | - |
-| C1 | Core: DB + EvalService + scheduler + lifecycle | core | L2 | pending | | |
+| C1 | Core: DB + EvalService + scheduler + lifecycle | core | L2 | in progress (dispatched) | | |
 | C2 | Core: Runner + recovery + device lock + F10 | core | C1,R1 | pending | | |
-| R1 | Robotics: mock adapter + conditions + registry | robotics | L2 | pending | | |
+| R1 | Robotics: mock adapter + conditions + registry | robotics | L2 | in progress (dispatched) | | |
 | R2 | Robotics: PyBullet Panda sim + scripted controllers | robotics | R1 | pending | | |
 | R3 | Robotics: LeRobot wrappers + hardware adapter/preflight | robotics | R1 | pending | | |
-| D1 | Data: recording writers + QA + quarantine | data | L2 | pending | | |
+| D1 | Data: recording writers + QA + quarantine | data | L2 | in progress (dispatched) | | |
 | D2 | Data: local/S3 stores + packaging + retry | data | L2 | pending | | |
 | D3 | Data: faults F01-F09 + report + data CLI | data | D1,D2 | pending | | |
 | E1 | Eval: metrics + Wilson + scoring + exports | eval | C1 | pending | | |
