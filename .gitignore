@@ -1,0 +1,29 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+.coverage
+htmlcov/
+# runtime data and generated artifacts (never commit recordings/databases)
+data/
+runs/
+*.db
+*.sqlite
+*.mp4
+*.avi
+!fixtures/**/*.mp4
+# secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.aws/
+# local Claude state
+.claude/settings.local.json
+.claude/worktrees/

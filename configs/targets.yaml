@@ -1,0 +1,13 @@
+# PROPOSED TARGETS ONLY. These are goals, not measured results. Measured values live in
+# docs/verification.md and generated reports, each linked to the run that produced them.
+targets:
+  demonstrations_total: 60
+  demonstration_sessions: 3
+  evaluation_trials: 100
+  required_metadata_completeness_pct: 100
+  demonstration_qa_acceptance_pct_min: 95
+  fault_cases_detected: 10
+  checksum_agreement_pct: 100
+needs_independent_human_measurement:
+  - scoring_agreement   # see docs/templates/scoring-agreement.csv
+  - reset_time_improvement   # see docs/templates/reset-time-log.csv
