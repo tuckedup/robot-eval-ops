@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-13T16:20:44.406601+00:00",
+  "generated_at": "2026-10-13T17:25:02.219823+00:00",
   "environment": {
     "python": "3.11.16",
     "platform": "Windows-10-10.0.26220-SP0",
@@ -34,7 +34,7 @@
       "message": "video trials/fault_trial/video.mp4 is missing for fault_trial; re-record the trial or locate the file (do not mark the trial successful without video evidence)",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:43.354589Z",
+      "executed_at": "2026-10-13T17:25:00.722171Z",
       "details": {
         "quality": "fail",
         "accepted": false,
@@ -59,7 +59,7 @@
       "message": "trials/fault_trial/video.mp4 cannot be opened and has no container index (moov atom): the file looks truncated (interrupted write or partial transfer); re-record or re-download",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:43.560520Z",
+      "executed_at": "2026-10-13T17:25:00.821882Z",
       "details": {
         "quality": "fail",
         "accepted": false,
@@ -88,7 +88,7 @@
       "message": "trials/fault_trial/trace.jsonl: timestamp goes backwards at row 5 (line 7): t=0.05 after 0.4. The recorder clock or file order is wrong; re-record. Timestamps are never re-sorted or synthesised",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:43.639001Z",
+      "executed_at": "2026-10-13T17:25:00.912885Z",
       "details": {
         "quality": "fail",
         "accepted": false,
@@ -115,7 +115,7 @@
       "message": "trials/fault_trial/trace.jsonl: 1 non-finite (NaN/Inf) value(s); first at line 5, row 3 field action[0]. Check the sensor/controller for numerical failure and re-record; do not use this trial for scoring or training",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:43.715920Z",
+      "executed_at": "2026-10-13T17:25:01.097010Z",
       "details": {
         "quality": "fail",
         "accepted": false,
@@ -142,7 +142,7 @@
       "message": "trials/fault_trial/trace.jsonl schema_version '0.0-legacy' != supported '1.0'; migrate or re-record with a matching version",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:43.790783Z",
+      "executed_at": "2026-10-13T17:25:01.188347Z",
       "details": {
         "quality": "fail",
         "accepted": false,
@@ -169,7 +169,7 @@
       "message": "model artifact models/policy.pt referenced by fault_trial does not exist; restore the checkpoint/config or do not claim this controller ran",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:43.858283Z",
+      "executed_at": "2026-10-13T17:25:01.271295Z",
       "details": {
         "quality": "fail",
         "accepted": false,
@@ -194,7 +194,7 @@
       "message": "trial_id 'fault_trial' appears 2 times in manifest.json; trial ids must be unique - find the colliding records and re-issue ids (do not delete either record)",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:43.920874Z",
+      "executed_at": "2026-10-13T17:25:01.441879Z",
       "details": {
         "manifest_trials": 2,
         "claimed_outcome": "success",
@@ -214,7 +214,7 @@
       "message": "trials/fault_trial/trace.jsonl: recomputed sha256 f84e63fcaffb... != recorded e1668833d345...; the file changed after recording (corruption or tampering). Keep the file as evidence, restore from a verified copy",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:43.992683Z",
+      "executed_at": "2026-10-13T17:25:01.530393Z",
       "details": {
         "quality": "fail",
         "accepted": false,
@@ -241,7 +241,7 @@
       "message": "upload runs/fault_session/manifest.json failed after 3 attempt(s): TimeoutError: injected: connection timed out. Check connectivity and credentials, then re-run; completed artifacts are skipped on resume",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:44.082348Z",
+      "executed_at": "2026-10-13T17:25:01.748175Z",
       "details": {
         "max_attempts": 3,
         "direct_attempts": 3,
@@ -270,10 +270,10 @@
       "detected_codes": [
         "interrupted_runner"
       ],
-      "message": "trial 270d1e13-73e9-408a-b771-aeef8678f091 marked aborted/interrupted_runner; session requires a fresh preflight. Runner said: session 4fddfab1-b755-4371-a306-b272e4536847 requires a fresh preflight (set after an interruption or halt); run `robotevalops session preflight 4fddfab1-b755-4371-a306-b272e4536847` before running trials",
+      "message": "trial 3ffa145b-ba5d-4803-bcd6-2f1a6022d191 marked aborted/interrupted_runner; session requires a fresh preflight. Runner said: session c15cb80a-526c-4432-a74b-1302265e0ee7 requires a fresh preflight (set after an interruption or halt); run `robotevalops session preflight c15cb80a-526c-4432-a74b-1302265e0ee7` before running trials",
       "evidence_preserved": true,
       "misleading_success_prevented": true,
-      "executed_at": "2026-10-13T16:20:44.406601Z",
+      "executed_at": "2026-10-13T17:25:02.218823Z",
       "details": {
         "checks": {
           "interrupted_session_found": true,
@@ -289,16 +289,16 @@
           "no_auto_resume": true,
           "remaining_trial_ran_after_preflight": true
         },
-        "session_id": "4fddfab1-b755-4371-a306-b272e4536847",
-        "trial_id": "270d1e13-73e9-408a-b771-aeef8678f091",
-        "refusal_message": "session 4fddfab1-b755-4371-a306-b272e4536847 requires a fresh preflight (set after an interruption or halt); run `robotevalops session preflight 4fddfab1-b755-4371-a306-b272e4536847` before running trials",
+        "session_id": "c15cb80a-526c-4432-a74b-1302265e0ee7",
+        "trial_id": "3ffa145b-ba5d-4803-bcd6-2f1a6022d191",
+        "refusal_message": "session c15cb80a-526c-4432-a74b-1302265e0ee7 requires a fresh preflight (set after an interruption or halt); run `robotevalops session preflight c15cb80a-526c-4432-a74b-1302265e0ee7` before running trials",
         "evidence": {
           "interrupted_runner": {
             "files_on_disk": [
-              "trials/270d1e13-73e9-408a-b771-aeef8678f091/trace.jsonl"
+              "trials/3ffa145b-ba5d-4803-bcd6-2f1a6022d191/trace.jsonl"
             ],
             "note": "runner died while the trial was RUNNING; partial files preserved, task not judged",
-            "recovered_at": "2026-10-13T16:20:44.263043+00:00"
+            "recovered_at": "2026-10-13T17:25:02.020448+00:00"
           },
           "runner": {
             "note": "pre-crash"

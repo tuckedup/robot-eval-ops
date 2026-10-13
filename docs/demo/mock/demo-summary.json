@@ -1,0 +1,434 @@
+{
+  "backend_label": "MOCK FIXTURE - not evidence of robotics performance",
+  "session_ids": [
+    "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+    "756be1cb-4488-4d2e-867c-bc9aa9b9c3db"
+  ],
+  "planned": 12,
+  "run_report": {
+    "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+    "final_session_state": "completed",
+    "trials_processed": [
+      "5f9e5f31-b8a9-47f5-89cf-bbfdb3eac09e",
+      "9a30e619-b40e-4dd3-b09b-17b2113937cf",
+      "40fad76e-8c47-43a3-aeec-993e5b1be908",
+      "cc7cdbcc-b9c1-4a9a-b488-bec406d3d973",
+      "bdb94cd6-9b06-418e-9c1e-9811e0089cdf",
+      "f444e266-00b9-4222-8cc6-b605be71037a",
+      "91b7fe66-48f3-43ac-9e17-5487d6af30d9",
+      "b149ac0b-a74e-4626-ac1f-5add98d519f3",
+      "36b42f23-bde9-47d8-bb83-617e224d0810",
+      "39c17186-6954-439e-a8fb-532c44f3acbe",
+      "8cf4f4b3-1205-4d7e-8e00-c3fc4af46e1f",
+      "a233c76a-4da8-46d8-a10e-e1bf19fbd4dc"
+    ],
+    "stopped": false,
+    "halted_reason": null
+  },
+  "reports": {
+    "plot_success": "data\\demo\\reports\\ff0a25f0-fa05-4342-ad08-53d87b72f7cc\\plots\\success_by_condition.png",
+    "plot_failures": "data\\demo\\reports\\ff0a25f0-fa05-4342-ad08-53d87b72f7cc\\plots\\failure_categories.png",
+    "plot_duration": "data\\demo\\reports\\ff0a25f0-fa05-4342-ad08-53d87b72f7cc\\plots\\duration.png",
+    "csv": "data\\demo\\reports\\ff0a25f0-fa05-4342-ad08-53d87b72f7cc\\summary.csv",
+    "md": "data\\demo\\reports\\ff0a25f0-fa05-4342-ad08-53d87b72f7cc\\summary.md",
+    "json": "data\\demo\\reports\\ff0a25f0-fa05-4342-ad08-53d87b72f7cc\\summary.json",
+    "html": "data\\demo\\reports\\ff0a25f0-fa05-4342-ad08-53d87b72f7cc\\report.html"
+  },
+  "fault_summary": {
+    "generated_at": "2026-10-13T17:25:02.219823+00:00",
+    "environment": {
+      "python": "3.11.16",
+      "platform": "Windows-10-10.0.26220-SP0",
+      "robotevalops": "0.1.0",
+      "numpy": "2.2.6",
+      "pandas": "3.0.6",
+      "pydantic": "2.14.1",
+      "pybullet": "3.2.7",
+      "opencv-python-headless": "4.12.0.88",
+      "boto3": "1.43.112",
+      "streamlit": "1.65.0",
+      "lerobot": "0.4.4",
+      "torch": "2.10.0"
+    },
+    "fixtures": "synthetic (generated frames/states via TrialRecorder, provenance=mock); not robot data",
+    "summary": {
+      "total": 10,
+      "executed": 10,
+      "passed": 10,
+      "failed": [],
+      "not_executed": []
+    },
+    "results": [
+      {
+        "case_id": "F01_missing_video",
+        "description": "trial lists video.mp4 but the file is gone",
+        "expected_code": "missing_video",
+        "detected": true,
+        "detected_codes": [
+          "missing_video"
+        ],
+        "message": "video trials/fault_trial/video.mp4 is missing for fault_trial; re-record the trial or locate the file (do not mark the trial successful without video evidence)",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:00.722171Z",
+        "details": {
+          "quality": "fail",
+          "accepted": false,
+          "rejection_reasons": [
+            "QA errors present: missing_video"
+          ],
+          "quarantined": [],
+          "claimed_outcome": "success",
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      },
+      {
+        "case_id": "F02_truncated_video",
+        "description": "H.264 mp4 cut to half its bytes (hash re-recorded)",
+        "expected_code": "truncated_video",
+        "detected": true,
+        "detected_codes": [
+          "truncated_video"
+        ],
+        "message": "trials/fault_trial/video.mp4 cannot be opened and has no container index (moov atom): the file looks truncated (interrupted write or partial transfer); re-record or re-download",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:00.821882Z",
+        "details": {
+          "quality": "fail",
+          "accepted": false,
+          "rejection_reasons": [
+            "QA errors present: truncated_video"
+          ],
+          "quarantined": [
+            "trials/fault_trial/video.mp4"
+          ],
+          "claimed_outcome": "success",
+          "original_bytes": 1967,
+          "truncated_bytes": 983,
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      },
+      {
+        "case_id": "F03_nonmonotonic_timestamps",
+        "description": "one trace timestamp goes backwards",
+        "expected_code": "nonmonotonic_timestamps",
+        "detected": true,
+        "detected_codes": [
+          "nonmonotonic_timestamps"
+        ],
+        "message": "trials/fault_trial/trace.jsonl: timestamp goes backwards at row 5 (line 7): t=0.05 after 0.4. The recorder clock or file order is wrong; re-record. Timestamps are never re-sorted or synthesised",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:00.912885Z",
+        "details": {
+          "quality": "fail",
+          "accepted": false,
+          "rejection_reasons": [
+            "QA errors present: nonmonotonic_timestamps"
+          ],
+          "quarantined": [
+            "trials/fault_trial/trace.jsonl"
+          ],
+          "claimed_outcome": "success",
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      },
+      {
+        "case_id": "F04_nonfinite_action",
+        "description": "an action value is a literal NaN",
+        "expected_code": "nonfinite_value",
+        "detected": true,
+        "detected_codes": [
+          "nonfinite_value"
+        ],
+        "message": "trials/fault_trial/trace.jsonl: 1 non-finite (NaN/Inf) value(s); first at line 5, row 3 field action[0]. Check the sensor/controller for numerical failure and re-record; do not use this trial for scoring or training",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:01.097010Z",
+        "details": {
+          "quality": "fail",
+          "accepted": false,
+          "rejection_reasons": [
+            "QA errors present: nonfinite_value"
+          ],
+          "quarantined": [
+            "trials/fault_trial/trace.jsonl"
+          ],
+          "claimed_outcome": "success",
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      },
+      {
+        "case_id": "F05_wrong_schema",
+        "description": "trace header declares an unsupported schema_version",
+        "expected_code": "schema_mismatch",
+        "detected": true,
+        "detected_codes": [
+          "schema_mismatch"
+        ],
+        "message": "trials/fault_trial/trace.jsonl schema_version '0.0-legacy' != supported '1.0'; migrate or re-record with a matching version",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:01.188347Z",
+        "details": {
+          "quality": "fail",
+          "accepted": false,
+          "rejection_reasons": [
+            "QA errors present: schema_mismatch"
+          ],
+          "quarantined": [
+            "trials/fault_trial/trace.jsonl"
+          ],
+          "claimed_outcome": "success",
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      },
+      {
+        "case_id": "F06_missing_model_artifact",
+        "description": "learned-controller trial references models/policy.pt which does not exist",
+        "expected_code": "missing_model_artifact",
+        "detected": true,
+        "detected_codes": [
+          "missing_model_artifact"
+        ],
+        "message": "model artifact models/policy.pt referenced by fault_trial does not exist; restore the checkpoint/config or do not claim this controller ran",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:01.271295Z",
+        "details": {
+          "quality": "fail",
+          "accepted": false,
+          "rejection_reasons": [
+            "QA errors present: missing_model_artifact"
+          ],
+          "quarantined": [],
+          "claimed_outcome": "success",
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      },
+      {
+        "case_id": "F07_duplicate_trial_id",
+        "description": "manifest lists the same trial_id twice",
+        "expected_code": "duplicate_id",
+        "detected": true,
+        "detected_codes": [
+          "duplicate_id"
+        ],
+        "message": "trial_id 'fault_trial' appears 2 times in manifest.json; trial ids must be unique - find the colliding records and re-issue ids (do not delete either record)",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:01.441879Z",
+        "details": {
+          "manifest_trials": 2,
+          "claimed_outcome": "success",
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      },
+      {
+        "case_id": "F08_hash_mismatch",
+        "description": "one byte of trace.jsonl flipped after its hash was recorded",
+        "expected_code": "hash_mismatch",
+        "detected": true,
+        "detected_codes": [
+          "hash_mismatch"
+        ],
+        "message": "trials/fault_trial/trace.jsonl: recomputed sha256 f84e63fcaffb... != recorded e1668833d345...; the file changed after recording (corruption or tampering). Keep the file as evidence, restore from a verified copy",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:01.530393Z",
+        "details": {
+          "quality": "fail",
+          "accepted": false,
+          "rejection_reasons": [
+            "QA errors present: hash_mismatch"
+          ],
+          "quarantined": [
+            "trials/fault_trial/trace.jsonl"
+          ],
+          "claimed_outcome": "success",
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      },
+      {
+        "case_id": "F09_transfer_timeout",
+        "description": "object store times out on every transfer after the first",
+        "expected_code": "transfer_timeout",
+        "detected": true,
+        "detected_codes": [
+          "transfer_timeout"
+        ],
+        "message": "upload runs/fault_session/manifest.json failed after 3 attempt(s): TimeoutError: injected: connection timed out. Check connectivity and credentials, then re-run; completed artifacts are skipped on resume",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:01.748175Z",
+        "details": {
+          "max_attempts": 3,
+          "direct_attempts": 3,
+          "bounded_retries": true,
+          "report_ok": false,
+          "state_statuses": {
+            "manifest.json": "uploaded",
+            "trials/fault_trial/trace.jsonl": "failed",
+            "trials/fault_trial/video.mp4": "failed"
+          },
+          "sleeps": [
+            1.0,
+            2.0
+          ],
+          "checksum_agreement": 0.0,
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      },
+      {
+        "case_id": "F10_interrupted_runner",
+        "description": "Runner process dies while a trial is RUNNING; restart must preserve evidence, never report success and require a fresh preflight before any further trial.",
+        "expected_code": "interrupted_runner",
+        "detected": true,
+        "detected_codes": [
+          "interrupted_runner"
+        ],
+        "message": "trial 3ffa145b-ba5d-4803-bcd6-2f1a6022d191 marked aborted/interrupted_runner; session requires a fresh preflight. Runner said: session c15cb80a-526c-4432-a74b-1302265e0ee7 requires a fresh preflight (set after an interruption or halt); run `robotevalops session preflight c15cb80a-526c-4432-a74b-1302265e0ee7` before running trials",
+        "evidence_preserved": true,
+        "misleading_success_prevented": true,
+        "executed_at": "2026-10-13T17:25:02.218823Z",
+        "details": {
+          "checks": {
+            "interrupted_session_found": true,
+            "one_running_trial_recovered": true,
+            "recovery_idempotent": true,
+            "trial_aborted_interrupted_runner": true,
+            "trial_not_success": true,
+            "partial_file_preserved_unchanged": true,
+            "partial_file_registered_with_hash": true,
+            "pre_crash_evidence_kept": true,
+            "session_requires_fresh_preflight": true,
+            "runner_refused_before_preflight": true,
+            "no_auto_resume": true,
+            "remaining_trial_ran_after_preflight": true
+          },
+          "session_id": "c15cb80a-526c-4432-a74b-1302265e0ee7",
+          "trial_id": "3ffa145b-ba5d-4803-bcd6-2f1a6022d191",
+          "refusal_message": "session c15cb80a-526c-4432-a74b-1302265e0ee7 requires a fresh preflight (set after an interruption or halt); run `robotevalops session preflight c15cb80a-526c-4432-a74b-1302265e0ee7` before running trials",
+          "evidence": {
+            "interrupted_runner": {
+              "files_on_disk": [
+                "trials/3ffa145b-ba5d-4803-bcd6-2f1a6022d191/trace.jsonl"
+              ],
+              "note": "runner died while the trial was RUNNING; partial files preserved, task not judged",
+              "recovered_at": "2026-10-13T17:25:02.020448+00:00"
+            },
+            "runner": {
+              "note": "pre-crash"
+            }
+          },
+          "executed": true
+        },
+        "executed": true,
+        "passed": true
+      }
+    ]
+  },
+  "steps": [
+    {
+      "step": "create session",
+      "ok": true,
+      "seconds": 0.11,
+      "error": null
+    },
+    {
+      "step": "plan trials",
+      "ok": true,
+      "seconds": 0.02,
+      "error": null
+    },
+    {
+      "step": "run trials",
+      "ok": true,
+      "seconds": 2.264,
+      "error": null
+    },
+    {
+      "step": "create fault-injection mock session",
+      "ok": true,
+      "seconds": 0.073,
+      "error": null
+    },
+    {
+      "step": "plan fault-injection trials",
+      "ok": true,
+      "seconds": 0.012,
+      "error": null
+    },
+    {
+      "step": "run fault-injection trials (recording_failure injected; 1 trial left unattempted)",
+      "ok": true,
+      "seconds": 0.335,
+      "error": null
+    },
+    {
+      "step": "package+upload ff0a25f0",
+      "ok": true,
+      "seconds": 0.921,
+      "error": null
+    },
+    {
+      "step": "download+verify SHA-256 ff0a25f0",
+      "ok": true,
+      "seconds": 0.215,
+      "error": null
+    },
+    {
+      "step": "package+upload 756be1cb",
+      "ok": true,
+      "seconds": 0.213,
+      "error": null
+    },
+    {
+      "step": "download+verify SHA-256 756be1cb",
+      "ok": true,
+      "seconds": 0.036,
+      "error": null
+    },
+    {
+      "step": "export reports",
+      "ok": true,
+      "seconds": 0.932,
+      "error": null
+    },
+    {
+      "step": "export fault-injection session report 756be1cb",
+      "ok": true,
+      "seconds": 0.736,
+      "error": null
+    },
+    {
+      "step": "run ten fault cases",
+      "ok": true,
+      "seconds": 1.573,
+      "error": null
+    }
+  ],
+  "home": "data\\demo",
+  "provenance": [
+    "mock"
+  ]
+}

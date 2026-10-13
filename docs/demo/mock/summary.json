@@ -1,0 +1,2282 @@
+{
+  "generated_at": "2026-10-13T17:24:59.810223+00:00",
+  "provenance": [
+    "mock"
+  ],
+  "controller_types": [
+    "scripted"
+  ],
+  "banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+  "session_ids": [
+    "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+  ],
+  "sessions": [
+    {
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "name": "demo-eval_smoke_mock-1791912294",
+      "state": "completed",
+      "provenance": "mock",
+      "backend": "mock",
+      "eval_config_hash": "22d912f28c224876b4e6bd3181cfacd74bdbf6422246f6a01f3cb9df7cbb34d8",
+      "git_commit": "90c98754e8654251adb39af1105149928757b902",
+      "software": {
+        "boto3": "1.43.112",
+        "lerobot": "0.4.4",
+        "numpy": "2.2.6",
+        "opencv-python-headless": "4.12.0.88",
+        "pandas": "3.0.6",
+        "platform": "Windows-10-10.0.26220-SP0",
+        "pybullet": "3.2.7",
+        "pydantic": "2.14.1",
+        "python": "3.11.16",
+        "robotevalops": "0.1.0",
+        "streamlit": "1.65.0",
+        "torch": "2.10.0"
+      },
+      "run_dir": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "manifest": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json",
+      "manifest_exists": true,
+      "controllers": [
+        {
+          "controller_id": "mock_scripted_a",
+          "type": "scripted",
+          "version": "1",
+          "config_hash": "eeb953ffb044e4f56d312cf446a68dd2d4eab9c3943632deb493608d87647b2d",
+          "artifact_sha256": null
+        },
+        {
+          "controller_id": "mock_scripted_b",
+          "type": "scripted",
+          "version": "1",
+          "config_hash": "734c6fa64d2a5e431a46097a8d1eb78ad9e9b9452d8f6b7ac76115610ee65b9e",
+          "artifact_sha256": null
+        }
+      ],
+      "conditions": [
+        {
+          "name": "nominal",
+          "kind": "nominal",
+          "version": "1",
+          "params": {
+            "difficulty": 0.0
+          },
+          "affects_controller_state": false,
+          "description": "Mock fixture, no difficulty offset. Not performance evidence."
+        },
+        {
+          "name": "mock_state_shift",
+          "kind": "object_position",
+          "version": "1",
+          "params": {
+            "difficulty": 0.15
+          },
+          "affects_controller_state": true,
+          "description": "Mock fixture standing in for a state-affecting shift (difficulty 0.15). Not performance evidence."
+        },
+        {
+          "name": "mock_visual_shift",
+          "kind": "lighting",
+          "version": "1",
+          "params": {
+            "difficulty": 0.05
+          },
+          "affects_controller_state": false,
+          "description": "Mock fixture standing in for a visual-only shift (difficulty 0.05). Not performance evidence; says nothing about learned-policy robustness."
+        }
+      ],
+      "base_seed": 1234,
+      "trials_per_condition": 2
+    }
+  ],
+  "metrics": {
+    "provenances": [
+      "mock"
+    ],
+    "controller_types": [
+      "scripted"
+    ],
+    "session_ids": [
+      "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+    ],
+    "banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+    "overall": {
+      "key": {},
+      "provenances": [
+        "mock"
+      ],
+      "controller_types": [
+        "scripted"
+      ],
+      "session_ids": [
+        "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+      ],
+      "planned": 12,
+      "attempted": 12,
+      "completed": 12,
+      "failed": 0,
+      "aborted": 0,
+      "not_attempted": 0,
+      "unscored": 0,
+      "evaluable": 12,
+      "autonomous_successes": 9,
+      "assisted_successes": 0,
+      "unknown_intervention_successes": 0,
+      "success_per_attempt": {
+        "k": 9,
+        "n": 12,
+        "rate": 0.75,
+        "ci_low": 0.46768966087934005,
+        "ci_high": 0.9110599603710386,
+        "ci_method": "wilson_95"
+      },
+      "success_per_evaluable": {
+        "k": 9,
+        "n": 12,
+        "rate": 0.75,
+        "ci_low": 0.46768966087934005,
+        "ci_high": 0.9110599603710386,
+        "ci_method": "wilson_95"
+      },
+      "intervention_rate": {
+        "k": 0,
+        "n": 12,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.2425007574992425,
+        "ci_method": "wilson_95"
+      },
+      "infra_abort_rate": {
+        "k": 0,
+        "n": 12,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.2425007574992425,
+        "ci_method": "wilson_95"
+      },
+      "infra_reasons_not_attempted": 0,
+      "recording_pass_rate": {
+        "k": 12,
+        "n": 12,
+        "rate": 1.0,
+        "ci_low": 0.7574992425007574,
+        "ci_high": 1.0,
+        "ci_method": "wilson_95"
+      },
+      "recording_unchecked": 0,
+      "quality_excluded": 0,
+      "duration": {
+        "n": 12,
+        "mean": 3.0,
+        "median": 3.0,
+        "min": 3.0,
+        "max": 3.0,
+        "p95": null,
+        "note": "trial duration: n=12 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+      },
+      "reset_duration": {
+        "n": 12,
+        "mean": 0.001333333333604969,
+        "median": 0.0,
+        "min": 0.0,
+        "max": 0.01600000000325963,
+        "p95": null,
+        "note": "reset duration: n=12 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+      },
+      "artifacts": {
+        "expected": 36,
+        "present_with_hash": 36,
+        "completeness": {
+          "k": 36,
+          "n": 36,
+          "rate": 1.0,
+          "ci_low": 0.9035781695514236,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "missing": 0,
+        "quarantined": 0,
+        "checksum_verified": 36,
+        "checksum_mismatch": 0,
+        "checksum_unverified": 0,
+        "checksum_agreement": {
+          "k": 36,
+          "n": 36,
+          "rate": 1.0,
+          "ci_low": 0.9035781695514236,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        }
+      },
+      "warnings": [
+        "[overall] small n: 12 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+      ]
+    },
+    "by_condition": [
+      {
+        "key": {
+          "condition": "mock_state_shift",
+          "provenance": "mock"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 4,
+        "attempted": 4,
+        "completed": 4,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 4,
+        "autonomous_successes": 3,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "ci_low": 0.3006360524426366,
+          "ci_high": 0.9544139373553637,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "ci_low": 0.3006360524426366,
+          "ci_high": 0.9544139373553637,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 4,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.48990002040399916,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 4,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.48990002040399916,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 4,
+          "n": 4,
+          "rate": 1.0,
+          "ci_low": 0.5100999795960008,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 4,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=4 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 4,
+          "mean": 0.004000000000814907,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.01600000000325963,
+          "p95": null,
+          "note": "reset duration: n=4 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 12,
+          "present_with_hash": 12,
+          "completeness": {
+            "k": 12,
+            "n": 12,
+            "rate": 1.0,
+            "ci_low": 0.7574992425007574,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 12,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 12,
+            "n": 12,
+            "rate": 1.0,
+            "ci_low": 0.7574992425007574,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[condition=mock_state_shift, provenance=mock] small n: 4 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      },
+      {
+        "key": {
+          "condition": "mock_visual_shift",
+          "provenance": "mock"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 4,
+        "attempted": 4,
+        "completed": 4,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 4,
+        "autonomous_successes": 3,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "ci_low": 0.3006360524426366,
+          "ci_high": 0.9544139373553637,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "ci_low": 0.3006360524426366,
+          "ci_high": 0.9544139373553637,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 4,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.48990002040399916,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 4,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.48990002040399916,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 4,
+          "n": 4,
+          "rate": 1.0,
+          "ci_low": 0.5100999795960008,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 4,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=4 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 4,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p95": null,
+          "note": "reset duration: n=4 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 12,
+          "present_with_hash": 12,
+          "completeness": {
+            "k": 12,
+            "n": 12,
+            "rate": 1.0,
+            "ci_low": 0.7574992425007574,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 12,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 12,
+            "n": 12,
+            "rate": 1.0,
+            "ci_low": 0.7574992425007574,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[condition=mock_visual_shift, provenance=mock] small n: 4 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      },
+      {
+        "key": {
+          "condition": "nominal",
+          "provenance": "mock"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 4,
+        "attempted": 4,
+        "completed": 4,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 4,
+        "autonomous_successes": 3,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "ci_low": 0.3006360524426366,
+          "ci_high": 0.9544139373553637,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "ci_low": 0.3006360524426366,
+          "ci_high": 0.9544139373553637,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 4,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.48990002040399916,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 4,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.48990002040399916,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 4,
+          "n": 4,
+          "rate": 1.0,
+          "ci_low": 0.5100999795960008,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 4,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=4 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 4,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p95": null,
+          "note": "reset duration: n=4 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 12,
+          "present_with_hash": 12,
+          "completeness": {
+            "k": 12,
+            "n": 12,
+            "rate": 1.0,
+            "ci_low": 0.7574992425007574,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 12,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 12,
+            "n": 12,
+            "rate": 1.0,
+            "ci_low": 0.7574992425007574,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[condition=nominal, provenance=mock] small n: 4 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      }
+    ],
+    "by_controller": [
+      {
+        "key": {
+          "controller_id": "mock_scripted_a",
+          "controller_version": "1",
+          "controller_type": "scripted",
+          "provenance": "mock"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 6,
+        "attempted": 6,
+        "completed": 6,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 6,
+        "autonomous_successes": 5,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 5,
+          "n": 6,
+          "rate": 0.8333333333333334,
+          "ci_low": 0.43649056343635395,
+          "ci_high": 0.9699474141282697,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 5,
+          "n": 6,
+          "rate": 0.8333333333333334,
+          "ci_low": 0.43649056343635395,
+          "ci_high": 0.9699474141282697,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 6,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.3903430336530645,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 6,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.3903430336530645,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 6,
+          "n": 6,
+          "rate": 1.0,
+          "ci_low": 0.6096569663469354,
+          "ci_high": 0.9999999999999999,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 6,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=6 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 6,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p95": null,
+          "note": "reset duration: n=6 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 18,
+          "present_with_hash": 18,
+          "completeness": {
+            "k": 18,
+            "n": 18,
+            "rate": 1.0,
+            "ci_low": 0.8241154494176252,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 18,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 18,
+            "n": 18,
+            "rate": 1.0,
+            "ci_low": 0.8241154494176252,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=mock_scripted_a, controller_version=1, controller_type=scripted, provenance=mock] small n: 6 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      },
+      {
+        "key": {
+          "controller_id": "mock_scripted_b",
+          "controller_version": "1",
+          "controller_type": "scripted",
+          "provenance": "mock"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 6,
+        "attempted": 6,
+        "completed": 6,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 6,
+        "autonomous_successes": 4,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 4,
+          "n": 6,
+          "rate": 0.6666666666666666,
+          "ci_low": 0.29998832134152864,
+          "ci_high": 0.9032306674407831,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 4,
+          "n": 6,
+          "rate": 0.6666666666666666,
+          "ci_low": 0.29998832134152864,
+          "ci_high": 0.9032306674407831,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 6,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.3903430336530645,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 6,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.3903430336530645,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 6,
+          "n": 6,
+          "rate": 1.0,
+          "ci_low": 0.6096569663469354,
+          "ci_high": 0.9999999999999999,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 6,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=6 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 6,
+          "mean": 0.002666666667209938,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.01600000000325963,
+          "p95": null,
+          "note": "reset duration: n=6 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 18,
+          "present_with_hash": 18,
+          "completeness": {
+            "k": 18,
+            "n": 18,
+            "rate": 1.0,
+            "ci_low": 0.8241154494176252,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 18,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 18,
+            "n": 18,
+            "rate": 1.0,
+            "ci_low": 0.8241154494176252,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=mock_scripted_b, controller_version=1, controller_type=scripted, provenance=mock] small n: 6 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      }
+    ],
+    "by_controller_condition": [
+      {
+        "key": {
+          "controller_id": "mock_scripted_a",
+          "controller_version": "1",
+          "controller_type": "scripted",
+          "provenance": "mock",
+          "condition": "mock_state_shift"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 2,
+        "attempted": 2,
+        "completed": 2,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 2,
+        "autonomous_successes": 1,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 1,
+          "n": 2,
+          "rate": 0.5,
+          "ci_low": 0.09452865480086614,
+          "ci_high": 0.9054713451991339,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 1,
+          "n": 2,
+          "rate": 0.5,
+          "ci_low": 0.09452865480086614,
+          "ci_high": 0.9054713451991339,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 2,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 2,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p95": null,
+          "note": "reset duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 6,
+          "present_with_hash": 6,
+          "completeness": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 6,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=mock_scripted_a, controller_version=1, controller_type=scripted, provenance=mock, condition=mock_state_shift] small n: 2 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      },
+      {
+        "key": {
+          "controller_id": "mock_scripted_a",
+          "controller_version": "1",
+          "controller_type": "scripted",
+          "provenance": "mock",
+          "condition": "mock_visual_shift"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 2,
+        "attempted": 2,
+        "completed": 2,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 2,
+        "autonomous_successes": 2,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 2,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 2,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p95": null,
+          "note": "reset duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 6,
+          "present_with_hash": 6,
+          "completeness": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 6,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=mock_scripted_a, controller_version=1, controller_type=scripted, provenance=mock, condition=mock_visual_shift] small n: 2 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      },
+      {
+        "key": {
+          "controller_id": "mock_scripted_a",
+          "controller_version": "1",
+          "controller_type": "scripted",
+          "provenance": "mock",
+          "condition": "nominal"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 2,
+        "attempted": 2,
+        "completed": 2,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 2,
+        "autonomous_successes": 2,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 2,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 2,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p95": null,
+          "note": "reset duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 6,
+          "present_with_hash": 6,
+          "completeness": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 6,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=mock_scripted_a, controller_version=1, controller_type=scripted, provenance=mock, condition=nominal] small n: 2 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      },
+      {
+        "key": {
+          "controller_id": "mock_scripted_b",
+          "controller_version": "1",
+          "controller_type": "scripted",
+          "provenance": "mock",
+          "condition": "mock_state_shift"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 2,
+        "attempted": 2,
+        "completed": 2,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 2,
+        "autonomous_successes": 2,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 2,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 2,
+          "mean": 0.008000000001629815,
+          "median": 0.008000000001629815,
+          "min": 0.0,
+          "max": 0.01600000000325963,
+          "p95": null,
+          "note": "reset duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 6,
+          "present_with_hash": 6,
+          "completeness": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 6,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=mock_scripted_b, controller_version=1, controller_type=scripted, provenance=mock, condition=mock_state_shift] small n: 2 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      },
+      {
+        "key": {
+          "controller_id": "mock_scripted_b",
+          "controller_version": "1",
+          "controller_type": "scripted",
+          "provenance": "mock",
+          "condition": "mock_visual_shift"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 2,
+        "attempted": 2,
+        "completed": 2,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 2,
+        "autonomous_successes": 1,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 1,
+          "n": 2,
+          "rate": 0.5,
+          "ci_low": 0.09452865480086614,
+          "ci_high": 0.9054713451991339,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 1,
+          "n": 2,
+          "rate": 0.5,
+          "ci_low": 0.09452865480086614,
+          "ci_high": 0.9054713451991339,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 2,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 2,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p95": null,
+          "note": "reset duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 6,
+          "present_with_hash": 6,
+          "completeness": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 6,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=mock_scripted_b, controller_version=1, controller_type=scripted, provenance=mock, condition=mock_visual_shift] small n: 2 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      },
+      {
+        "key": {
+          "controller_id": "mock_scripted_b",
+          "controller_version": "1",
+          "controller_type": "scripted",
+          "provenance": "mock",
+          "condition": "nominal"
+        },
+        "provenances": [
+          "mock"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "ff0a25f0-fa05-4342-ad08-53d87b72f7cc"
+        ],
+        "planned": 2,
+        "attempted": 2,
+        "completed": 2,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 2,
+        "autonomous_successes": 1,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 1,
+          "n": 2,
+          "rate": 0.5,
+          "ci_low": 0.09452865480086614,
+          "ci_high": 0.9054713451991339,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 1,
+          "n": 2,
+          "rate": 0.5,
+          "ci_low": 0.09452865480086614,
+          "ci_high": 0.9054713451991339,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 2,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.6576280471103807,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 2,
+          "n": 2,
+          "rate": 1.0,
+          "ci_low": 0.34237195288961925,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "quality_excluded": 0,
+        "duration": {
+          "n": 2,
+          "mean": 3.0,
+          "median": 3.0,
+          "min": 3.0,
+          "max": 3.0,
+          "p95": null,
+          "note": "trial duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 2,
+          "mean": 0.0,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "p95": null,
+          "note": "reset duration: n=2 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 6,
+          "present_with_hash": 6,
+          "completeness": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 6,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 0,
+          "checksum_agreement": {
+            "k": 6,
+            "n": 6,
+            "rate": 1.0,
+            "ci_low": 0.6096569663469354,
+            "ci_high": 0.9999999999999999,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=mock_scripted_b, controller_version=1, controller_type=scripted, provenance=mock, condition=nominal] small n: 2 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+        ]
+      }
+    ],
+    "warnings": [
+      "[overall] small n: 12 evaluable trial(s) (< 20); intervals are wide and differences are not reliable."
+    ],
+    "denominator_definitions": {
+      "planned": "all trials given (never-attempted trials stay here)",
+      "attempted": "started_at set (reached RUNNING)",
+      "completed/failed/aborted": "lifecycle state counts",
+      "unscored": "attempted trials with task_outcome=unscored",
+      "evaluable": "COMPLETED, scored success|failure, recording_quality != fail",
+      "success_per_attempt": "autonomous successes / attempted",
+      "success_per_evaluable": "autonomous successes / evaluable",
+      "intervention_rate": "intervention == assisted / attempted",
+      "infra_abort_rate": "attempted trials terminated by an infra reason / attempted",
+      "recording_pass_rate": "recording_quality == pass / attempted",
+      "artifact_completeness": "present+hash-recorded / expected (expected includes video+trace per attempt)",
+      "checksum_agreement": "verified / transferred (uploaded+verified+mismatch)"
+    }
+  },
+  "failures": {
+    "rows": [
+      {
+        "controller_id": "mock_scripted_a",
+        "controller_type": "scripted",
+        "provenance": "mock",
+        "condition": "mock_state_shift",
+        "failure_class": "autonomous_success",
+        "state": "completed",
+        "termination_reason": "success_criterion_met",
+        "task_outcome": "success",
+        "intervention": "none",
+        "count": 1
+      },
+      {
+        "controller_id": "mock_scripted_a",
+        "controller_type": "scripted",
+        "provenance": "mock",
+        "condition": "mock_state_shift",
+        "failure_class": "task_failure",
+        "state": "completed",
+        "termination_reason": "timeout",
+        "task_outcome": "failure",
+        "intervention": "none",
+        "count": 1
+      },
+      {
+        "controller_id": "mock_scripted_a",
+        "controller_type": "scripted",
+        "provenance": "mock",
+        "condition": "mock_visual_shift",
+        "failure_class": "autonomous_success",
+        "state": "completed",
+        "termination_reason": "success_criterion_met",
+        "task_outcome": "success",
+        "intervention": "none",
+        "count": 2
+      },
+      {
+        "controller_id": "mock_scripted_a",
+        "controller_type": "scripted",
+        "provenance": "mock",
+        "condition": "nominal",
+        "failure_class": "autonomous_success",
+        "state": "completed",
+        "termination_reason": "success_criterion_met",
+        "task_outcome": "success",
+        "intervention": "none",
+        "count": 2
+      },
+      {
+        "controller_id": "mock_scripted_b",
+        "controller_type": "scripted",
+        "provenance": "mock",
+        "condition": "mock_state_shift",
+        "failure_class": "autonomous_success",
+        "state": "completed",
+        "termination_reason": "success_criterion_met",
+        "task_outcome": "success",
+        "intervention": "none",
+        "count": 2
+      },
+      {
+        "controller_id": "mock_scripted_b",
+        "controller_type": "scripted",
+        "provenance": "mock",
+        "condition": "mock_visual_shift",
+        "failure_class": "autonomous_success",
+        "state": "completed",
+        "termination_reason": "success_criterion_met",
+        "task_outcome": "success",
+        "intervention": "none",
+        "count": 1
+      },
+      {
+        "controller_id": "mock_scripted_b",
+        "controller_type": "scripted",
+        "provenance": "mock",
+        "condition": "mock_visual_shift",
+        "failure_class": "task_failure",
+        "state": "completed",
+        "termination_reason": "timeout",
+        "task_outcome": "failure",
+        "intervention": "none",
+        "count": 1
+      },
+      {
+        "controller_id": "mock_scripted_b",
+        "controller_type": "scripted",
+        "provenance": "mock",
+        "condition": "nominal",
+        "failure_class": "autonomous_success",
+        "state": "completed",
+        "termination_reason": "success_criterion_met",
+        "task_outcome": "success",
+        "intervention": "none",
+        "count": 1
+      },
+      {
+        "controller_id": "mock_scripted_b",
+        "controller_type": "scripted",
+        "provenance": "mock",
+        "condition": "nominal",
+        "failure_class": "task_failure",
+        "state": "completed",
+        "termination_reason": "timeout",
+        "task_outcome": "failure",
+        "intervention": "none",
+        "count": 1
+      }
+    ],
+    "qa_flag_counts": {},
+    "total_trials": 12,
+    "class_totals": {
+      "autonomous_success": 9,
+      "task_failure": 3
+    },
+    "note": "Every trial appears in exactly one row. infra/abort trials stay unscored and are never counted as task failures; task failures are completed trials scored failure."
+  },
+  "comparisons": [
+    {
+      "controller_a": "mock_scripted_a",
+      "controller_b": "mock_scripted_b",
+      "provenances": [
+        "mock"
+      ],
+      "controller_types": {
+        "mock_scripted_a": [
+          "scripted"
+        ],
+        "mock_scripted_b": [
+          "scripted"
+        ]
+      },
+      "overall": {
+        "condition": "ALL",
+        "pairs": 6,
+        "both": 3,
+        "a_only": 2,
+        "b_only": 1,
+        "neither": 0,
+        "a_success": {
+          "k": 5,
+          "n": 6,
+          "rate": 0.8333333333333334,
+          "ci_low": 0.43649056343635395,
+          "ci_high": 0.9699474141282697,
+          "ci_method": "wilson_95"
+        },
+        "b_success": {
+          "k": 4,
+          "n": 6,
+          "rate": 0.6666666666666666,
+          "ci_low": 0.29998832134152864,
+          "ci_high": 0.9032306674407831,
+          "ci_method": "wilson_95"
+        },
+        "p_value_exact_mcnemar": 1.0
+      },
+      "by_condition": [
+        {
+          "condition": "mock_state_shift",
+          "pairs": 2,
+          "both": 1,
+          "a_only": 0,
+          "b_only": 1,
+          "neither": 0,
+          "a_success": {
+            "k": 1,
+            "n": 2,
+            "rate": 0.5,
+            "ci_low": 0.09452865480086614,
+            "ci_high": 0.9054713451991339,
+            "ci_method": "wilson_95"
+          },
+          "b_success": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "ci_low": 0.34237195288961925,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "p_value_exact_mcnemar": 1.0
+        },
+        {
+          "condition": "mock_visual_shift",
+          "pairs": 2,
+          "both": 1,
+          "a_only": 1,
+          "b_only": 0,
+          "neither": 0,
+          "a_success": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "ci_low": 0.34237195288961925,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "b_success": {
+            "k": 1,
+            "n": 2,
+            "rate": 0.5,
+            "ci_low": 0.09452865480086614,
+            "ci_high": 0.9054713451991339,
+            "ci_method": "wilson_95"
+          },
+          "p_value_exact_mcnemar": 1.0
+        },
+        {
+          "condition": "nominal",
+          "pairs": 2,
+          "both": 1,
+          "a_only": 1,
+          "b_only": 0,
+          "neither": 0,
+          "a_success": {
+            "k": 2,
+            "n": 2,
+            "rate": 1.0,
+            "ci_low": 0.34237195288961925,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "b_success": {
+            "k": 1,
+            "n": 2,
+            "rate": 0.5,
+            "ci_low": 0.09452865480086614,
+            "ci_high": 0.9054713451991339,
+            "ci_method": "wilson_95"
+          },
+          "p_value_exact_mcnemar": 1.0
+        }
+      ],
+      "unpaired": [],
+      "caveat": "The exact McNemar p-value uses only discordant pairs. With the small n typical here it does not support significance claims: it assumes independent pairs, a fixed paired design, and a pre-specified test, and ignores multiple comparisons across conditions. Treat differences as descriptive.",
+      "notes": []
+    }
+  ],
+  "limitations": [
+    "The controllers evaluated by this repository are scripted, state-based programs reading simulator state; they are not learned policies and not trained checkpoints.",
+    "Simulation results use a PyBullet Panda arm with rendered simulator frames. This is not the SO-101 arm and not physical hardware; no conclusion about real-robot performance follows.",
+    "Mock-provenance results are seeded fixtures and are never evidence of robotics performance.",
+    "Visual-only conditions (lighting, background, occlusion) do not change what a state-based controller reads; they say nothing about the visual robustness of a learned policy.",
+    "Small sample sizes: Wilson intervals are wide and any difference between controllers is descriptive. p-values from so few discordant pairs do not support significance claims.",
+    "Scoring agreement between independent human scorers and reset-time improvements are not measured by this report; they need independent human measurement (see docs/evaluation-protocol.md)."
+  ],
+  "trials": [
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "5f9e5f31-b8a9-47f5-89cf-bbfdb3eac09e",
+      "schedule_position": 0,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_a",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "eeb953ffb044e4f56d312cf446a68dd2d4eab9c3943632deb493608d87647b2d",
+      "condition": "nominal",
+      "condition_kind": "nominal",
+      "trial_index": 0,
+      "seed": 2728018416,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": true,
+      "failure_class": "autonomous_success",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/5f9e5f31-b8a9-47f5-89cf-bbfdb3eac09e/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "9a30e619-b40e-4dd3-b09b-17b2113937cf",
+      "schedule_position": 1,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_b",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "734c6fa64d2a5e431a46097a8d1eb78ad9e9b9452d8f6b7ac76115610ee65b9e",
+      "condition": "nominal",
+      "condition_kind": "nominal",
+      "trial_index": 0,
+      "seed": 2728018416,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": true,
+      "failure_class": "autonomous_success",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/9a30e619-b40e-4dd3-b09b-17b2113937cf/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "40fad76e-8c47-43a3-aeec-993e5b1be908",
+      "schedule_position": 2,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_a",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "eeb953ffb044e4f56d312cf446a68dd2d4eab9c3943632deb493608d87647b2d",
+      "condition": "nominal",
+      "condition_kind": "nominal",
+      "trial_index": 1,
+      "seed": 2276888359,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": true,
+      "failure_class": "autonomous_success",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/40fad76e-8c47-43a3-aeec-993e5b1be908/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "cc7cdbcc-b9c1-4a9a-b488-bec406d3d973",
+      "schedule_position": 3,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_b",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "734c6fa64d2a5e431a46097a8d1eb78ad9e9b9452d8f6b7ac76115610ee65b9e",
+      "condition": "nominal",
+      "condition_kind": "nominal",
+      "trial_index": 1,
+      "seed": 2276888359,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "timeout",
+      "task_outcome": "failure",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": false,
+      "failure_class": "task_failure",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/cc7cdbcc-b9c1-4a9a-b488-bec406d3d973/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "bdb94cd6-9b06-418e-9c1e-9811e0089cdf",
+      "schedule_position": 4,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_a",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "eeb953ffb044e4f56d312cf446a68dd2d4eab9c3943632deb493608d87647b2d",
+      "condition": "mock_state_shift",
+      "condition_kind": "object_position",
+      "trial_index": 0,
+      "seed": 2439288426,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "timeout",
+      "task_outcome": "failure",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": false,
+      "failure_class": "task_failure",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/bdb94cd6-9b06-418e-9c1e-9811e0089cdf/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "f444e266-00b9-4222-8cc6-b605be71037a",
+      "schedule_position": 5,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_b",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "734c6fa64d2a5e431a46097a8d1eb78ad9e9b9452d8f6b7ac76115610ee65b9e",
+      "condition": "mock_state_shift",
+      "condition_kind": "object_position",
+      "trial_index": 0,
+      "seed": 2439288426,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": true,
+      "failure_class": "autonomous_success",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.01600000000325963,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/f444e266-00b9-4222-8cc6-b605be71037a/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "91b7fe66-48f3-43ac-9e17-5487d6af30d9",
+      "schedule_position": 6,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_a",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "eeb953ffb044e4f56d312cf446a68dd2d4eab9c3943632deb493608d87647b2d",
+      "condition": "mock_state_shift",
+      "condition_kind": "object_position",
+      "trial_index": 1,
+      "seed": 3896481481,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": true,
+      "failure_class": "autonomous_success",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/91b7fe66-48f3-43ac-9e17-5487d6af30d9/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "b149ac0b-a74e-4626-ac1f-5add98d519f3",
+      "schedule_position": 7,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_b",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "734c6fa64d2a5e431a46097a8d1eb78ad9e9b9452d8f6b7ac76115610ee65b9e",
+      "condition": "mock_state_shift",
+      "condition_kind": "object_position",
+      "trial_index": 1,
+      "seed": 3896481481,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": true,
+      "failure_class": "autonomous_success",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/b149ac0b-a74e-4626-ac1f-5add98d519f3/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "36b42f23-bde9-47d8-bb83-617e224d0810",
+      "schedule_position": 8,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_a",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "eeb953ffb044e4f56d312cf446a68dd2d4eab9c3943632deb493608d87647b2d",
+      "condition": "mock_visual_shift",
+      "condition_kind": "lighting",
+      "trial_index": 0,
+      "seed": 3846424596,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": true,
+      "failure_class": "autonomous_success",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/36b42f23-bde9-47d8-bb83-617e224d0810/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "39c17186-6954-439e-a8fb-532c44f3acbe",
+      "schedule_position": 9,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_b",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "734c6fa64d2a5e431a46097a8d1eb78ad9e9b9452d8f6b7ac76115610ee65b9e",
+      "condition": "mock_visual_shift",
+      "condition_kind": "lighting",
+      "trial_index": 0,
+      "seed": 3846424596,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": true,
+      "failure_class": "autonomous_success",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/39c17186-6954-439e-a8fb-532c44f3acbe/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "8cf4f4b3-1205-4d7e-8e00-c3fc4af46e1f",
+      "schedule_position": 10,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_a",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "eeb953ffb044e4f56d312cf446a68dd2d4eab9c3943632deb493608d87647b2d",
+      "condition": "mock_visual_shift",
+      "condition_kind": "lighting",
+      "trial_index": 1,
+      "seed": 3590876214,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": true,
+      "failure_class": "autonomous_success",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/8cf4f4b3-1205-4d7e-8e00-c3fc4af46e1f/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    },
+    {
+      "provenance_banner": "MOCK FIXTURE \u2014 not evidence of robotics performance",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "trial_id": "a233c76a-4da8-46d8-a10e-e1bf19fbd4dc",
+      "schedule_position": 11,
+      "provenance": "mock",
+      "backend": "mock",
+      "controller_id": "mock_scripted_b",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "734c6fa64d2a5e431a46097a8d1eb78ad9e9b9452d8f6b7ac76115610ee65b9e",
+      "condition": "mock_visual_shift",
+      "condition_kind": "lighting",
+      "trial_index": 1,
+      "seed": 3590876214,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "timeout",
+      "task_outcome": "failure",
+      "score_source": "mock_fixture",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "pass",
+      "autonomous_success": false,
+      "failure_class": "task_failure",
+      "duration_s": 3.0,
+      "reset_duration_s": 0.0,
+      "qa_flags": "",
+      "n_artifacts": 3,
+      "video_relpath": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/a233c76a-4da8-46d8-a10e-e1bf19fbd4dc/video.mp4",
+      "video_status": "verified",
+      "manifest_path": "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/manifest.json"
+    }
+  ],
+  "sources": [
+    {
+      "trial_id": "5f9e5f31-b8a9-47f5-89cf-bbfdb3eac09e",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/5f9e5f31-b8a9-47f5-89cf-bbfdb3eac09e/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/5f9e5f31-b8a9-47f5-89cf-bbfdb3eac09e/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/5f9e5f31-b8a9-47f5-89cf-bbfdb3eac09e/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "9a30e619-b40e-4dd3-b09b-17b2113937cf",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/9a30e619-b40e-4dd3-b09b-17b2113937cf/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/9a30e619-b40e-4dd3-b09b-17b2113937cf/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/9a30e619-b40e-4dd3-b09b-17b2113937cf/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "40fad76e-8c47-43a3-aeec-993e5b1be908",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/40fad76e-8c47-43a3-aeec-993e5b1be908/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/40fad76e-8c47-43a3-aeec-993e5b1be908/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/40fad76e-8c47-43a3-aeec-993e5b1be908/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "cc7cdbcc-b9c1-4a9a-b488-bec406d3d973",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/cc7cdbcc-b9c1-4a9a-b488-bec406d3d973/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/cc7cdbcc-b9c1-4a9a-b488-bec406d3d973/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/cc7cdbcc-b9c1-4a9a-b488-bec406d3d973/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "bdb94cd6-9b06-418e-9c1e-9811e0089cdf",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/bdb94cd6-9b06-418e-9c1e-9811e0089cdf/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/bdb94cd6-9b06-418e-9c1e-9811e0089cdf/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/bdb94cd6-9b06-418e-9c1e-9811e0089cdf/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "f444e266-00b9-4222-8cc6-b605be71037a",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/f444e266-00b9-4222-8cc6-b605be71037a/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/f444e266-00b9-4222-8cc6-b605be71037a/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/f444e266-00b9-4222-8cc6-b605be71037a/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "91b7fe66-48f3-43ac-9e17-5487d6af30d9",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/91b7fe66-48f3-43ac-9e17-5487d6af30d9/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/91b7fe66-48f3-43ac-9e17-5487d6af30d9/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/91b7fe66-48f3-43ac-9e17-5487d6af30d9/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "b149ac0b-a74e-4626-ac1f-5add98d519f3",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/b149ac0b-a74e-4626-ac1f-5add98d519f3/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/b149ac0b-a74e-4626-ac1f-5add98d519f3/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/b149ac0b-a74e-4626-ac1f-5add98d519f3/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "36b42f23-bde9-47d8-bb83-617e224d0810",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/36b42f23-bde9-47d8-bb83-617e224d0810/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/36b42f23-bde9-47d8-bb83-617e224d0810/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/36b42f23-bde9-47d8-bb83-617e224d0810/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "39c17186-6954-439e-a8fb-532c44f3acbe",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/39c17186-6954-439e-a8fb-532c44f3acbe/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/39c17186-6954-439e-a8fb-532c44f3acbe/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/39c17186-6954-439e-a8fb-532c44f3acbe/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "8cf4f4b3-1205-4d7e-8e00-c3fc4af46e1f",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/8cf4f4b3-1205-4d7e-8e00-c3fc4af46e1f/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/8cf4f4b3-1205-4d7e-8e00-c3fc4af46e1f/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/8cf4f4b3-1205-4d7e-8e00-c3fc4af46e1f/video.mp4"
+      ]
+    },
+    {
+      "trial_id": "a233c76a-4da8-46d8-a10e-e1bf19fbd4dc",
+      "session_id": "ff0a25f0-fa05-4342-ad08-53d87b72f7cc",
+      "artifacts": [
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/a233c76a-4da8-46d8-a10e-e1bf19fbd4dc/controller.json",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/a233c76a-4da8-46d8-a10e-e1bf19fbd4dc/trace.jsonl",
+        "runs/ff0a25f0-fa05-4342-ad08-53d87b72f7cc/trials/a233c76a-4da8-46d8-a10e-e1bf19fbd4dc/video.mp4"
+      ]
+    }
+  ]
+}
