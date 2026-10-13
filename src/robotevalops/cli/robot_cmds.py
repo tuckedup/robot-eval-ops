@@ -179,6 +179,14 @@ def _hardware_flow(
         session_id="cli-session",
     )
     wrapper = adapter.wrapper
+    if not dry_run:
+        # Cheap, deterministic gates first so the refusal never depends on what tools are installed.
+        if not hardware_mode:
+            _fail("refused: --hardware-mode is required to move hardware", 2, as_json)
+        if not ack_operator or not ack_operator.strip():
+            _fail(
+                "refused: --ack-operator NAME is required (per-session operator acknowledgement)", 2, as_json
+            )
     if dry_run:
         _with_dry_run_names(wrapper)
     try:
@@ -211,10 +219,6 @@ def _hardware_flow(
             as_json,
         )
         return
-    if not hardware_mode:
-        _fail("refused: --hardware-mode is required to move hardware", 2, as_json)
-    if not ack_operator or not ack_operator.strip():
-        _fail("refused: --ack-operator NAME is required (per-session operator acknowledgement)", 2, as_json)
     pre = adapter.preflight()
     if not pre.ok:
         _fail(
