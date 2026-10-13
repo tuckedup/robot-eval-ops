@@ -12,11 +12,15 @@ version in place. Record the rubric version with every score.
 
 Mark **success** only if ALL are true within the attempt:
 
-1. The block is entirely inside the target region (no part touches or crosses the boundary).
+0. The block was picked up (grasped and lifted), not pushed or dragged. Simulation checks this from evidence
+   (`grasped`, `lift_m` >= 0.03 m, `both_finger_contact_steps`); on video, confirm the block visibly left the
+   table in the gripper.
+1. The block is entirely inside the target region: every corner strictly inside; touching the boundary does not count.
 2. The block is released (the gripper has let go).
 3. Conditions 1 and 2 hold continuously for 2 s.
 
-Otherwise mark **failure** (examples: timeout, dropped, outside the region, still held, moved out during dwell).
+Otherwise mark **failure** (examples: timeout, dropped, pushed into the region, outside the region, still held,
+moved out during dwell). A pushed block is a task failure, not a success.
 
 If the video is unusable (missing, cut, cannot judge), do not guess: leave the trial unscored and report it with the
 bug template.

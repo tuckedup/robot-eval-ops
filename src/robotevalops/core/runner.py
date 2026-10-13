@@ -299,6 +299,13 @@ class Runner:
         reset_error: str | None = None
         try:
             adapter.reset(condition, trial.seed)
+        except HardwareRefusedError:
+            # A gate refusal is not an attempt: nothing moved. Put the trial back to PREFLIGHT (it never
+            # reached RUNNING, so started_at stays unset), pause the session at READY and refuse the run.
+            svc.transition_trial(tid, TrialState.PREFLIGHT)
+            svc.transition_session(sid, SessionState.READY, note="hardware gate refused motion")
+            svc.record_event("hardware_refused", sid, tid, stage="reset")
+            raise
         except Exception as e:  # noqa: BLE001
             reset_error = f"reset failed: {type(e).__name__}: {e}"
         reset_duration = time.monotonic() - t_reset

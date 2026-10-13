@@ -72,3 +72,14 @@ def test_unknown_format_rejected(seeded, tmp_path):
     svc, sess = seeded
     with pytest.raises(ValueError):
         export_summary(svc, [sess.session_id], tmp_path / "x", formats=("pdf",))
+
+
+def test_csv_has_provenance_banner_column(svc, tmp_path):
+    import pandas as pd
+
+    mock = seed_session(svc, Provenance.MOCK, "m")
+    df = pd.read_csv(export_summary(svc, [mock.session_id], tmp_path / "a")["csv"])
+    assert set(df["provenance_banner"]) == {"MOCK FIXTURE — not evidence of robotics performance"}
+    sim = seed_session(svc, Provenance.SIMULATION, "s")
+    df = pd.read_csv(export_summary(svc, [sim.session_id], tmp_path / "b")["csv"])
+    assert df["provenance_banner"].str.contains("not the SO-101").all()

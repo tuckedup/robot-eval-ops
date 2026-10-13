@@ -17,7 +17,7 @@ import typer
 from robotevalops.core.runner import Runner
 from robotevalops.core.service import EvalService
 from robotevalops.errors import RobotEvalOpsError
-from robotevalops.schemas import EvalConfig, Provenance, QAReport, TrialRecord
+from robotevalops.schemas import EvalConfig, Provenance
 from robotevalops.util import atomic_write_text
 
 app = typer.Typer(help="Run the end-to-end demo workflow.", no_args_is_help=True)
@@ -36,7 +36,9 @@ def _step(name: str, fn: Any, log: list[dict[str, Any]], echo: bool) -> Any:
         result, ok, err = None, False, str(e)
     log.append({"step": name, "ok": ok, "seconds": round(time.perf_counter() - t0, 3), "error": err})
     if echo:
-        typer.echo(f"[{'ok' if ok else 'FAIL'}] {name} ({log[-1]['seconds']}s){'' if ok else ': ' + str(err)}")
+        typer.echo(
+            f"[{'ok' if ok else 'FAIL'}] {name} ({log[-1]['seconds']}s){'' if ok else ': ' + str(err)}"
+        )
     if not ok:
         raise typer.Exit(1)
     return result
@@ -44,8 +46,7 @@ def _step(name: str, fn: Any, log: list[dict[str, Any]], echo: bool) -> Any:
 
 def _make_runner(svc: EvalService, backend: str, mock_faults: set[str] | None = None) -> Runner:
     from robotevalops.adapters.registry import get_adapter, get_controller
-    from robotevalops.qa.trial_qa import qa_trial
-    from robotevalops.recording.manifest import write_manifest
+    from robotevalops.integration import make_hooks
 
     def adapter_factory(session: Any) -> Any:
         if backend == "mock" and mock_faults:
@@ -54,15 +55,7 @@ def _make_runner(svc: EvalService, backend: str, mock_faults: set[str] | None = 
             return MockAdapter(faults=set(mock_faults))
         return get_adapter(backend, session)
 
-    def qa_hook(trial: TrialRecord, run_dir: Path) -> QAReport:
-        manifest = svc.export_manifest(trial.session_id)
-        entry = next(e for e in manifest.trials if e.trial_id == trial.trial_id)
-        report = qa_trial(run_dir, entry)
-        atomic_write_text(run_dir / "qa" / f"{trial.trial_id}.qa.json", report.model_dump_json(indent=2))
-        return report
-
-    def manifest_hook(session_id: str) -> None:
-        write_manifest(svc.run_dir(session_id) / "manifest.json", svc.export_manifest(session_id))
+    qa_hook, manifest_hook = make_hooks(svc)
 
     return Runner(
         svc,
@@ -85,8 +78,8 @@ def run(
     """Plan, run, QA, package, verify and report a small evaluation, then run the fault cases."""
     from robotevalops.config import load_eval_config
     from robotevalops.faults import registry as fault_registry
-    from robotevalops.integration import apply_transfer_report
     from robotevalops.faults import report as fault_report
+    from robotevalops.integration import apply_transfer_report
     from robotevalops.recording.manifest import read_manifest
     from robotevalops.reporting.export import export_summary
     from robotevalops.storage.local import LocalArtifactStore
@@ -138,8 +131,11 @@ def run(
         fs = _step(
             "create fault-injection mock session",
             lambda: svc.create_session(
-                f"demo-{mini.name}-{int(time.time())}", mini.provenance, mini.backend, eval_config=mini,
-                notes="Mock fixture with injected recording failure; shows failures stay in the denominators.",
+                f"demo-{mini.name}-{int(time.time())}",
+                mini.provenance,
+                mini.backend,
+                eval_config=mini,
+                notes="Mock fixture, injected recording failure: failures stay in the denominators.",
             ),
             steps,
             echo,
@@ -164,8 +160,10 @@ def run(
             steps,
             echo,
         )
-        transfer[s] = {"upload": json.loads(json.dumps(rep, default=lambda o: getattr(o, "__dict__", str(o)))),
-                       "verify": json.loads(json.dumps(ver, default=lambda o: getattr(o, "__dict__", str(o))))}
+        transfer[s] = {
+            "upload": json.loads(json.dumps(rep, default=lambda o: getattr(o, "__dict__", str(o)))),
+            "verify": json.loads(json.dumps(ver, default=lambda o: getattr(o, "__dict__", str(o)))),
+        }
         apply_transfer_report(svc, s, ver)
         mf = run_dir / "manifest.json"
         if mf.exists():
@@ -183,7 +181,9 @@ def run(
 
     fault_summary: dict[str, Any] | None = None
     if not skip_faults:
-        results = _step("run ten fault cases", lambda: fault_registry.run_all(home / "fault_work"), steps, echo)
+        results = _step(
+            "run ten fault cases", lambda: fault_registry.run_all(home / "fault_work"), steps, echo
+        )
         fault_summary = fault_report.write_report(
             results, report_dir / "fault-injection-report.md", report_dir / "fault-injection-report.json"
         )
@@ -201,4 +201,6 @@ def run(
         "provenance": [Provenance(cfg.provenance).value],
     }
     atomic_write_text(report_dir / "demo-summary.json", json.dumps(summary, indent=2, default=str) + "\n")
-    typer.echo(json.dumps({k: summary[k] for k in ("backend_label", "session_ids", "planned", "reports")}, indent=2))
+    typer.echo(
+        json.dumps({k: summary[k] for k in ("backend_label", "session_ids", "planned", "reports")}, indent=2)
+    )

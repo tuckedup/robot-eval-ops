@@ -74,3 +74,96 @@ def split_episodes(
     ev = sorted(ranked[:n_eval])
     tr = sorted(ranked[n_eval:])
     return {"train": tr, "eval": ev}
+
+
+def episode_to_trace(
+    dataset_root: str | Path, trace_path: str | Path, episode: int | None = None
+) -> dict[str, Any]:
+    """Write ``trace.jsonl`` (TraceHeader + TraceRow) from a LeRobot dataset episode's parquet.
+
+    Values are copied EXACTLY from the dataset's ``timestamp``, ``observation.state`` and ``action``
+    columns; nothing is invented, repaired or reordered. If the parquet cannot be read or a required
+    column is missing, NO trace is written and the returned dict says why (``ok`` False).
+    State/action names come from ``meta/info.json`` features when present; otherwise they are plain
+    positional labels (``observation.state[i]``), which are labels, not data.
+    Returns {"ok", "rows", "reason", "episode", "source_files"}.
+    """
+    from robotevalops.schemas import Provenance, TraceHeader, TraceRow
+
+    root = Path(dataset_root)
+    files = sorted((root / "data").rglob("*.parquet")) if (root / "data").is_dir() else []
+    if not files:
+        return {"ok": False, "rows": 0, "reason": "no data/**/*.parquet files in dataset", "source_files": []}
+    try:
+        import pandas as pd
+
+        df = pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)
+    except Exception as e:  # noqa: BLE001 - missing pyarrow, corrupt file, ...
+        return {
+            "ok": False,
+            "rows": 0,
+            "reason": f"parquet unreadable: {type(e).__name__}: {e}",
+            "source_files": [str(f) for f in files],
+        }
+    missing = [c for c in ("timestamp", "observation.state", "action") if c not in df.columns]
+    if missing:
+        return {
+            "ok": False,
+            "rows": 0,
+            "reason": f"missing columns {missing}; trace not written",
+            "source_files": [str(f) for f in files],
+        }
+    if "episode_index" in df.columns:
+        ep = int(df["episode_index"].min()) if episode is None else int(episode)
+        df = df[df["episode_index"] == ep]
+    else:
+        ep = 0 if episode is None else int(episode)
+    if len(df) == 0:
+        return {
+            "ok": False,
+            "rows": 0,
+            "reason": f"episode {ep} has no rows",
+            "source_files": [str(f) for f in files],
+        }
+    info: dict[str, Any] = {}
+    info_path = root / "meta" / "info.json"
+    if info_path.is_file():
+        try:
+            info = json.loads(info_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            info = {}
+
+    def _names(key: str, dim: int) -> list[str]:
+        feat = (info.get("features") or {}).get(key) or {}
+        names = feat.get("names") if isinstance(feat, dict) else None
+        if isinstance(names, dict):  # e.g. {"motors": [...]}
+            names = next(iter(names.values()), None)
+        if isinstance(names, list) and len(names) == dim:
+            return [str(n) for n in names]
+        return [f"{key}[{i}]" for i in range(dim)]
+
+    first_state, first_action = list(df["observation.state"].iloc[0]), list(df["action"].iloc[0])
+    fps = float(info.get("fps") or 0.0)
+    header = TraceHeader(
+        state_names=_names("observation.state", len(first_state)),
+        action_names=_names("action", len(first_action)),
+        fps=fps,
+        provenance=Provenance.PHYSICAL_HARDWARE,
+    )
+    lines = [header.model_dump_json()]
+    for i, (_, r) in enumerate(df.iterrows()):
+        row = TraceRow(
+            i=i,
+            t=float(r["timestamp"]),
+            state=[float(x) for x in r["observation.state"]],
+            action=[float(x) for x in r["action"]],
+        )
+        lines.append(json.dumps(row.model_dump(), allow_nan=True))
+    Path(trace_path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return {
+        "ok": True,
+        "rows": len(df),
+        "reason": None,
+        "episode": ep,
+        "source_files": [str(f) for f in files],
+    }

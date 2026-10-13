@@ -22,7 +22,7 @@ SCHEMA_VERSION = "1.0"
 RUBRIC_VERSION = "rubric-v1"
 
 # File names/patterns that must never be collected into an artifact package.
-FORBIDDEN_NAMES = {".env", "credentials", "config.json", "id_rsa", "id_ed25519", ".netrc", ".pgpass"}
+FORBIDDEN_NAMES = {".env", "credentials", "id_rsa", "id_ed25519", ".netrc", ".pgpass"}
 FORBIDDEN_SUFFIXES = {".pem", ".key", ".p12", ".pfx", ".kdbx"}
 FORBIDDEN_PARTS = {".aws", ".ssh", ".git", ".gnupg"}
 

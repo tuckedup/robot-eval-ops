@@ -24,7 +24,6 @@ from robotevalops.schemas import (
     SessionState,
     TrialState,
 )
-from robotevalops.util import atomic_write_text
 
 app = typer.Typer(help="session commands", no_args_is_help=True)
 
@@ -266,7 +265,16 @@ def run(
     def controller_factory(spec: ControllerSpec) -> Any:
         return reg.get_controller(spec, s.backend)
 
-    runner = Runner(svc, lambda sess: reg.get_adapter(sess.backend, sess), controller_factory)
+    from robotevalops.integration import make_hooks
+
+    qa_hook, manifest_hook = make_hooks(svc)  # recording QA must always reach the DB
+    runner = Runner(
+        svc,
+        lambda sess: reg.get_adapter(sess.backend, sess),
+        controller_factory,
+        qa_hook=qa_hook,
+        manifest_hook=manifest_hook,
+    )
     report = runner.run_session(session_id, max_trials=max_trials)
     out = {
         "session_id": session_id,
@@ -328,13 +336,17 @@ def export_manifest(
     """Export the RunManifest (covers every planned trial)."""
     svc = EvalService(home)
     m = svc.export_manifest(session_id)
-    payload = m.model_dump_json(indent=2)
+    from robotevalops.recording.manifest import write_manifest
+
+    default_path = svc.run_dir(session_id) / "manifest.json"
+    write_manifest(default_path, m)  # always keep runs/<id>/manifest.json current
     if out is not None:
-        atomic_write_text(out, payload)
+        write_manifest(out, m)
         _emit(
-            {"session_id": session_id, "path": str(out), "trials": len(m.trials)},
+            {"session_id": session_id, "path": str(out), "default_path": str(default_path)}
+            | {"trials": len(m.trials)},  # noqa: E501
             as_json,
-            f"wrote manifest for {len(m.trials)} trials to {out}",
+            f"wrote manifest for {len(m.trials)} trials to {out} and {default_path}",
         )
     else:
-        sys.stdout.write(payload + "\n")
+        sys.stdout.write(m.model_dump_json(indent=2) + chr(10))

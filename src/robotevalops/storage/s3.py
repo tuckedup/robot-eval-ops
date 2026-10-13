@@ -169,19 +169,32 @@ class S3ArtifactStore(ArtifactStore):
         head, attempts = self._head(key)
         if head is not None:
             meta = {k.lower(): v for k, v in (head.get("Metadata") or {}).items()}
-            remote_sha = meta.get("sha256")
-            if remote_sha is None:  # object without our metadata: download and hash to decide
+            claimed = meta.get("sha256")
+            if int(head.get("ContentLength", -1)) != size:
+                remote_sha = claimed or "(different size)"
+            else:  # same size: decide from the real bytes, never from metadata
                 remote_sha, a2 = self._download_hash(key)
                 attempts += a2
-            if remote_sha == actual and int(head.get("ContentLength", -1)) == size:
-                return TransferResult(
-                    key,
-                    ArtifactStatus.UPLOADED,
-                    actual,
-                    attempts,
-                    skipped_identical=True,
-                    detail="identical sha256 already stored",
-                )
+                if remote_sha == actual:
+                    return TransferResult(
+                        key,
+                        ArtifactStatus.UPLOADED,
+                        actual,
+                        attempts,
+                        skipped_identical=True,
+                        detail="identical bytes already stored (re-hashed from the object)",
+                    )
+                if claimed == actual:
+                    return TransferResult(
+                        key,
+                        ArtifactStatus.MISMATCH,
+                        remote_sha,
+                        attempts,
+                        detail=f"s3://{self.bucket}/{full} is CORRUPTED: metadata claims "
+                        f"{actual[:12]}... but "
+                        f"the object bytes hash to {remote_sha[:12]}.... Not skipped, not overwritten; "
+                        "inspect and remove deliberately.",
+                    )
             raise ArtifactOverwriteError(
                 f"s3://{self.bucket}/{full} already holds different bytes (stored sha256 "
                 f"{str(remote_sha)[:12]}..., new {actual[:12]}...); artifacts are immutable. Use a new key."

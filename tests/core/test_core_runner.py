@@ -301,3 +301,25 @@ def test_terminal_session_cannot_run_again(svc):
     run(svc, s, FakeAdapter())
     with pytest.raises(PreflightFailedError):
         run(svc, s, FakeAdapter())
+
+
+def test_gate_refusal_at_reset_is_not_an_attempt(svc):
+    s = make_session(
+        svc, {"a": "reset_refused", "b": "success"}, provenance=Provenance.PHYSICAL_HARDWARE, device_id="arm0"
+    )
+    svc.acknowledge_operator(s.session_id, "alice")
+    svc.mark_preflight_passed(s.session_id)
+    ad = FakeAdapter({"a": "reset_refused"}, Provenance.PHYSICAL_HARDWARE)
+    with pytest.raises(HardwareRefusedError):
+        run(svc, s, ad)
+    t = by_cond(svc, s)
+    assert all(x.started_at is None for x in t.values())  # nothing counted as attempted
+    assert all(x.state in (T.PLANNED, T.PREFLIGHT) for x in t.values())
+    assert not any(x.termination_reason == TerminationReason.INFRA_FAILURE for x in t.values())
+    got = svc.get_session(s.session_id)
+    assert got.state == SessionState.READY and not got.requires_fresh_preflight
+    assert svc.device_lock_holder("arm0") is None and ad.closed and ad.episodes == 0
+    # once the gate is satisfied the same trials run normally
+    ad2 = FakeAdapter({}, Provenance.PHYSICAL_HARDWARE)
+    run(svc, s, ad2)
+    assert ad2.episodes == 2

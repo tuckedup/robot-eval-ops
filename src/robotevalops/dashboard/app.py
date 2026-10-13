@@ -74,6 +74,9 @@ def main() -> None:
         else:
             st.warning(b)
 
+    for w in views.unchecked_warnings(views.metrics_for(svc, [sid])):
+        st.warning(w)
+
     tabs = st.tabs(
         ["Trials", "Metrics", "Condition comparison", "Failures", "Artifact QA", "Video and logs", "Scoring"]
     )

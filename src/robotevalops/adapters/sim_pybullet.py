@@ -12,7 +12,9 @@ Scene geometry (world frame, metres, z up; all documented constants below):
     a placement tolerance of 4 cm per axis for an axis-aligned block.
 Timing: physics 240 Hz fixed step; control 20 Hz (12 physics substeps per control step); trace rows and
 rendered frames are recorded at 10 Hz (every 2nd control step; TinyRenderer cost dominates).
-Success (all derived from simulator state, never a flag):
+Success (all derived from simulator state, never a flag), PICK-and-place, so it requires:
+  (1) grasp: both fingers in contact with the block for >= 5 control steps, AND (2) lift: block
+  centre rose >= 0.03 m above its resting height at some point, AND then (3) the placement below.
   every footprint corner of the block inside the target square AND gripper released
   (finger opening >= 0.06 m AND no contact points between any Panda link and the block) AND this
   holds continuously for ``dwell_required_s`` (default 2.0 s of simulated time) within the attempt
@@ -64,6 +66,8 @@ BLOCK_MASS = 0.05
 BLOCK_NOMINAL_XY = (0.50, -0.15)
 TARGET_CENTER = (0.50, 0.20)
 TARGET_HALF = 0.06
+MIN_LIFT_M = 0.03  # block must rise >= 3 cm above its resting height at some point
+MIN_BILATERAL_STEPS = 5  # control steps (0.25 s) with BOTH fingers touching the block
 OPEN_THRESHOLD_M = 0.06  # sum of both finger positions
 EE_LINK = 11  # panda_grasptarget
 ARM_JOINTS = list(range(7))
@@ -129,18 +133,27 @@ def footprint_fraction_in_square(
     gx, gy = np.meshgrid(g, g)
     local = np.stack([gx.ravel(), gy.ravel(), np.full(gx.size, -BLOCK_HALF)], axis=1)
     world = local @ _rot(quat).T + pos
-    inside = (np.abs(world[:, 0] - center[0]) <= half) & (np.abs(world[:, 1] - center[1]) <= half)
+    inside = (np.abs(world[:, 0] - center[0]) < half) & (np.abs(world[:, 1] - center[1]) < half)
     return float(inside.mean())
 
 
 def corners_inside_square(
     pos: np.ndarray, quat: np.ndarray, center: tuple[float, float], half: float
 ) -> bool:
-    """True iff all 4 bottom-face corners of the cube are inside the square region."""
-    corners = np.array([[sx * BLOCK_HALF, sy * BLOCK_HALF, -BLOCK_HALF] for sx in (-1, 1) for sy in (-1, 1)])
+    """True iff ALL 8 corners of the cube (bottom and top face, so tilt/overhang counts) lie
+    STRICTLY inside the square region in x and y. Tolerance policy: none; a corner exactly on the
+    boundary (or beyond) is NOT inside."""
+    corners = np.array(
+        [
+            [sx * BLOCK_HALF, sy * BLOCK_HALF, sz * BLOCK_HALF]
+            for sx in (-1, 1)
+            for sy in (-1, 1)
+            for sz in (-1, 1)
+        ]
+    )
     world = corners @ _rot(quat).T + pos
     return bool(
-        np.all(np.abs(world[:, 0] - center[0]) <= half) and np.all(np.abs(world[:, 1] - center[1]) <= half)
+        np.all(np.abs(world[:, 0] - center[0]) < half) and np.all(np.abs(world[:, 1] - center[1]) < half)
     )
 
 
@@ -452,6 +465,18 @@ class PyBulletPandaAdapter(RobotAdapter):
         self._finger_target = min(max(v[7], 0.0), 0.04)
         self._finger_force = min(max(v[8], 0.0), 40.0)
 
+    def _grasp_evidence(self) -> dict[str, Any]:
+        ev = self._ev
+        lift = ev["max_block_z_m"] - float(self._block_start[2])
+        both = int(ev["both_finger_contact_steps"])
+        return {
+            "grasped": bool(both >= MIN_BILATERAL_STEPS and lift >= MIN_LIFT_M),
+            "bilateral_contact_ok": bool(both >= MIN_BILATERAL_STEPS),
+            "lift_ok": bool(lift >= MIN_LIFT_M),
+            "min_bilateral_contact_steps": MIN_BILATERAL_STEPS,
+            "min_lift_m": MIN_LIFT_M,
+        }
+
     def _update_task(self) -> None:
         pos, quat = self._block_pose()
         n_pts, n_fingers, fsum = self._contacts()
@@ -540,6 +565,8 @@ class PyBulletPandaAdapter(RobotAdapter):
             "gripper_width_m": width,
             "gripper_block_contact_points_final": n_pts,
             "dwell_s": self._dwell,
+            **self._grasp_evidence(),
+            "placement_dwell_met": bool(self._success),
             "dwell_required_s": self._dwell_required,
             "dwell_s_max": ev.get("dwell_s_max", 0.0),
             "gripper_contact_steps": ev["gripper_contact_steps"],
@@ -559,11 +586,30 @@ class PyBulletPandaAdapter(RobotAdapter):
             "record_hz": REC_HZ,
         }
 
+    @staticmethod
+    def _failed_criteria(ev: dict[str, Any]) -> list[str]:
+        failed = []
+        if not ev["bilateral_contact_ok"]:
+            failed.append("grasp: no sustained bilateral finger contact")
+        if not ev["lift_ok"]:
+            failed.append("lift: block never rose >= min_lift_m")
+        if not ev["all_corners_inside"]:
+            failed.append("placement: block not entirely inside target")
+        if not ev["released"]:
+            failed.append("release: gripper not open / still touching block")
+        if not ev["placement_dwell_met"]:
+            failed.append("dwell: placement not held for dwell_required_s")
+        return failed
+
     def run_episode(
         self, controller: Controller, out_dir: Path, timeout_s: float, dwell_required_s: float
     ) -> EpisodeResult:
         if self._condition is None or self._panda < 0:
             raise RobotEvalOpsError("run_episode() requires reset() first")
+        if not (math.isfinite(timeout_s) and timeout_s > 0):
+            raise RobotEvalOpsError(f"timeout_s must be a finite number > 0, got {timeout_s!r}")
+        if not (math.isfinite(dwell_required_s) and dwell_required_s > 0):
+            raise RobotEvalOpsError(f"dwell_required_s must be a finite number > 0, got {dwell_required_s!r}")
         self._dwell_required = float(dwell_required_s)
         max_steps = int(math.ceil(timeout_s * CONTROL_HZ))
         try:
@@ -595,7 +641,7 @@ class PyBulletPandaAdapter(RobotAdapter):
                 self.act(action)
                 res = self.step()
                 obs, t_end = res.observation, self._t
-                if res.done:
+                if res.done and self._grasp_evidence()["grasped"]:
                     reason = TerminationReason.SUCCESS_CRITERION_MET
                     break
         except StopRequestedError:
@@ -610,6 +656,7 @@ class PyBulletPandaAdapter(RobotAdapter):
             error = (error + "; " if error else "") + f"recorder close failed: {type(e).__name__}: {e}"
             summary = RecordingSummary()
         ev = self._final_evidence()
+        ev["failed_criteria"] = self._failed_criteria(ev)
         success: bool | None
         if reason == TerminationReason.SUCCESS_CRITERION_MET:
             success = True

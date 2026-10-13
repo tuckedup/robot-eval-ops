@@ -77,6 +77,27 @@ Autonomous success = COMPLETED and `task_outcome=success` and `intervention=none
 * `edit_score` needs an editor and a non-empty reason and writes one `score_edits` row holding the before and after
   values of outcome, intervention and source. Only COMPLETED trials can be scored or edited.
 
+### ScoreSource per provenance (enforced by `score_trial`, `edit_score`, `record_trial_result`)
+
+| Trial provenance | Allowed `score_source` |
+|---|---|
+| mock | `mock_fixture`, `operator_video` |
+| simulation | `physics_evidence`, `operator_video` |
+| imported_real_recording | `imported_label`, `operator_video` |
+| physical_hardware | `operator_video` only |
+
+Anything else raises `ValueError` and changes nothing (e.g. a mock trial can never carry `physics_evidence`).
+
+### Audit rules for terminal trials
+
+* `register_artifacts`: every change to an existing artifact's sha256/size/status writes an `artifact_changed`
+  event with the previous values. On a terminal trial, replacing a recorded sha256 with a different one under a
+  good status (present/uploaded/verified) raises `ValueError` unless `actor` and `reason` are passed; recording
+  `mismatch`/`failed` (transfer reports) is allowed and audited.
+* `set_recording_quality`: the `recording_quality` event stores `previous_quality`, `previous_flags`, `actor`,
+  `reason`. Moving a trial away from `fail` requires `actor` and a non-empty `reason`; the first set from
+  `unchecked` (Runner QA hook) needs neither.
+
 ### Artifacts
 
 `artifacts_json` is a list of `ArtifactRef` (role, POSIX `relpath` relative to `runs/<session_id>/`, `sha256`,

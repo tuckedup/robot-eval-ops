@@ -126,3 +126,17 @@ def test_app_mock_banner_and_empty_home(svc, monkeypatch, tmp_path):
     monkeypatch.setenv("ROBOTEVALOPS_HOME", str(tmp_path / "empty"))
     at2 = AppTest.from_file(str(app), default_timeout=60).run()
     assert not at2.exception and any("No sessions" in i.value for i in at2.info)
+
+
+def test_dashboard_unchecked_column_and_warning(seeded):
+    svc, sess = seeded
+    from robotevalops.schemas import RecordingQuality
+
+    df = views.trial_table(svc, sess.session_id)
+    assert "recording_qa_status" in df.columns
+    t = next(t for t in svc.list_trials(sess.session_id) if t.is_attempted)
+    svc.set_recording_quality(t.trial_id, RecordingQuality.UNCHECKED)
+    df = views.trial_table(svc, sess.session_id)
+    assert (df["recording_qa_status"] == "no QA result (unchecked)").any()
+    ws = views.unchecked_warnings(views.metrics_for(svc, [sess.session_id]))
+    assert len(ws) == 1 and "data validate" in ws[0]

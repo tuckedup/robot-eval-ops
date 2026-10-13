@@ -356,3 +356,110 @@ def test_cli_lerobot_info():
     r = runner.invoke(app, ["lerobot-info", "--json"])
     d = json.loads(r.stdout)
     assert r.exit_code == 0 and "sources" in d and "lerobot_rollout_tool_present" in d
+
+
+# ------------------------------------------------------- verification-round fixes (VF-07/08/09/17)
+
+
+def test_ack_bound_to_session_refused_when_gate_session_unset(env):
+    make_calibration(env["root"], env["cfg"])
+    a = SO101HardwareAdapter(
+        env["cfg"],
+        hardware_mode=True,
+        acknowledgement=OperatorAcknowledgement("a", "S9"),
+        overrides=env["ov"],
+        port_lister=lambda: {"COM3", "COM4"},
+        camera_probe=lambda c: (True, "FAKE"),
+    )
+    assert a.preflight().ok
+    with pytest.raises(HardwareRefusedError, match="session id is unset"):
+        a.gate().require()
+
+
+def test_check_motion_allowed_is_non_moving_and_gated(env):
+    make_calibration(env["root"], env["cfg"])
+    a = make_adapter(env, hardware_mode=True, acknowledgement=ACK)
+    with pytest.raises(HardwareRefusedError, match="preflight"):
+        a.check_motion_allowed()
+    assert a.preflight().ok
+    assert a.check_motion_allowed() is None
+    b = make_adapter(env, acknowledgement=ACK)
+    b.preflight()
+    with pytest.raises(HardwareRefusedError, match="hardware mode"):
+        b.check_motion_allowed()
+
+
+@pytest.mark.parametrize(
+    "kw",
+    [
+        {"follower_id": "fol\n"},
+        {"follower_port": "COM3\n"},
+        {"dataset_repo_id": "a/b\n"},
+        {"leader_id": "x\n"},
+    ],
+)
+def test_trailing_newline_rejected_fullmatch(kw):
+    with pytest.raises(ValueError):
+        make_cfg(**kw)
+
+
+def _real_mp4(path, n):
+    import numpy as np
+
+    from robotevalops.recording.writers import TrialRecorder
+
+    rec = TrialRecorder(path.parent, 10, ["s"], ["a"], Provenance.MOCK, frame_size=(32, 24))
+    for k in range(n):
+        rec.add(k / 10, np.full((24, 32, 3), k * 20, dtype=np.uint8), [0.0], [0.0])
+    rec.close(n)
+
+
+def test_trace_written_from_synthetic_lerobot_style_parquet_exactly(env, tmp_path, monkeypatch):
+    """SYNTHETIC dataset fixture written by the fake exe; trace values must be copied exactly."""
+    pytest.importorskip("pyarrow")
+    vid_dir = tmp_path / "src"
+    vid_dir.mkdir()
+    _real_mp4(vid_dir / "video.mp4", 4)
+    monkeypatch.setenv("FAKE_VIDEO", str(vid_dir / "video.mp4"))
+    make_calibration(env["root"], env["cfg"])
+    ov = overrides(tmp_path, mode="dataset_parquet")
+    a = make_adapter(env, hardware_mode=True, acknowledgement=ACK, overrides=ov)
+    assert a.preflight().ok
+    res = a.run_episode(ExternalLeRobotController(TELEOP), tmp_path / "ep", 5.0, 2.0)
+    lines = (tmp_path / "ep" / "trace.jsonl").read_text(encoding="utf-8").splitlines()
+    header = json.loads(lines[0])
+    rows = [json.loads(x) for x in lines[1:]]
+    assert header["state_names"] == ["j0", "j1"] and header["action_names"] == ["a0", "a1"]
+    assert header["provenance"] == "physical_hardware" and header["fps"] == 10.0
+    assert [r["t"] for r in rows] == [0.0, 0.1, 0.2, 0.3]
+    assert rows[1]["state"] == [0.5, 1.5] and rows[2]["action"] == [0.5, 0.6]
+    assert rows[3]["state"][0] != rows[3]["state"][0]  # NaN preserved, not repaired
+    rec = res.recording
+    assert rec.trace_relpath == "trace.jsonl" and rec.trace_rows == 4 and rec.frames_expected == 4
+    assert rec.frames_written == 4 and rec.completeness == 1.0
+    assert res.task_success is None
+
+
+def test_trace_absent_and_reported_when_parquet_columns_missing(env, tmp_path):
+    pytest.importorskip("pyarrow")
+    import pandas as pd
+
+    root = tmp_path / "ds"
+    (root / "data").mkdir(parents=True)
+    pd.DataFrame({"timestamp": [0.0, 0.1]}).to_parquet(root / "data" / "f.parquet")
+    from robotevalops.adapters.lerobot_dataset import episode_to_trace
+
+    r = episode_to_trace(root, tmp_path / "trace.jsonl")
+    assert r["ok"] is False and "missing columns" in r["reason"] and not (tmp_path / "trace.jsonl").exists()
+    r2 = episode_to_trace(tmp_path / "empty", tmp_path / "t2.jsonl")
+    assert r2["ok"] is False and "no data" in r2["reason"]
+
+
+def test_fake_video_bytes_without_parquet_leave_trace_absent_with_evidence(env, tmp_path):
+    make_calibration(env["root"], env["cfg"])
+    a = make_adapter(env, hardware_mode=True, acknowledgement=ACK)
+    assert a.preflight().ok
+    res = a.run_episode(ExternalLeRobotController(TELEOP), tmp_path / "ep", 5.0, 2.0)
+    assert res.recording.trace_relpath is None and not (tmp_path / "ep" / "trace.jsonl").exists()
+    assert "no data" in res.evidence["trace_absent_reason"]
+    assert res.recording.completeness == 0.0

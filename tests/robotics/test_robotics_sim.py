@@ -341,3 +341,69 @@ def test_controller_b_nominal_runs(tmp_path):
     a.close()
     assert res.termination_reason in (TerminationReason.SUCCESS_CRITERION_MET, TerminationReason.TIMEOUT)
     assert res.evidence["lift_m"] > 0.05  # whatever the verdict, B really lifts the block
+
+
+# ------------------------------------------------------- verification-round fixes (VF-01/02/15)
+
+
+def test_success_evidence_records_grasp_and_empty_failed_criteria(nominal_run):
+    _, res, _ = nominal_run
+    ev = res.evidence
+    assert ev["grasped"] is True and ev["bilateral_contact_ok"] and ev["lift_ok"]
+    assert ev["both_finger_contact_steps"] >= 5 and ev["lift_m"] >= 0.03
+    assert ev["failed_criteria"] == []
+
+
+def test_noop_failure_lists_failed_criteria(tmp_path):
+    a = new_adapter()
+    a.reset(CONDS["nominal"], 0)
+    res = a.run_episode(HoldController(), tmp_path, 2.0, 2.0)
+    a.close()
+    fc = " | ".join(res.evidence["failed_criteria"])
+    assert res.evidence["grasped"] is False
+    assert "grasp" in fc and "lift" in fc and "placement" in fc and "dwell" in fc
+
+
+def test_placed_without_grasp_is_not_success(tmp_path):
+    """Block teleported by the TEST (not product code) into the region, gripper open: dwell is met
+    but there was no grasp/lift, so the episode must end TIMEOUT / failure with the reason recorded."""
+    a = new_adapter()
+    a.reset(CONDS["nominal"], 0)
+    a.p.resetBasePositionAndOrientation(
+        a._block, [TARGET_CENTER[0], TARGET_CENTER[1], 0.0202], [0, 0, 0, 1], physicsClientId=a._cid
+    )
+    res = a.run_episode(HoldController(), tmp_path, 5.0, 2.0)
+    a.close()
+    assert res.evidence["placement_dwell_met"] is True and res.evidence["all_corners_inside"] is True
+    assert res.termination_reason == TerminationReason.TIMEOUT and res.task_success is False
+    assert any(c.startswith("grasp") for c in res.evidence["failed_criteria"])
+
+
+@pytest.mark.parametrize(
+    "timeout,dwell", [(0.0, 2.0), (-1.0, 2.0), (5.0, 0.0), (5.0, -1.0), (float("nan"), 2.0)]
+)
+def test_nonpositive_timeout_or_dwell_refused(tmp_path, timeout, dwell):
+    from robotevalops.errors import RobotEvalOpsError
+
+    a = new_adapter()
+    a.reset(CONDS["nominal"], 0)
+    with pytest.raises(RobotEvalOpsError, match="> 0"):
+        a.run_episode(HoldController(), tmp_path, timeout, dwell)
+    a.close()
+
+
+def test_strict_inclusion_boundary_touching_is_not_inside():
+    c, q = TARGET_CENTER, np.array([0.0, 0.0, 0.0, 1.0])
+    exactly = np.array([c[0], c[1] + TARGET_HALF - 0.02, 0.02])  # corner exactly on the boundary
+    assert not corners_inside_square(exactly, q, c, TARGET_HALF)
+    assert corners_inside_square(exactly - np.array([0, 1e-6, 0]), q, c, TARGET_HALF)
+
+
+def test_tilted_block_overhanging_with_top_corners_is_not_inside():
+    c = TARGET_CENTER
+    th = np.radians(30.0)
+    q = np.array([0.0, np.sin(th / 2), 0.0, np.cos(th / 2)])  # pitch 30 deg about y
+    pos = np.array([c[0] + 0.035, c[1], 0.03])
+    # hand computed: bottom corners span x in [0.0077, 0.0423], top corners reach x = 0.0623 > 0.06
+    assert not corners_inside_square(pos, q, c, TARGET_HALF)
+    assert corners_inside_square(pos - np.array([0.005, 0, 0]), q, c, TARGET_HALF)

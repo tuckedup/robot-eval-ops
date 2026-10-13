@@ -31,6 +31,7 @@ from robotevalops.errors import (
 from robotevalops.lifecycle_rules import validate_session_transition, validate_trial_transition
 from robotevalops.schemas import (
     ArtifactRef,
+    ArtifactStatus,
     EvalConfig,
     Intervention,
     Provenance,
@@ -86,6 +87,27 @@ _TRIAL_FIELDS = frozenset(
         "notes",
     }
 )
+
+
+# Which ScoreSource may label a trial of a given provenance (VF-04). physics_evidence needs simulator state,
+# mock_fixture is only the mock backend's fixture rule, imported_label only labels imported recordings;
+# a human watching the (rendered or physical) video may score any provenance except imported ones that
+# carry their own label source.
+ALLOWED_SCORE_SOURCES: dict[Provenance, frozenset[ScoreSource]] = {
+    Provenance.MOCK: frozenset({ScoreSource.MOCK_FIXTURE, ScoreSource.OPERATOR_VIDEO}),
+    Provenance.SIMULATION: frozenset({ScoreSource.PHYSICS_EVIDENCE, ScoreSource.OPERATOR_VIDEO}),
+    Provenance.IMPORTED_REAL_RECORDING: frozenset({ScoreSource.IMPORTED_LABEL, ScoreSource.OPERATOR_VIDEO}),
+    Provenance.PHYSICAL_HARDWARE: frozenset({ScoreSource.OPERATOR_VIDEO}),
+}
+
+
+def check_score_source(provenance: Provenance, source: ScoreSource) -> None:
+    allowed = ALLOWED_SCORE_SOURCES[provenance]
+    if source not in allowed:
+        raise ValueError(
+            f"score_source {source.value!r} is not valid for a {provenance.value} trial; "
+            f"allowed: {sorted(x.value for x in allowed)}"
+        )
 
 
 def state_for_termination(reason: TerminationReason) -> TrialState:
@@ -577,6 +599,9 @@ class EvalService:
                 raise InvalidTransitionError(
                     f"results can only be recorded for a running trial; trial is {t.state.value}"
                 )
+            if scored:
+                assert score_source is not None
+                check_score_source(t.provenance, score_source)
             return self._apply_transition(c, t, new_state, fields, extra, artifacts)
 
     def recover_trial(
@@ -598,28 +623,114 @@ class EvalService:
                 artifacts=artifacts,
             )
 
-    def register_artifacts(self, trial_id: str, artifacts: list[ArtifactRef]) -> TrialRecord:
+    def register_artifacts(
+        self,
+        trial_id: str,
+        artifacts: list[ArtifactRef],
+        *,
+        actor: str | None = None,
+        reason: str | None = None,
+    ) -> TrialRecord:
+        """Upsert artifacts by relpath. Any change to an existing artifact's hash/size/status is
+        written to the events table with the previous values. On a terminal trial, replacing a recorded
+        sha256 with a different one under a good status (present/uploaded/verified) is refused unless an
+        actor and reason are given;
+        recording a mismatch/failure (e.g. a transfer report) is always allowed and audited."""
         with self.db.tx() as c:
             t = self._trial(c, trial_id)
+            previous = {a.relpath: a for a in t.artifacts}
+            terminal = t.state in (TrialState.COMPLETED, TrialState.FAILED, TrialState.ABORTED)
+            good = {ArtifactStatus.PRESENT, ArtifactStatus.UPLOADED, ArtifactStatus.VERIFIED}
+            changes: list[dict[str, Any]] = []
+            for a in artifacts:
+                old = previous.get(a.relpath)
+                if old is None or (old.sha256, old.size_bytes, old.status) == (
+                    a.sha256,
+                    a.size_bytes,
+                    a.status,
+                ):
+                    continue
+                hash_replaced = old.sha256 is not None and a.sha256 != old.sha256
+                if (
+                    terminal
+                    and hash_replaced
+                    and a.status in good
+                    and not (actor and reason and reason.strip())
+                ):
+                    raise ValueError(
+                        f"artifact {a.relpath!r} of terminal trial {trial_id} already has sha256 "
+                        f"{old.sha256}; replacing it needs actor and reason (evidence must not change silently)"  # noqa: E501
+                    )
+                changes.append(
+                    {
+                        "relpath": a.relpath,
+                        "previous_sha256": old.sha256,
+                        "previous_size_bytes": old.size_bytes,
+                        "previous_status": old.status.value,
+                        "new_sha256": a.sha256,
+                        "new_size_bytes": a.size_bytes,
+                        "new_status": a.status.value,
+                    }
+                )
             merged = self._merge_artifacts(t.artifacts, artifacts)
             self._update_trial(
                 c, trial_id, {"artifacts_json": dumps([a.model_dump(mode="json") for a in merged])}
             )
             self._event(c, "artifacts_registered", t.session_id, trial_id, count=len(artifacts))
+            if changes:
+                self._event(
+                    c,
+                    "artifact_changed",
+                    t.session_id,
+                    trial_id,
+                    changes=changes,
+                    actor=actor,
+                    reason=reason,
+                    trial_state=t.state.value,
+                )
             return self._trial(c, trial_id)
 
     def set_recording_quality(
-        self, trial_id: str, quality: RecordingQuality, qa_flags: Iterable[str] = ()
+        self,
+        trial_id: str,
+        quality: RecordingQuality,
+        qa_flags: Iterable[str] = (),
+        *,
+        actor: str | None = None,
+        reason: str | None = None,
     ) -> TrialRecord:
+        """Set QA quality. The event records the previous quality, actor and reason. Moving a trial away from
+        `fail` (to pass/flagged/unchecked) requires an actor and a non-empty reason."""
+        quality = RecordingQuality(quality)
         flags = list(dict.fromkeys(str(f) for f in qa_flags))
         with self.db.tx() as c:
             t = self._trial(c, trial_id)
+            if (
+                t.recording_quality == RecordingQuality.FAIL
+                and quality != RecordingQuality.FAIL
+                and not (actor and actor.strip() and reason and reason.strip())
+            ):
+                raise ValueError(
+                    f"trial {trial_id} has recording_quality=fail; changing it to {quality.value} requires "
+                    "actor and a non-empty reason"
+                )
             self._update_trial(
                 c,
                 trial_id,
-                {"recording_quality": RecordingQuality(quality).value, "qa_flags_json": dumps(flags)},
+                {"recording_quality": quality.value, "qa_flags_json": dumps(flags)},
             )
-            self._event(c, "recording_quality", t.session_id, trial_id, quality=quality.value, flags=flags)
+            self._event(
+                c,
+                "recording_quality",
+                t.session_id,
+                trial_id,
+                quality=quality.value,
+                previous_quality=t.recording_quality.value,
+                previous_flags=t.qa_flags,
+                flags=flags,
+                actor=actor,
+                reason=reason,
+            )
             return self._trial(c, trial_id)
 
     def record_event(
@@ -664,6 +775,7 @@ class EvalService:
             raise ValueError("scorer must be non-empty")
         with self.db.tx() as c:
             t = self._trial(c, trial_id)
+            check_score_source(t.provenance, source)
             if t.task_outcome != TaskOutcome.UNSCORED:
                 raise ScoreProtectionError(
                     f"trial {trial_id} is already scored ({t.task_outcome.value}, source "
@@ -705,6 +817,8 @@ class EvalService:
                 raise InvalidTransitionError(
                     f"only completed trials can be scored; trial is {t.state.value} and stays unscored"
                 )
+            if outcome != TaskOutcome.UNSCORED:
+                check_score_source(t.provenance, source)
             new_intervention = Intervention(intervention) if intervention is not None else t.intervention
             edit = ScoreEdit(
                 edit_id=new_id(),

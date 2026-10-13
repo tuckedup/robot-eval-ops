@@ -80,6 +80,13 @@ NOT an emergency stop and carries no latency guarantee.
   halts the same way. An abort/safety stop/stop request ends the session ABORTED; remaining trials stay PLANNED.
   A reset failure is recorded as RUNNING -> FAILED(`infra_failure`) because READY -> FAILED is not an allowed edge;
   the attempt therefore counts as initiated (conservative for the infra-abort rate).
+* Gate refusal (VF-08): if `adapter.reset` raises `HardwareRefusedError` (hardware mode off, no acknowledgement
+  bound to the adapter, ...) nothing moved and nothing was attempted. The Runner returns the trial from READY to
+  PREFLIGHT (`started_at` stays unset, no termination reason), pauses the session at READY, records a
+  `hardware_refused` event, releases the lock and re-raises `HardwareRefusedError`. The refusal therefore never
+  appears as an infra failure or in the infra-abort rate; trials stay un-run. Design choice: no new adapter API
+  is required (Robotics owns `adapters/`); the refusal is caught at the first motion-related call, which is
+  before RUNNING.
 * After the loop: all trials terminal -> COMPLETED; `max_trials` reached -> READY (resume later with the remaining
   PLANNED trials); stopped -> ABORTED.
 * A crash never resumes: terminal trials are never re-run, and the interrupted trial stays ABORTED.
@@ -98,3 +105,9 @@ Scenario test: `core/fault_interrupted.py::run_interrupted_runner_case` (fault F
 SQLite in WAL mode, foreign keys on, `busy_timeout` 30 s. Every mutation is a `BEGIN IMMEDIATE` transaction, so
 two writers (threads or processes) are serialised; e.g. two simultaneous `score_trial` calls yield exactly one
 success and one `ScoreProtectionError`.
+
+## Hooks and manifests
+
+`session run` builds the Runner with `robotevalops.integration.make_hooks(svc)`, so every attempted trial gets
+QA (`recording_quality` leaves `unchecked`) and `runs/<id>/manifest.json` is written at the end. `session
+export-manifest` also (re)writes `runs/<id>/manifest.json`; `--out` writes an additional copy.

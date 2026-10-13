@@ -70,7 +70,7 @@ _CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
 
 
 def _check(regex: re.Pattern[str], value: str, what: str) -> str:
-    if not isinstance(value, str) or not regex.match(value) or ".." in value.split("/"):
+    if not isinstance(value, str) or not regex.fullmatch(value) or ".." in value.split("/"):
         raise ValueError(f"invalid {what} {value!r}: must match {regex.pattern}")
     return value
 
@@ -202,7 +202,9 @@ class HardwareGate:
         a = self.acknowledgement
         if a is None or not a.operator.strip():
             return "no operator acknowledgement for this session (--ack-operator NAME)"
-        if self.session_id and a.session_id != self.session_id:
+        if not self.session_id:
+            return "adapter/gate session id is unset; an acknowledgement is bound to a specific session"
+        if a.session_id != self.session_id:
             return "operator acknowledgement belongs to a different session"
         if not self.preflight_ok:
             return "preflight has not passed (run the non-moving hardware preflight and fix failures)"

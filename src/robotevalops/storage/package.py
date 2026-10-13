@@ -22,7 +22,7 @@ from robotevalops.errors import (
 )
 from robotevalops.schemas import ArtifactStatus
 from robotevalops.storage.base import ArtifactStore
-from robotevalops.storage.local import strict_key
+from robotevalops.storage.local import credential_reason, strict_key
 from robotevalops.util import atomic_write_text, safe_relpath, sha256_file, utcnow
 
 STATE_DIR = ".transfer"
@@ -103,6 +103,9 @@ def collect_run_files(run_dir: str | Path) -> tuple[list[str], list[dict[str, st
             elif full.is_symlink():
                 blocked.append({"relpath": rel, "reason": "symlinked directory not followed"})
                 dirnames.remove(d)
+            elif credential_reason(rel + "/x") is not None:
+                blocked.append({"relpath": rel, "reason": f"credential/VCS directory {d!r} not collected"})
+                dirnames.remove(d)
         for name in filenames:
             full = dp / name
             rel = full.relative_to(root).as_posix()
@@ -112,10 +115,9 @@ def collect_run_files(run_dir: str | Path) -> tuple[list[str], list[dict[str, st
             if full.is_symlink():
                 blocked.append({"relpath": rel, "reason": "symlink (may escape the run directory)"})
                 continue
-            try:
-                safe_relpath(rel)
-            except PathTraversalError as exc:
-                blocked.append({"relpath": rel, "reason": str(exc)})
+            reason = credential_reason(rel)
+            if reason is not None:
+                blocked.append({"relpath": rel, "reason": reason})
                 continue
             if root not in full.resolve().parents:
                 blocked.append({"relpath": rel, "reason": "resolves outside the run directory"})
@@ -168,6 +170,14 @@ def _save_state(run_dir: Path, session_id: str, rep: PackageReport) -> None:
 # --------------------------------------------------------------------------- upload / verify / download
 
 
+def _store_has(store: ArtifactStore, key: str, size: int | None) -> bool:
+    """Resume state is only a hint: the object must still exist in the store with the same size."""
+    try:
+        return store.exists(key) and (size is None or store.stat(key).size_bytes == size)
+    except (RobotEvalOpsError, OSError):
+        return False
+
+
 def upload_run(store: ArtifactStore, run_dir: str | Path, session_id: str) -> PackageReport:
     """Upload every collectable file to runs/<session_id>/<relpath>. Per-artifact failures are recorded
     (status FAILED, detail) and the remaining artifacts are still attempted; state is saved after each
@@ -183,12 +193,13 @@ def upload_run(store: ArtifactStore, run_dir: str | Path, session_id: str) -> Pa
             prev
             and prev.get("sha256") == a.sha256
             and prev.get("status") in (ArtifactStatus.UPLOADED.value, ArtifactStatus.VERIFIED.value)
+            and _store_has(store, prefix + a.relpath, a.size_bytes)
         ):
             a.status = str(prev["status"])
-            a.detail = "skipped: already uploaded with identical sha256 (resume state)"
+            a.detail = "skipped: already uploaded with identical sha256 (resume state, store confirmed)"
             rep.skipped_identical += 1
-        else:
-            pending.append(a)
+            continue
+        pending.append(a)  # state absent, stale, or the store no longer has the object: (re-)upload
     for a in pending:
         try:
             res = store.put_file(root / a.relpath, prefix + a.relpath, a.sha256)

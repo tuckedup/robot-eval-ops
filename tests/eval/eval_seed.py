@@ -98,7 +98,11 @@ def seed_session(
             termination_reason=TerminationReason.SUCCESS_CRITERION_MET if win else TerminationReason.TIMEOUT,
             duration_s=3.0 + t.trial_index if win else 30.0,
             task_outcome=(TaskOutcome.SUCCESS if win else TaskOutcome.FAILURE) if scored else None,
-            score_source=ScoreSource.PHYSICS_EVIDENCE if scored else None,
+            score_source=(
+                (ScoreSource.MOCK_FIXTURE if provenance == Provenance.MOCK else ScoreSource.PHYSICS_EVIDENCE)
+                if scored
+                else None
+            ),
             intervention=Intervention.ASSISTED if beh == "assisted" else Intervention.NONE,
             artifacts=art,
             recording_quality=RecordingQuality.PASS,

@@ -85,6 +85,11 @@ robotevalops robot rollout  --config ... --policy-path <ckpt> --dry-run
 robotevalops robot import-dataset --path <lerobot dataset dir>           # read-only + episode split
 ```
 
+Library callers (e.g. a runner) can call `SO101HardwareAdapter.check_motion_allowed()` (non-moving)
+before starting a trial; it raises `HardwareRefusedError` unless hardware mode, a acknowledgement
+bound to the adapter's session id (an unset session id never matches) and a passing preflight on
+that instance all hold.
+
 `teleop`, `record` and `rollout` refuse (exit code 2) unless **all** of these hold:
 `--hardware-mode`, `--ack-operator NAME`, a passing preflight (config valid, lerobot executables
 and modules found, both serial ports present, both joint-calibration files present, cameras
@@ -105,9 +110,13 @@ workspace clear, stays within reach of the power switch, and starts with the lea
 `lerobot-record` writes a LeRobot dataset (`--dataset.push_to_hub=false` is always passed). The
 adapter's `run_episode` records one episode into `<out_dir>/lerobot_dataset`, copies the first
 video it finds to `video.mp4`, returns `task_success=None` (an operator must score from the video)
-and intervention `unknown`. **Not implemented:** converting the dataset's parquet states to
-`trace.jsonl` and measuring frame completeness; until then the QA stage sees no trace for hardware
-runs.
+and intervention `unknown`. If the dataset's `data/**/*.parquet` is readable (pandas + pyarrow)
+and has `timestamp`, `observation.state` and `action` columns, `trace.jsonl` is written with those
+values copied exactly (NaNs preserved; nothing repaired) and completeness is measured as frames
+decodable from `video.mp4` divided by dataset rows (0 if the video cannot be decoded, e.g. a codec
+OpenCV lacks). Otherwise the trace is left absent and `evidence.trace_absent_reason` says why. This
+conversion was tested only on a SYNTHETIC LeRobot-style fixture written by a fake executable; it
+has never seen a real LeRobot dataset.
 
 ### Supervised rollout
 
@@ -135,16 +144,23 @@ its video; stay present during any motion; own the physical emergency stop.
 `pybullet_panda` runs a **Franka Panda** in simulation (DIRECT mode, 240 Hz physics, 20 Hz control,
 10 Hz trace/video). Geometry: table top z=0; 4 cm block (50 g) nominally at (0.50, -0.15); target
 region a 12 cm square centred at (0.50, 0.20) (half side 0.06 m, so 4 cm slack per axis for the
-axis-aligned block). Success is read from physics: all footprint corners inside the square, gripper
-released (opening >= 0.06 m and no Panda-block contact points), continuously for 2.0 s within a 30 s
-attempt. The block is created once and never repositioned. Frames are "rendered simulator frames"
+axis-aligned block). This is PICK-and-place, so success is read from physics and requires all of: a
+grasp (both fingers in contact with the block for >= 5 control steps), a lift (block centre rose
+>= 0.03 m above its resting height at some point), then placement with all 8 block corners STRICTLY
+inside the square (a corner on the boundary does not count; no tolerance), the gripper released
+(opening >= 0.06 m and no Panda-block contact points), continuously for 2.0 s within a 30 s attempt.
+If the placement dwell is met without a grasp+lift (e.g. the block was pushed), the episode runs to
+the timeout and is a failure; `evidence.failed_criteria` lists which criterion failed and
+`evidence.grasped`, `lift_m`, `both_finger_contact_steps` record the measurements.
+`run_episode` refuses `timeout_s <= 0` or `dwell_required_s <= 0`. The block is created once and never repositioned. Frames are "rendered simulator frames"
 (TinyRenderer 320x240), not camera data. Visual conditions (lighting, background, occlusion) change
 only the rendered image; the scripted controllers read simulator state, so they are not expected to
 react to them and the results say nothing about learned-policy robustness.
 
 ### Simulation results (local run)
 
-Measured in one local run (Windows, pybullet 3.2.7, rendering + recording ON, seeds 100-104 per cell,
+Re-measured AFTER the grasp+lift+strict-inclusion criteria were added (Windows, pybullet 3.2.7,
+rendering + recording ON, seeds 100-104 per cell,
 5 trials per cell, 30 s attempt, 2.0 s dwell). Successes are physics-derived (see above); every run
 recorded video + trace with completeness 1.0; lift of the block was >= 0.19 m in all 50 runs;
 episodes lasted 9.6-14.0 s of simulated time.

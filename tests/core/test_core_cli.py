@@ -12,7 +12,7 @@ from typer.testing import CliRunner
 
 from robotevalops.cli.session_cmds import app
 from robotevalops.core.service import EvalService
-from robotevalops.schemas import Provenance, SessionState, TrialState
+from robotevalops.schemas import Provenance, RecordingQuality, SessionState, TrialState
 
 runner = CliRunner()
 
@@ -159,3 +159,24 @@ def test_preflight_failure_exits_2(home, cfg_path, monkeypatch):
     res = call("preflight", sid, "--home", home, "--json", ok=False)
     assert res.exit_code == 2 and json.loads(res.output)["ok"] is False
     assert EvalService(home).get_session(sid).state == SessionState.PREFLIGHT
+
+
+def test_run_always_applies_qa_and_writes_manifest(home, cfg_path, fake_registry):
+    sid = create_planned(home, cfg_path)
+    call("run", sid, "--home", home, "--json")
+    svc = EvalService(home)
+    trials = svc.list_trials(sid)
+    attempted = [t for t in trials if t.is_attempted]
+    assert len(attempted) == 8
+    assert all(t.recording_quality != RecordingQuality.UNCHECKED for t in attempted)
+    # the fake adapter writes a 16-byte "video": QA must have caught it, not left it unchecked
+    assert all(not t.is_autonomous_success for t in attempted)
+    assert (svc.run_dir(sid) / "manifest.json").is_file()
+    assert (svc.run_dir(sid) / "qa" / f"{trials[0].trial_id}.qa.json").is_file()
+
+
+def test_export_manifest_writes_run_dir_manifest(home, cfg_path):
+    sid = create_planned(home, cfg_path)
+    call("export-manifest", sid, "--home", home)
+    path = EvalService(home).run_dir(sid) / "manifest.json"
+    assert len(json.loads(path.read_text(encoding="utf-8"))["trials"]) == 8

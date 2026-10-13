@@ -19,18 +19,54 @@ from robotevalops.errors import (
 )
 from robotevalops.schemas import ArtifactStatus
 from robotevalops.storage.base import ArtifactStore, StoredObject, TransferResult
-from robotevalops.util import atomic_write_text, safe_relpath, sha256_file
+from robotevalops.util import atomic_write_text, sha256_file
 
 META_DIR = ".meta"
 
 
+_SECRET_DIRS = {".aws", ".ssh", ".git", ".gnupg"}
+_SECRET_SUFFIXES = (".pem", ".key", ".pfx", ".p12", ".kdbx")
+_SECRET_NAMES = {
+    "credentials", "credentials.json", ".git-credentials", ".netrc", ".pgpass", ".npmrc",
+    "id_rsa", "id_ecdsa", "id_ed25519", "id_dsa", "secrets",
+}  # fmt: skip
+
+
+def credential_reason(relpath: str) -> str | None:
+    """Why a file must never be packaged/stored (credential-like name), or None. Name-pattern based and
+    broader than util.FORBIDDEN_*; deliberately allows normal files such as config.json."""
+    parts = [p.lower() for p in relpath.split("/")]
+    name = parts[-1]
+    hit = next((p for p in parts[:-1] if p in _SECRET_DIRS), None)
+    if hit or name in _SECRET_DIRS:
+        return f"credential/VCS directory {hit or name!r}"
+    if name in _SECRET_NAMES:
+        return f"credential file name {name!r}"
+    if name.startswith(".env") or name.endswith(".env"):
+        return "environment file (.env*, *.env)"
+    if name.startswith("secrets."):
+        return "secrets file (secrets.*)"
+    if name.startswith("service-account") and name.endswith(".json"):
+        return "service-account key file"
+    if name.startswith("token") and name.endswith(".txt"):
+        return "token file (token*.txt)"
+    if name.endswith(_SECRET_SUFFIXES):
+        return "private key / certificate file"
+    return None
+
+
 def strict_key(key: str) -> str:
-    """util.safe_relpath plus canonical-form check: rejects 'a/./b', 'a//b' and trailing '/'
-    (PurePosixPath silently normalises those, which safe_relpath cannot see)."""
-    k = safe_relpath(key)
-    if k != key:
-        raise PathTraversalError(f"artifact key {key!r} is not canonical (expected {k!r})")
-    return k
+    """Canonical, traversal-free, non-credential POSIX key. Rejects '..', '.', empty segments ('a//b',
+    trailing '/'), backslashes, absolute paths, drive letters and credential-like names."""
+    if not key or "\\" in key or "\x00" in key:
+        raise PathTraversalError(f"invalid artifact key {key!r}: must be non-empty POSIX relative")
+    segs = key.split("/")
+    if key.startswith("/") or (len(key) > 1 and key[1] == ":") or any(s in ("", ".", "..") for s in segs):
+        raise PathTraversalError(f"artifact key {key!r} must be relative, canonical, without '.'/'..'")
+    reason = credential_reason(key)
+    if reason:
+        raise PathTraversalError(f"refusing to store {key!r}: {reason}")
+    return key
 
 
 class LocalArtifactStore(ArtifactStore):
@@ -86,10 +122,12 @@ class LocalArtifactStore(ArtifactStore):
                 "since it was hashed. Refusing to upload."
             )
         if dest.is_file():
-            existing = self._recorded_sha(key) or sha256_file(dest)
+            # Decide from the REAL stored bytes; the sidecar is never trusted.
+            existing = sha256_file(dest)
+            recorded = self._recorded_sha(key)
             if existing == actual:
-                if self._recorded_sha(key) is None:
-                    atomic_write_text(self._sidecar(key), actual + "\n")
+                if recorded != actual:
+                    atomic_write_text(self._sidecar(key), actual + "\n")  # repair a stale/absent sidecar
                 return TransferResult(
                     key,
                     ArtifactStatus.UPLOADED,
@@ -97,6 +135,16 @@ class LocalArtifactStore(ArtifactStore):
                     0,
                     skipped_identical=True,
                     detail="identical bytes already stored",
+                )
+            if recorded == actual:
+                return TransferResult(
+                    key,
+                    ArtifactStatus.MISMATCH,
+                    existing,
+                    0,
+                    detail=f"stored object is CORRUPTED: its bytes hash to {existing[:12]}... but the "
+                    f"recorded hash (and your file) is {actual[:12]}.... Not skipped, not overwritten. "
+                    "Remove the stored object deliberately (keep a copy as evidence) and re-upload.",
                 )
             raise ArtifactOverwriteError(
                 f"key {key!r} already holds different bytes (stored {existing[:12]}..., "

@@ -208,8 +208,8 @@ class TaskSpec(_M):
     task_id: str = "pick_place_block_v1"
     description: str = "Pick the block and place it entirely inside the target region, released."
     rubric_version: str = RUBRIC_VERSION
-    attempt_timeout_s: float = 30.0
-    dwell_required_s: float = 2.0
+    attempt_timeout_s: float = Field(default=30.0, gt=0)
+    dwell_required_s: float = Field(default=2.0, gt=0)  # rubric-v1 pins 2.0 s; must never be <= 0
 
 
 class EvalConfig(_M):

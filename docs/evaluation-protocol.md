@@ -10,11 +10,21 @@ Task `pick_place_block_v1`: pick the block and place it in the target region.
 
 A trial is a **success** only if ALL hold within the 30 s attempt timeout:
 
-1. the block is **entirely** inside the target region (not touching or straddling the boundary);
+0. the block was **picked, not pushed** (a verified grasp and lift, see below);
+1. the block is **entirely** inside the target region: every corner strictly inside; touching the boundary does
+   not count;
 2. the block has been **released** (gripper open / no longer held);
 3. conditions 1 and 2 **stay true for 2 s** (dwell) without the block moving out.
 
-Otherwise the completed trial is a **failure** (timeout, dropped block, outside the region, not released).
+Otherwise the completed trial is a **failure** (timeout, dropped block, outside the region, not released). A
+block that was pushed or dragged into the region without a verified grasp and lift is a **task failure**, not a
+success.
+
+**Simulation evidence rule (rubric-v1).** In simulation the grasp+lift is verified from recorded state: bilateral
+finger contact on the block for at least a minimum number of steps AND the block lifted at least 0.03 m at some
+point. The evidence fields are `grasped`, `lift_m` and `both_finger_contact_steps`. Success then also needs the
+release and the 2.0 s dwell with the block entirely inside the target. **Hardware and imported recordings** are
+scored from the video: the operator checks that the block was picked up and not pushed, plus the criteria above.
 
 - **Operator assistance prevents an autonomous success.** Any touch of the block or scene, repositioning, retry,
   hand-guiding or help that changes the outcome sets `intervention = assisted`. The outcome may still be recorded as

@@ -19,6 +19,7 @@ from robotevalops.lifecycle_rules import SESSION_TRANSITIONS, TRIAL_TRANSITIONS
 from robotevalops.schemas import (
     ArtifactRef,
     ArtifactRole,
+    ArtifactStatus,
     ControllerSpec,
     ControllerType,
     Intervention,
@@ -452,3 +453,115 @@ def test_acknowledge_operator(svc):
         svc.acknowledge_operator(s.session_id, " ")
     got = svc.acknowledge_operator(s.session_id, "alice")
     assert got.operator_ack_at is not None and got.operator == "alice"
+
+
+# ------------------------------------------------------------------ VF-04 score source matrix
+_ALLOWED = {
+    Provenance.MOCK: {ScoreSource.MOCK_FIXTURE, ScoreSource.OPERATOR_VIDEO},
+    Provenance.SIMULATION: {ScoreSource.PHYSICS_EVIDENCE, ScoreSource.OPERATOR_VIDEO},
+    Provenance.IMPORTED_REAL_RECORDING: {ScoreSource.IMPORTED_LABEL, ScoreSource.OPERATOR_VIDEO},
+    Provenance.PHYSICAL_HARDWARE: {ScoreSource.OPERATOR_VIDEO},
+}
+
+
+@pytest.mark.parametrize("prov", list(Provenance))
+@pytest.mark.parametrize("src", [x for x in ScoreSource if x != ScoreSource.NONE])
+def test_score_source_matrix(svc, prov, src):
+    backend = "mock" if prov == Provenance.MOCK else "other"
+    cfg = make_config(1, 1, 1, provenance=prov, backend=backend)
+    s = svc.create_session("m", prov, backend)
+    (t,) = svc.plan_trials(s.session_id, cfg.model_copy(update={"backend": backend}))
+    to_running(svc, t.trial_id)
+    svc.record_trial_result(t.trial_id, termination_reason=TerminationReason.TIMEOUT, duration_s=1.0)
+    if src in _ALLOWED[prov]:
+        assert svc.score_trial(t.trial_id, TaskOutcome.SUCCESS, source=src, scorer="x").score_source == src
+    else:
+        with pytest.raises(ValueError):
+            svc.score_trial(t.trial_id, TaskOutcome.SUCCESS, source=src, scorer="x")
+        assert svc.get_trial(t.trial_id).task_outcome == TaskOutcome.UNSCORED
+
+
+def test_edit_score_and_record_result_enforce_source_matrix(svc, planned):
+    _, trials, _ = planned
+    tid = trials[0].trial_id
+    finish_ok(svc, tid)
+    with pytest.raises(ValueError):
+        svc.edit_score(tid, TaskOutcome.FAILURE, source=ScoreSource.PHYSICS_EVIDENCE, editor="e", reason="r")
+    to_running(svc, trials[1].trial_id)
+    with pytest.raises(ValueError):
+        svc.record_trial_result(
+            trials[1].trial_id,
+            termination_reason=TerminationReason.TIMEOUT,
+            duration_s=1.0,
+            task_outcome=TaskOutcome.FAILURE,
+            score_source=ScoreSource.PHYSICS_EVIDENCE,
+        )
+
+
+# ------------------------------------------------------------------ VF-05 / VF-06 audit
+def test_terminal_artifact_hash_replacement_needs_actor_and_reason_and_is_audited(svc, planned):
+    s, trials, _ = planned
+    tid = trials[0].trial_id
+    finish_ok(svc, tid)
+    a = ArtifactRef(
+        role=ArtifactRole.VIDEO,
+        relpath="trials/x/video.mp4",
+        sha256="a" * 64,
+        size_bytes=1,
+        status=ArtifactStatus.PRESENT,
+    )
+    svc.register_artifacts(tid, [a])
+    b = a.model_copy(update={"sha256": "b" * 64, "size_bytes": 2})
+    with pytest.raises(ValueError):
+        svc.register_artifacts(tid, [b])
+    assert svc.get_trial(tid).artifacts[0].sha256 == "a" * 64
+    svc.register_artifacts(tid, [b], actor="alice", reason="re-encoded after review")
+    ev = [e for e in svc.list_events(s.session_id) if e["kind"] == "artifact_changed"]
+    assert len(ev) == 1
+    ch = ev[0]["detail"]["changes"][0]
+    assert (
+        ch["previous_sha256"] == "a" * 64 and ch["new_sha256"] == "b" * 64 and ch["previous_size_bytes"] == 1
+    )
+    assert ev[0]["detail"]["actor"] == "alice"
+
+
+def test_mismatch_status_update_is_allowed_and_audited(svc, planned):
+    s, trials, _ = planned
+    tid = trials[0].trial_id
+    finish_ok(svc, tid)
+    a = ArtifactRef(
+        role=ArtifactRole.VIDEO,
+        relpath="v.mp4",
+        sha256="a" * 64,
+        size_bytes=1,
+        status=ArtifactStatus.UPLOADED,
+    )
+    svc.register_artifacts(tid, [a])
+    svc.register_artifacts(
+        tid, [a.model_copy(update={"sha256": "c" * 64, "status": ArtifactStatus.MISMATCH})]
+    )
+    assert svc.get_trial(tid).artifacts[0].status == ArtifactStatus.MISMATCH
+    ev = [e for e in svc.list_events(s.session_id) if e["kind"] == "artifact_changed"]
+    assert ev[0]["detail"]["changes"][0]["previous_status"] == "uploaded"
+
+
+def test_quality_fail_to_pass_needs_actor_and_reason_and_records_previous(svc, planned):
+    s, trials, _ = planned
+    tid = trials[0].trial_id
+    finish_ok(svc, tid)
+    svc.set_recording_quality(tid, RecordingQuality.FAIL, ["truncated_video"])  # first set: no reason needed
+    with pytest.raises(ValueError):
+        svc.set_recording_quality(tid, RecordingQuality.PASS, [])
+    with pytest.raises(ValueError):
+        svc.set_recording_quality(tid, RecordingQuality.PASS, [], actor="bob", reason=" ")
+    assert svc.get_trial(tid).recording_quality == RecordingQuality.FAIL
+    svc.set_recording_quality(tid, RecordingQuality.PASS, [], actor="bob", reason="re-inspected video, ok")
+    ev = [e for e in svc.list_events(s.session_id) if e["kind"] == "recording_quality"]
+    last = ev[-1]["detail"]
+    assert (
+        last["previous_quality"] == "fail"
+        and last["actor"] == "bob"
+        and last["previous_flags"] == ["truncated_video"]
+    )
+    # fail -> fail (re-run of the same verdict) needs nothing
+    svc.set_recording_quality(tid, RecordingQuality.FAIL, ["x"])

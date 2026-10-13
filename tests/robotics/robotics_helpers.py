@@ -35,6 +35,29 @@ FAKE_SCRIPT = textwrap.dedent(
             if mode == "dataset":
                 (root / "videos" / "chunk-000").mkdir(parents=True, exist_ok=True)
                 (root / "videos" / "chunk-000" / "file-000.mp4").write_bytes(b"FAKE-VIDEO-BYTES")
+    if mode == "dataset_parquet":
+        # SYNTHETIC LeRobot-STYLE dataset (not recorded from any robot)
+        import os, shutil
+        import pandas as pd
+        root = None
+        for a in args:
+            if a.startswith("--dataset.root="):
+                root = Path(a.split("=", 1)[1])
+        (root / "meta").mkdir(parents=True, exist_ok=True)
+        (root / "meta" / "info.json").write_text(json.dumps({
+            "total_episodes": 1, "fps": 10,
+            "features": {"observation.state": {"names": ["j0", "j1"]}, "action": {"names": ["a0", "a1"]}},
+        }), encoding="utf-8")
+        (root / "data" / "chunk-000").mkdir(parents=True, exist_ok=True)
+        pd.DataFrame({
+            "timestamp": [0.0, 0.1, 0.2, 0.3],
+            "episode_index": [0, 0, 0, 0],
+            "observation.state": [[0.0, 1.0], [0.5, 1.5], [1.0, 2.0], [float("nan"), 2.5]],
+            "action": [[0.1, 0.2], [0.3, 0.4], [0.5, 0.6], [0.7, 0.8]],
+        }).to_parquet(root / "data" / "chunk-000" / "file-000.parquet")
+        if os.environ.get("FAKE_VIDEO"):
+            (root / "videos" / "chunk-000").mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(os.environ["FAKE_VIDEO"], root / "videos" / "chunk-000" / "file-000.mp4")
     print("fake lerobot ran")
     """
 )

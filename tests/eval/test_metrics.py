@@ -149,3 +149,25 @@ def test_failure_report_never_drops_rows():
         "task_failure": 2,
     }
     assert rep.qa_flag_counts == {"missing_video": 1}
+
+
+def test_unchecked_recordings_are_counted_and_warned():
+    from robotevalops.schemas import RecordingQuality
+
+    ts = [
+        make_trial(state=C, outcome=S, reason=OK, intervention=NONE, quality=PASS),
+        make_trial(state=C, outcome=S, reason=OK, intervention=NONE, quality=RecordingQuality.UNCHECKED),
+        make_trial(state=C, outcome=FL, reason=TO, intervention=NONE, quality=RecordingQuality.UNCHECKED),
+        make_trial(),  # never attempted: not counted as unchecked
+    ]
+    g = compute_group(ts)
+    assert g.recording_unchecked == 2
+    assert (g.recording_pass_rate.k, g.recording_pass_rate.n) == (1, 3)  # unchecked lowers the pass rate
+    assert any(
+        "2 attempted trial(s) have no recording QA result; run 'robotevalops data validate' "
+        "(or session run, which now runs QA) before trusting evaluable counts" in w
+        for w in g.warnings
+    )
+    clean = compute_group([make_trial(state=C, outcome=S, reason=OK, intervention=NONE, quality=PASS)])
+    assert clean.recording_unchecked == 0
+    assert not any("no recording QA result" in w for w in clean.warnings)

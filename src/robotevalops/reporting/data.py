@@ -82,6 +82,7 @@ def trial_rows(bundles: Sequence[SessionBundle]) -> list[dict[str, Any]]:
             video = next((a for a in t.artifacts if a.role == ArtifactRole.VIDEO), None)
             rows.append(
                 {
+                    "provenance_banner": PROVENANCE_NOTES.get(t.provenance.value, ""),
                     "session_id": t.session_id,
                     "trial_id": t.trial_id,
                     "schedule_position": t.schedule_position,

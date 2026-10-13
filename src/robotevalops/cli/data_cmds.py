@@ -7,6 +7,7 @@ expected errors (missing manifest, refused S3, ...).
 
 from __future__ import annotations
 
+import inspect
 import json
 from collections.abc import Callable
 from pathlib import Path
@@ -17,8 +18,16 @@ import typer
 from robotevalops.errors import RobotEvalOpsError
 from robotevalops.qa.quarantine import quarantine_trial
 from robotevalops.qa.trial_qa import qa_trial
-from robotevalops.recording.manifest import read_manifest, validate_manifest
-from robotevalops.schemas import ArtifactStatus, QAReport, Severity
+from robotevalops.recording.manifest import read_manifest, validate_manifest, write_manifest
+from robotevalops.schemas import (
+    ArtifactStatus,
+    QAFlag,
+    QAReport,
+    RecordingQuality,
+    RunManifest,
+    Severity,
+    TrialState,
+)
 from robotevalops.storage.base import ArtifactStore
 from robotevalops.storage.local import LocalArtifactStore
 from robotevalops.storage.package import build_package, download_run, upload_run, verify_run
@@ -39,7 +48,7 @@ def _emit(payload: dict[str, Any], as_json: bool, human: str) -> None:
 def _guard(fn: Callable[[], int]) -> None:
     try:
         code = fn()
-    except RobotEvalOpsError as exc:
+    except (RobotEvalOpsError, OSError, json.JSONDecodeError) as exc:
         typer.echo(f"error: {exc}", err=True)
         raise typer.Exit(2) from exc
     if code:
@@ -60,29 +69,129 @@ def _make_store(store: str, store_root: Path | None, bucket: str | None, prefix:
     raise RobotEvalOpsError(f"unknown --store {store!r}; use 'local' (default) or 's3'")
 
 
-def _qa_all(run_dir: Path, require_video: bool) -> tuple[list[QAReport], list[Any]]:
-    manifest = read_manifest(run_dir / "manifest.json")
-    reports = [qa_trial(run_dir, t, require_video=require_video) for t in manifest.trials]
-    return reports, validate_manifest(manifest)
+def _find_home(run_dir: Path, home: Path | None) -> Path | None:
+    """Home with robotevalops.db: --home, else <run_dir>/../.. (runs/<id>), else $ROBOTEVALOPS_HOME."""
+    cands = [home] if home else [run_dir.resolve().parent.parent, get_home()]
+    return next((c for c in cands if c and (c / "robotevalops.db").is_file()), None)
+
+
+def _open_service(home: Path | None) -> Any | None:
+    if home is None:
+        return None
+    from robotevalops.core.service import EvalService
+
+    return EvalService(home)
+
+
+def _load_manifest(run_dir: Path, svc: Any | None, session_id: str) -> RunManifest:
+    path = run_dir / "manifest.json"
+    if path.is_file():
+        return read_manifest(path)
+    if svc is None:
+        raise RobotEvalOpsError(
+            f"{path} not found and no database was found to rebuild it from. Run `robotevalops session "
+            "export-manifest <session_id> --out <run_dir>/manifest.json`, or pass --home pointing at the "
+            "data root that holds robotevalops.db"
+        )
+    manifest = svc.export_manifest(session_id)
+    write_manifest(path, manifest)
+    return manifest
+
+
+def _merge_manifest_flags(reports: list[QAReport], mflags: list[QAFlag]) -> list[QAReport]:
+    """Fold manifest-level flags (e.g. duplicate trial ids) into the matching trial's report."""
+    out = []
+    for r in reports:
+        have = {(f.code, f.message) for f in r.flags}
+        extra = [f for f in mflags if f.subject == r.subject and (f.code, f.message) not in have]
+        if extra:
+            r = r.model_copy(deep=True)
+            r.flags.extend(extra)
+            if any(f.severity == Severity.ERROR for f in extra):
+                r.accepted = False
+                r.rejection_reasons.append(
+                    "QA errors present: " + ", ".join(sorted({f.code.value for f in extra}))
+                )
+        out.append(r)
+    return out
+
+
+_RANK = {RecordingQuality.PASS: 0, RecordingQuality.FLAGGED: 1, RecordingQuality.FAIL: 2}
+
+
+def _persist_quality(svc: Any, reports: list[QAReport]) -> tuple[list[str], list[str]]:
+    """Write recording_quality + flag codes via the public EvalService API. Duplicate trial ids get the
+    worst quality. Returns (recorded trial ids, errors)."""
+    worst: dict[str, tuple[RecordingQuality, list[str]]] = {}
+    for r in reports:
+        q, codes = worst.get(r.subject, (RecordingQuality.PASS, []))
+        worst[r.subject] = (
+            max(q, r.quality, key=lambda x: _RANK[x]),
+            list(dict.fromkeys([*codes, *(f.code.value for f in r.flags)])),
+        )
+    params = inspect.signature(svc.set_recording_quality).parameters
+    extra: dict[str, str] = {}
+    if "actor" in params:
+        extra["actor"] = "data-validate"
+    if "reason" in params:
+        extra["reason"] = "re-run of data validate"
+    done: list[str] = []
+    errors: list[str] = []
+    for tid, (quality, codes) in worst.items():
+        try:
+            svc.set_recording_quality(tid, quality, codes, **extra)
+            done.append(tid)
+        except RobotEvalOpsError as exc:
+            errors.append(f"{tid}: could not record quality {quality.value}: {exc}")
+    return done, errors
 
 
 @app.command()
 def validate(
     run_dir: Path = RunDirArg,
     require_video: bool = typer.Option(True, "--require-video/--no-require-video"),
+    home: Path | None = typer.Option(None, "--home", help="Data root holding robotevalops.db"),
+    session_id: str | None = typer.Option(None, "--session-id", help="Default: run directory name"),
     json_out: bool = JsonOpt,
 ) -> None:
-    """Run QA on every trial in run_dir/manifest.json; writes qa/<trial_id>.qa.json. Exit 1 on QA errors."""
+    """Run QA on every trial; write qa/<trial_id>.qa.json and, when a database is found, record
+    recording_quality + QA flag codes per trial (so metrics see QA failures). Exit 1 on QA errors."""
 
     def go() -> int:
-        reports, mflags = _qa_all(run_dir, require_video)
+        sid = session_id or run_dir.resolve().name
+        svc = _open_service(_find_home(run_dir, home))
+        manifest = _load_manifest(run_dir, svc, sid)
+        mflags = validate_manifest(manifest)
+        terminal = {TrialState.COMPLETED, TrialState.FAILED, TrialState.ABORTED}
+        skipped = [t.trial_id for t in manifest.trials if t.state not in terminal]  # nothing recorded yet
+        reports = _merge_manifest_flags(
+            [
+                qa_trial(run_dir, t, require_video=require_video)
+                for t in manifest.trials
+                if t.state in terminal
+            ],
+            mflags,
+        )
         for r in reports:
             atomic_write_text(run_dir / "qa" / f"{r.subject}.qa.json", r.model_dump_json(indent=2) + "\n")
+        recorded: list[str] = []
+        db_errors: list[str] = []
+        if svc is not None:
+            recorded, db_errors = _persist_quality(svc, reports)
         n_err = sum(f.severity == Severity.ERROR for r in reports for f in r.flags)
-        m_err = [f for f in mflags if f.severity == Severity.ERROR]
+        m_err = [
+            f
+            for f in mflags
+            if f.severity == Severity.ERROR and not any(f.subject == r.subject for r in reports)
+        ]
         payload = {
             "run_dir": str(run_dir),
+            "session_id": sid,
             "trials": len(reports),
+            "skipped_not_attempted": skipped,
+            "database_recorded": svc is not None,
+            "recorded_trials": recorded,
+            "database_errors": db_errors,
             "manifest_flags": [f.model_dump(mode="json") for f in mflags],
             "reports": [
                 {
@@ -94,7 +203,7 @@ def validate(
                 }
                 for r in reports
             ],
-            "error_count": n_err + len(m_err),
+            "error_count": n_err + len(m_err) + len(db_errors),
         }
         lines = [
             f"{r.subject}: quality={r.quality.value} accepted={r.accepted}"
@@ -102,7 +211,13 @@ def validate(
             for r in reports
         ]
         lines += [f"manifest [{f.severity.value}] {f.code.value}: {f.message}" for f in mflags]
-        _emit(payload, json_out, "\n".join(lines) or "no trials")
+        lines += [f"database error: {e}" for e in db_errors]
+        lines.append(
+            f"recorded recording_quality for {len(recorded)} trial(s) in the database"
+            if svc is not None
+            else "NOTE: no database found (use --home); results are NOT recorded in the database"
+        )
+        _emit(payload, json_out, "\n".join(lines))
         return 1 if payload["error_count"] else 0
 
     _guard(go)
@@ -120,6 +235,8 @@ def quarantine(
         manifest = read_manifest(run_dir / "manifest.json")
         out = []
         for t in manifest.trials:
+            if t.state not in (TrialState.COMPLETED, TrialState.FAILED, TrialState.ABORTED):
+                continue
             if trial and t.trial_id != trial:
                 continue
             rep = qa_trial(run_dir, t)

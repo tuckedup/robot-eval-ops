@@ -113,6 +113,7 @@ class GroupMetrics(BaseModel):
     infra_abort_rate: Rate
     infra_reasons_not_attempted: int
     recording_pass_rate: Rate
+    recording_unchecked: int  # attempted trials with recording_quality == unchecked (no QA result)
     quality_excluded: int  # completed+scored but recording_quality == fail
     duration: DurationStats
     reset_duration: DurationStats
@@ -211,6 +212,12 @@ def _group_warnings(g: GroupMetrics) -> list[str]:
             f"[{label}] duration recorded for {g.duration.n} of {g.attempted} attempted trials; "
             "durations exclude the others."
         )
+    if g.recording_unchecked:
+        w.append(
+            f"[{label}] {g.recording_unchecked} attempted trial(s) have no recording QA result; "
+            "run 'robotevalops data validate' (or session run, which now runs QA) "
+            "before trusting evaluable counts"
+        )
     if g.quality_excluded:
         w.append(
             f"[{label}] {g.quality_excluded} scored trial(s) excluded from 'evaluable' by recording "
@@ -268,6 +275,7 @@ def compute_group(trials: Sequence[TrialRecord], key: dict[str, str] | None = No
         recording_pass_rate=Rate.of(
             sum(t.recording_quality == RecordingQuality.PASS for t in attempted_t), n_att
         ),
+        recording_unchecked=sum(t.recording_quality == RecordingQuality.UNCHECKED for t in attempted_t),
         quality_excluded=len(scored) - len(evaluable),
         duration=DurationStats.of([t.duration_s for t in ts if t.duration_s is not None], "trial duration"),
         reset_duration=DurationStats.of(

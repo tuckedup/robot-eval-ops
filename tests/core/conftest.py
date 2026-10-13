@@ -101,6 +101,10 @@ class FakeAdapter(RobotAdapter):
     def reset(self, condition: ConditionSpec, seed: int) -> Observation:
         self._cond = condition.name
         self.seeds.append((condition.name, seed))
+        if self.behaviors.get(condition.name) == "reset_refused":
+            from robotevalops.errors import HardwareRefusedError
+
+            raise HardwareRefusedError("hardware mode not enabled")
         if self.behaviors.get(condition.name) == "reset_raise":
             raise RuntimeError("reset boom")
         return Observation(t=0.0, state={})

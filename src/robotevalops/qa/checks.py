@@ -370,10 +370,29 @@ def check_nonfinite(tr: ParsedTrace, subject: str, relpath: str = "trace.jsonl")
     ]
 
 
+def check_has_rows(tr: ParsedTrace, subject: str, relpath: str = "trace.jsonl") -> list[QAFlag]:
+    """A trace with a header but zero data rows is an empty recording, not a pass."""
+    if tr.header is not None and not tr.rows:
+        return [
+            _flag(
+                QACode.MISSING_FIELD,
+                Severity.ERROR,
+                f"{relpath} has a valid header but ZERO data rows: the recording is empty. Re-record; an "
+                "empty demonstration is never accepted",
+                subject,
+                relpath=relpath,
+                field="rows",
+                rows=0,
+            )
+        ]
+    return []
+
+
 def check_trace(path: Path, subject: str, relpath: str = "trace.jsonl") -> tuple[ParsedTrace, list[QAFlag]]:
     tr = load_trace(path)
     flags = [
         *check_trace_schema(tr, subject, relpath),
+        *check_has_rows(tr, subject, relpath),
         *check_timestamps(tr, subject, relpath),
         *check_nonfinite(tr, subject, relpath),
     ]

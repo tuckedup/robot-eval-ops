@@ -10,6 +10,7 @@ session, and ``preflight()`` has returned an all-ok result on this adapter insta
 
 from __future__ import annotations
 
+import json
 import shutil
 from collections.abc import Callable
 from pathlib import Path
@@ -25,6 +26,7 @@ from robotevalops.adapters.base import (
     RobotAdapter,
     StepResult,
 )
+from robotevalops.adapters.lerobot_dataset import episode_to_trace
 from robotevalops.adapters.lerobot_wrapper import (
     CameraSpec,
     HardwareGate,
@@ -42,6 +44,23 @@ from robotevalops.schemas import (
     RecordingSummary,
     TerminationReason,
 )
+
+
+def _count_decodable_frames(path: Path) -> int:
+    """Decode the video with OpenCV and count frames actually readable (0 if undecodable)."""
+    try:
+        import cv2
+    except ImportError:
+        return 0
+    cap = cv2.VideoCapture(str(path))
+    n = 0
+    try:
+        while cap.isOpened() and cap.read()[0]:
+            n += 1
+    finally:
+        cap.release()
+    return n
+
 
 PortLister = Callable[[], set[str]]
 CameraProbe = Callable[[CameraSpec], tuple[bool, str]]
@@ -113,6 +132,11 @@ class SO101HardwareAdapter(RobotAdapter):
 
     def _require_gate(self) -> None:
         self.gate().require()
+
+    def check_motion_allowed(self) -> None:
+        """Non-moving pre-trial check: raises HardwareRefusedError unless hardware mode, a
+        this-session operator acknowledgement and a passing preflight (run on this instance) all hold."""
+        self._require_gate()
 
     # ------------------------------------------------------------- preflight
     def preflight(self) -> PreflightResult:
@@ -284,9 +308,28 @@ class SO101HardwareAdapter(RobotAdapter):
             vids = sorted((ds_root / "videos").rglob("*.mp4")) if (ds_root / "videos").is_dir() else []
             if vids:
                 shutil.copyfile(vids[0], out_dir / "video.mp4")
-                summary = RecordingSummary(video_relpath="video.mp4", video_kind="physical_camera")
                 ev["video_source"] = str(vids[0])
-                ev["frame_counts"] = "not measured (completeness unknown)"
+                tr = episode_to_trace(ds_root, out_dir / "trace.jsonl")
+                ev["trace_conversion"] = tr
+                decoded = _count_decodable_frames(out_dir / "video.mp4")
+                rows = int(tr["rows"]) if tr["ok"] else 0
+                summary = RecordingSummary(
+                    video_relpath="video.mp4",
+                    trace_relpath="trace.jsonl" if tr["ok"] else None,
+                    frames_expected=rows,
+                    frames_written=decoded,
+                    trace_rows=rows,
+                    fps=float((self._read_fps(ds_root)) or 0.0),
+                    completeness=float(min(1.0, decoded / rows)) if rows else 0.0,
+                    video_kind="physical_camera",
+                )
+                ev["frame_counts"] = {
+                    "decoded_video_frames": decoded,
+                    "dataset_rows": rows,
+                    "note": "completeness = decoded frames / dataset rows (measured); 0 if undecodable",
+                }
+                if not tr["ok"]:
+                    ev["trace_absent_reason"] = tr["reason"]
             else:
                 reason = TerminationReason.RECORDING_FAILURE
                 error = "lerobot exited 0 but no video (*.mp4) was found under the dataset videos/ directory"
@@ -299,6 +342,13 @@ class SO101HardwareAdapter(RobotAdapter):
             intervention_detected=False,
             error=error,
         )
+
+    @staticmethod
+    def _read_fps(ds_root: Path) -> float | None:
+        try:
+            return float(json.loads((ds_root / "meta" / "info.json").read_text(encoding="utf-8"))["fps"])
+        except (OSError, KeyError, ValueError, TypeError):
+            return None
 
     @staticmethod
     def _map(res: WrapperResult) -> tuple[TerminationReason, str | None]:

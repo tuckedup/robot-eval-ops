@@ -52,6 +52,11 @@ def session_table(service: EvalService) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=SESSION_COLUMNS)
 
 
+def unchecked_warnings(report: MetricsReport) -> list[str]:
+    """Overview warnings about attempted trials with no recording QA result."""
+    return [w for w in report.overall.warnings if "no recording QA result" in w]
+
+
 def banners(provenances: Sequence[str]) -> list[str]:
     """Banner strings that must be shown prominently for these provenance values."""
     return [PROVENANCE_NOTES[p] for p in provenances if p in PROVENANCE_NOTES]
@@ -79,6 +84,9 @@ def trial_table(
     df = pd.DataFrame(trial_rows([bundle]))
     if df.empty:
         return df
+    df["recording_qa_status"] = df["recording_quality"].map(
+        lambda q: "no QA result (unchecked)" if q == "unchecked" else q
+    )
     if controller:
         df = df[df["controller_id"] == controller]
     if condition:
