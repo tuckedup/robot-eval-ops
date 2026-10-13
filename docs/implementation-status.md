@@ -6,17 +6,21 @@ Subagent tool access is by `tools:` allowlist; ownership is enforced by instruct
 
 | ID | Task | Owner | Depends | Status | Acceptance evidence | Blockers |
 |---|---|---|---|---|---|---|
-| L1 | Inspect env (py3.11 venv, pybullet+Panda+TinyRenderer verified) | lead | - | done | pybullet 3.2.7 built, Panda loads, 64x64 render ok | - |
+| L1 | Inspect env (py3.11 venv, pybullet+Panda+TinyRenderer verified) | lead | - | done | pybullet 3.2.7 built, Panda loads, render ok | - |
 | L2 | Shared contracts, pyproject, CLI skeleton, agents | lead | L1 | done | docs/contracts.md | - |
-| C1 | Core: DB + EvalService + scheduler + lifecycle | core | L2 | in progress (dispatched) | | |
-| C2 | Core: Runner + recovery + device lock + F10 | core | C1,R1 | pending | | |
-| R1 | Robotics: mock adapter + conditions + registry | robotics | L2 | in progress (dispatched) | | |
-| R2 | Robotics: PyBullet Panda sim + scripted controllers | robotics | R1 | pending | | |
-| R3 | Robotics: LeRobot wrappers + hardware adapter/preflight | robotics | R1 | pending | | |
-| D1 | Data: recording writers + QA + quarantine | data | L2 | in progress (dispatched) | | |
-| D2 | Data: local/S3 stores + packaging + retry | data | L2 | pending | | |
-| D3 | Data: faults F01-F09 + report + data CLI | data | D1,D2 | pending | | |
-| E1 | Eval: metrics + Wilson + scoring + exports | eval | C1 | pending | | |
-| E2 | Eval: dashboard + html report + docs | eval | E1 | pending | | |
-| V1 | Verifier: adversarial review + acceptance | verifier | all | pending | | |
-| L3 | Integration, demo script, CI, Dockerfile, README, verification doc | lead | all | pending | | |
+| C1 | Core: DB + EvalService + scheduler + lifecycle | core | L2 | done | tests/core 196 pass | - |
+| C2 | Core: Runner + recovery + device lock + F10 | core | C1,R1 | done | F10 passes; crash-recovery tests (incl. verifier real process kill) | - |
+| R1 | Robotics: mock adapter + conditions + registry | robotics | L2 | done | tests/robotics | - |
+| R2 | Robotics: PyBullet Panda sim + scripted controllers | robotics | R1 | done | 100/100 sim run; physics tests 53 pass | - |
+| R3 | Robotics: LeRobot wrappers + hardware adapter/preflight | robotics | R1 | done (fake executables only) | gates refuse; no hardware verification | no hardware |
+| D1 | Data: recording writers + QA + quarantine | data | L2 | done | tests/data | - |
+| D2 | Data: local/S3 stores + packaging + retry | data | L2 | done (S3 via moto only) | 300/300 checksums local | no AWS |
+| D3 | Data: faults F01-F09 + report + data CLI | data | D1,D2 | done | docs/fault-injection-report.md 10/10 | - |
+| E1 | Eval: metrics + Wilson + scoring + exports | eval | C1 | done | tests/eval | - |
+| E2 | Eval: dashboard + html report + docs | eval | E1 | done | dashboard health ok, AppTest | no screenshots |
+| V1 | Verifier: adversarial review | verifier | all | done | docs/verification-findings.md (19 findings) | - |
+| F1 | Fix round: VF-01..VF-18 (core, robotics, data, eval, lead) | all | V1 | done | strict-xfail tests now pass; 745 pass | - |
+| L3 | Integration, demo, CI, Docker, README, verification doc | lead | all | done (CI + Docker written, not run) | docs/verification.md | no remote / Docker not run |
+
+Lead-made edits to worker-owned files (to keep ownership honest): `tests/verification/` assertions updated for fixed behaviour
+(VF-02, VF-08, VF-11); `cli/robot_cmds.py` gate-before-discovery reorder found by the clean-clone run.
