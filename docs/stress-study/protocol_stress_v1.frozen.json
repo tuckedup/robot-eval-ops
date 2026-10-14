@@ -1,0 +1,21 @@
+{
+  "protocol_id": "stress_v1",
+  "files": {
+    "protocol": "7c6bffc79baf65eaba682ee65f3d4569fa2a2c1500996bf4eba97436af278e68",
+    "conditions": "9895ddaeef3a67f2f372a8e9c1000c3b4b8994dd3af371a44ace0dbb97f810ed",
+    "controllers": "52f81c8eee5a27c7ecaae1aa6d80d186275918086a875a284a5919718a68867b"
+  },
+  "combined_sha256": "d2b6a3d89668924b38a9db29bc5afaff23d1da2e3082220c8cdc8ec0785cc45f",
+  "frozen_at": "2026-10-14T08:01:17.319015+00:00",
+  "git_commit": "5437bb1b5cbae16168a7d15006edeb5bbaa1e3a2",
+  "pilot": {
+    "home": "data\\stress_pilot",
+    "trials": 58,
+    "completed": 58,
+    "task_failures": 7,
+    "problems": [],
+    "clean": true
+  },
+  "seed_sets_disjoint": true,
+  "note": "the evaluation stage refuses to run unless the three files below still match these hashes"
+}

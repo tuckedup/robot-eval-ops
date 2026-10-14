@@ -1,0 +1,116 @@
+{
+  "home": "data\\operator_demo",
+  "sessions": {
+    "main": "e6d57044-b88c-40e8-8112-2e61a63d672a",
+    "corrupt": "95a17e99-453a-4ac3-ba88-e8f3267e1665",
+    "interrupted": "7b68cf10-155e-4870-b1fb-63d52adc2ba6"
+  },
+  "steps": [
+    {
+      "step": "preflight",
+      "seconds": 2.5,
+      "ok": true,
+      "checks": [
+        {
+          "pybullet_import": true
+        },
+        {
+          "panda_urdf": true
+        },
+        {
+          "render_tinyrenderer": true
+        },
+        {
+          "video_encoder": true
+        }
+      ]
+    },
+    {
+      "step": "one verified success",
+      "seconds": 87.67,
+      "trial": "4aa53bd6-cca2-4a86-a984-69a1e0cc6092",
+      "controller": "scripted_baseline_a",
+      "condition": "stress_nominal",
+      "sim_duration_s": 13.500000000000057
+    },
+    {
+      "step": "one physics task failure (real simulator evidence)",
+      "seconds": 87.67,
+      "trial": "2828523c-09de-4735-9b24-1916d988667b",
+      "controller": "scripted_baseline_b",
+      "condition": "mass_2.0kg",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "video": "runs/e6d57044-b88c-40e8-8112-2e61a63d672a/trials/2828523c-09de-4735-9b24-1916d988667b/video.mp4"
+    },
+    {
+      "step": "corrupt recording rejected",
+      "seconds": 13.06,
+      "trial": "d87f8c1e-7330-4a8d-8896-323fe9379ecd",
+      "task_outcome_still_recorded": "success",
+      "recording_quality": "fail",
+      "counts_as_verified_success": false,
+      "flags": [
+        "truncated_video",
+        "hash_mismatch"
+      ],
+      "reasons": [
+        "trials/d87f8c1e-7330-4a8d-8896-323fe9379ecd/video.mp4 cannot be opened and has no container index (moov atom): the file looks truncated (interrupted write or partial transfer); re-record or re-download",
+        "trials/d87f8c1e-7330-4a8d-8896-323fe9379ecd/video.mp4: recomputed sha256 0b30572b31b4... != recorded bc9c68765c94...; the file changed after recording (corruption or tampering). Keep the file as evidence, restore from a verified copy"
+      ]
+    },
+    {
+      "step": "interrupted run recovered",
+      "seconds": 11.15,
+      "killed_mid_trial": true,
+      "recovered_trials": [
+        "ffe90b03-3b82-497f-921d-2eb14dc7ea23"
+      ],
+      "trial_states": [
+        [
+          "aborted",
+          "interrupted_runner",
+          "unscored"
+        ],
+        [
+          "planned",
+          "not_run",
+          "unscored"
+        ]
+      ],
+      "session_state": "preflight",
+      "requires_fresh_preflight": true,
+      "any_success_recorded": false
+    },
+    {
+      "step": "verified artifact transfer",
+      "seconds": 0.99,
+      "session": "e6d57044-b88c-40e8-8112-2e61a63d672a",
+      "uploaded": 18,
+      "statuses": [
+        "verified"
+      ],
+      "all_verified": true
+    },
+    {
+      "step": "report",
+      "seconds": 2.14,
+      "files": {
+        "plot_success": "docs\\demo\\operator\\report\\plots\\success_by_condition.png",
+        "plot_failures": "docs\\demo\\operator\\report\\plots\\failure_categories.png",
+        "plot_duration": "docs\\demo\\operator\\report\\plots\\duration.png",
+        "csv": "docs\\demo\\operator\\report\\summary.csv",
+        "md": "docs\\demo\\operator\\report\\summary.md",
+        "json": "docs\\demo\\operator\\report\\summary.json",
+        "html": "docs\\demo\\operator\\report\\report.html"
+      },
+      "corrupt_session_attempted": 1,
+      "corrupt_session_evaluable": 0,
+      "corrupt_session_verified_successes": 0,
+      "corrupt_session_raw_task_successes": 1
+    }
+  ],
+  "scope": "SIMULATION ONLY: Panda arm in PyBullet with scripted controllers. Demonstrates the evaluation workflow; not a robot, not a learned policy."
+}

@@ -1,0 +1,2636 @@
+{
+  "protocol_id": "stress_v1",
+  "stage": "evaluation",
+  "home": "data\\stress_eval",
+  "generated_at": "2026-10-14T08:40:38.406018+00:00",
+  "denominators": {
+    "planned": 464,
+    "attempted": 464,
+    "verified_successes": 407,
+    "task_failures": 57,
+    "infra_failures": 0,
+    "unverified_recordings": 0
+  },
+  "failure_categories": {
+    "lift_failed": 1,
+    "placement_outside_target": 48,
+    "release_failed": 5,
+    "dropped_in_transit": 3
+  },
+  "cells": [
+    {
+      "family": "delay",
+      "condition": "delay_1steps",
+      "controller_id": "scripted_baseline_a",
+      "factor": "control_delay_steps",
+      "level": 1.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "delay",
+      "condition": "delay_1steps",
+      "controller_id": "scripted_baseline_b",
+      "factor": "control_delay_steps",
+      "level": 1.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "delay",
+      "condition": "delay_2steps",
+      "controller_id": "scripted_baseline_a",
+      "factor": "control_delay_steps",
+      "level": 2.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "delay",
+      "condition": "delay_2steps",
+      "controller_id": "scripted_baseline_b",
+      "factor": "control_delay_steps",
+      "level": 2.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "delay",
+      "condition": "delay_4steps",
+      "controller_id": "scripted_baseline_a",
+      "factor": "control_delay_steps",
+      "level": 4.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "delay",
+      "condition": "delay_4steps",
+      "controller_id": "scripted_baseline_b",
+      "factor": "control_delay_steps",
+      "level": 4.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "delay",
+      "condition": "delay_8steps",
+      "controller_id": "scripted_baseline_a",
+      "factor": "control_delay_steps",
+      "level": 8.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "delay",
+      "condition": "delay_8steps",
+      "controller_id": "scripted_baseline_b",
+      "factor": "control_delay_steps",
+      "level": 8.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "friction",
+      "condition": "friction_0.15",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_friction",
+      "level": 0.15,
+      "n_attempted": 8,
+      "n_success": 7,
+      "rate": 0.875,
+      "ci_low": 0.5291051942301386,
+      "ci_high": 0.9775830911367038,
+      "categories": {
+        "lift_failed": 1
+      }
+    },
+    {
+      "family": "friction",
+      "condition": "friction_0.15",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_friction",
+      "level": 0.15,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "friction",
+      "condition": "friction_0.25",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_friction",
+      "level": 0.25,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "friction",
+      "condition": "friction_0.25",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_friction",
+      "level": 0.25,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "friction",
+      "condition": "friction_0.4",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_friction",
+      "level": 0.4,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "friction",
+      "condition": "friction_0.4",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_friction",
+      "level": 0.4,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "friction",
+      "condition": "friction_0.6",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_friction",
+      "level": 0.6,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "friction",
+      "condition": "friction_0.6",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_friction",
+      "level": 0.6,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "joint",
+      "condition": "joint_moderate",
+      "controller_id": "scripted_baseline_a",
+      "factor": null,
+      "level": null,
+      "n_attempted": 8,
+      "n_success": 7,
+      "rate": 0.875,
+      "ci_low": 0.5291051942301386,
+      "ci_high": 0.9775830911367038,
+      "categories": {
+        "placement_outside_target": 1
+      }
+    },
+    {
+      "family": "joint",
+      "condition": "joint_moderate",
+      "controller_id": "scripted_baseline_b",
+      "factor": null,
+      "level": null,
+      "n_attempted": 8,
+      "n_success": 7,
+      "rate": 0.875,
+      "ci_low": 0.5291051942301386,
+      "ci_high": 0.9775830911367038,
+      "categories": {
+        "placement_outside_target": 1
+      }
+    },
+    {
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_a",
+      "factor": null,
+      "level": null,
+      "n_attempted": 8,
+      "n_success": 3,
+      "rate": 0.375,
+      "ci_low": 0.13684175946152105,
+      "ci_high": 0.6942621454161981,
+      "categories": {
+        "placement_outside_target": 5
+      }
+    },
+    {
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_b",
+      "factor": null,
+      "level": null,
+      "n_attempted": 8,
+      "n_success": 4,
+      "rate": 0.5,
+      "ci_low": 0.21521252682444186,
+      "ci_high": 0.7847874731755582,
+      "categories": {
+        "placement_outside_target": 4
+      }
+    },
+    {
+      "family": "mass",
+      "condition": "mass_0.2kg",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_mass_kg",
+      "level": 0.2,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "mass",
+      "condition": "mass_0.2kg",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_mass_kg",
+      "level": 0.2,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "mass",
+      "condition": "mass_0.5kg",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_mass_kg",
+      "level": 0.5,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "mass",
+      "condition": "mass_0.5kg",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_mass_kg",
+      "level": 0.5,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "mass",
+      "condition": "mass_1.0kg",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_mass_kg",
+      "level": 1.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "mass",
+      "condition": "mass_1.0kg",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_mass_kg",
+      "level": 1.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_mass_kg",
+      "level": 2.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_mass_kg",
+      "level": 2.0,
+      "n_attempted": 8,
+      "n_success": 0,
+      "rate": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.3244156195108769,
+      "categories": {
+        "release_failed": 4,
+        "dropped_in_transit": 3,
+        "placement_outside_target": 1
+      }
+    },
+    {
+      "family": "noise",
+      "condition": "obs_noise_10mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "obs_noise_std_m",
+      "level": 0.01,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "noise",
+      "condition": "obs_noise_10mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "obs_noise_std_m",
+      "level": 0.01,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "noise",
+      "condition": "obs_noise_20mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "obs_noise_std_m",
+      "level": 0.02,
+      "n_attempted": 8,
+      "n_success": 6,
+      "rate": 0.75,
+      "ci_low": 0.40926987910258916,
+      "ci_high": 0.9285223111419724,
+      "categories": {
+        "placement_outside_target": 2
+      }
+    },
+    {
+      "family": "noise",
+      "condition": "obs_noise_20mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "obs_noise_std_m",
+      "level": 0.02,
+      "n_attempted": 8,
+      "n_success": 5,
+      "rate": 0.625,
+      "ci_low": 0.30573785458380187,
+      "ci_high": 0.863158240538479,
+      "categories": {
+        "placement_outside_target": 3
+      }
+    },
+    {
+      "family": "noise",
+      "condition": "obs_noise_2mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "obs_noise_std_m",
+      "level": 0.002,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "noise",
+      "condition": "obs_noise_2mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "obs_noise_std_m",
+      "level": 0.002,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "noise",
+      "condition": "obs_noise_5mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "obs_noise_std_m",
+      "level": 0.005,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "noise",
+      "condition": "obs_noise_5mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "obs_noise_std_m",
+      "level": 0.005,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "reference",
+      "condition": "stress_nominal",
+      "controller_id": "scripted_baseline_a",
+      "factor": null,
+      "level": null,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "reference",
+      "condition": "stress_nominal",
+      "controller_id": "scripted_baseline_b",
+      "factor": null,
+      "level": null,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "size",
+      "condition": "half_size_25mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_half_size_m",
+      "level": 0.025,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "size",
+      "condition": "half_size_25mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_half_size_m",
+      "level": 0.025,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "size",
+      "condition": "half_size_30mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_half_size_m",
+      "level": 0.03,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "size",
+      "condition": "half_size_30mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_half_size_m",
+      "level": 0.03,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "size",
+      "condition": "half_size_35mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_half_size_m",
+      "level": 0.035,
+      "n_attempted": 8,
+      "n_success": 7,
+      "rate": 0.875,
+      "ci_low": 0.5291051942301386,
+      "ci_high": 0.9775830911367038,
+      "categories": {
+        "placement_outside_target": 1
+      }
+    },
+    {
+      "family": "size",
+      "condition": "half_size_35mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_half_size_m",
+      "level": 0.035,
+      "n_attempted": 8,
+      "n_success": 7,
+      "rate": 0.875,
+      "ci_low": 0.5291051942301386,
+      "ci_high": 0.9775830911367038,
+      "categories": {
+        "release_failed": 1
+      }
+    },
+    {
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "target_half_m",
+      "level": 0.03,
+      "n_attempted": 8,
+      "n_success": 0,
+      "rate": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.3244156195108769,
+      "categories": {
+        "placement_outside_target": 8
+      }
+    },
+    {
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "target_half_m",
+      "level": 0.03,
+      "n_attempted": 8,
+      "n_success": 0,
+      "rate": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.3244156195108769,
+      "categories": {
+        "placement_outside_target": 8
+      }
+    },
+    {
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "target_half_m",
+      "level": 0.035,
+      "n_attempted": 8,
+      "n_success": 2,
+      "rate": 0.25,
+      "ci_low": 0.07147768885802763,
+      "ci_high": 0.5907301208974108,
+      "categories": {
+        "placement_outside_target": 6
+      }
+    },
+    {
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "target_half_m",
+      "level": 0.035,
+      "n_attempted": 8,
+      "n_success": 0,
+      "rate": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.3244156195108769,
+      "categories": {
+        "placement_outside_target": 8
+      }
+    },
+    {
+      "family": "target",
+      "condition": "target_half_40mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "target_half_m",
+      "level": 0.04,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "target",
+      "condition": "target_half_40mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "target_half_m",
+      "level": 0.04,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "target",
+      "condition": "target_half_50mm",
+      "controller_id": "scripted_baseline_a",
+      "factor": "target_half_m",
+      "level": 0.05,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "target",
+      "condition": "target_half_50mm",
+      "controller_id": "scripted_baseline_b",
+      "factor": "target_half_m",
+      "level": 0.05,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "yaw",
+      "condition": "yaw_15deg",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_yaw_deg",
+      "level": 15.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "yaw",
+      "condition": "yaw_15deg",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_yaw_deg",
+      "level": 15.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "yaw",
+      "condition": "yaw_30deg",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_yaw_deg",
+      "level": 30.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "yaw",
+      "condition": "yaw_30deg",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_yaw_deg",
+      "level": 30.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "yaw",
+      "condition": "yaw_45deg",
+      "controller_id": "scripted_baseline_a",
+      "factor": "block_yaw_deg",
+      "level": 45.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    },
+    {
+      "family": "yaw",
+      "condition": "yaw_45deg",
+      "controller_id": "scripted_baseline_b",
+      "factor": "block_yaw_deg",
+      "level": 45.0,
+      "n_attempted": 8,
+      "n_success": 8,
+      "rate": 1.0,
+      "ci_low": 0.6755843804891231,
+      "ci_high": 1.0,
+      "categories": {}
+    }
+  ],
+  "envelope": {
+    "scripted_baseline_a": {
+      "mass": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0.05,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "mass_0.2kg",
+            "level": 0.2,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "mass_0.5kg",
+            "level": 0.5,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "mass_1.0kg",
+            "level": 1.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "mass_2.0kg",
+            "level": 2.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          }
+        ],
+        "first_level_below_100pct": null,
+        "first_level_below_50pct": null
+      },
+      "friction": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 1.0,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "friction_0.6",
+            "level": 0.6,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "friction_0.4",
+            "level": 0.4,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "friction_0.25",
+            "level": 0.25,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "friction_0.15",
+            "level": 0.15,
+            "rate": 0.875,
+            "n": 8,
+            "ci": [
+              0.5291051942301386,
+              0.9775830911367038
+            ],
+            "categories": {
+              "lift_failed": 1
+            }
+          }
+        ],
+        "first_level_below_100pct": "friction_0.15",
+        "first_level_below_50pct": null
+      },
+      "size": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0.02,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "half_size_25mm",
+            "level": 0.025,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "half_size_30mm",
+            "level": 0.03,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "half_size_35mm",
+            "level": 0.035,
+            "rate": 0.875,
+            "n": 8,
+            "ci": [
+              0.5291051942301386,
+              0.9775830911367038
+            ],
+            "categories": {
+              "placement_outside_target": 1
+            }
+          }
+        ],
+        "first_level_below_100pct": "half_size_35mm",
+        "first_level_below_50pct": null
+      },
+      "yaw": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "yaw_15deg",
+            "level": 15.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "yaw_30deg",
+            "level": 30.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "yaw_45deg",
+            "level": 45.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          }
+        ],
+        "first_level_below_100pct": null,
+        "first_level_below_50pct": null
+      },
+      "target": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0.06,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "target_half_50mm",
+            "level": 0.05,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "target_half_40mm",
+            "level": 0.04,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "target_half_35mm",
+            "level": 0.035,
+            "rate": 0.25,
+            "n": 8,
+            "ci": [
+              0.07147768885802763,
+              0.5907301208974108
+            ],
+            "categories": {
+              "placement_outside_target": 6
+            }
+          },
+          {
+            "condition": "target_half_30mm",
+            "level": 0.03,
+            "rate": 0.0,
+            "n": 8,
+            "ci": [
+              0.0,
+              0.3244156195108769
+            ],
+            "categories": {
+              "placement_outside_target": 8
+            }
+          }
+        ],
+        "first_level_below_100pct": "target_half_35mm",
+        "first_level_below_50pct": "target_half_35mm"
+      },
+      "delay": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "delay_1steps",
+            "level": 1.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "delay_2steps",
+            "level": 2.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "delay_4steps",
+            "level": 4.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "delay_8steps",
+            "level": 8.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          }
+        ],
+        "first_level_below_100pct": null,
+        "first_level_below_50pct": null
+      },
+      "noise": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0.0,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "obs_noise_2mm",
+            "level": 0.002,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "obs_noise_5mm",
+            "level": 0.005,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "obs_noise_10mm",
+            "level": 0.01,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "obs_noise_20mm",
+            "level": 0.02,
+            "rate": 0.75,
+            "n": 8,
+            "ci": [
+              0.40926987910258916,
+              0.9285223111419724
+            ],
+            "categories": {
+              "placement_outside_target": 2
+            }
+          }
+        ],
+        "first_level_below_100pct": "obs_noise_20mm",
+        "first_level_below_50pct": null
+      }
+    },
+    "scripted_baseline_b": {
+      "mass": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0.05,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "mass_0.2kg",
+            "level": 0.2,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "mass_0.5kg",
+            "level": 0.5,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "mass_1.0kg",
+            "level": 1.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "mass_2.0kg",
+            "level": 2.0,
+            "rate": 0.0,
+            "n": 8,
+            "ci": [
+              0.0,
+              0.3244156195108769
+            ],
+            "categories": {
+              "release_failed": 4,
+              "dropped_in_transit": 3,
+              "placement_outside_target": 1
+            }
+          }
+        ],
+        "first_level_below_100pct": "mass_2.0kg",
+        "first_level_below_50pct": "mass_2.0kg"
+      },
+      "friction": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 1.0,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "friction_0.6",
+            "level": 0.6,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "friction_0.4",
+            "level": 0.4,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "friction_0.25",
+            "level": 0.25,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "friction_0.15",
+            "level": 0.15,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          }
+        ],
+        "first_level_below_100pct": null,
+        "first_level_below_50pct": null
+      },
+      "size": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0.02,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "half_size_25mm",
+            "level": 0.025,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "half_size_30mm",
+            "level": 0.03,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "half_size_35mm",
+            "level": 0.035,
+            "rate": 0.875,
+            "n": 8,
+            "ci": [
+              0.5291051942301386,
+              0.9775830911367038
+            ],
+            "categories": {
+              "release_failed": 1
+            }
+          }
+        ],
+        "first_level_below_100pct": "half_size_35mm",
+        "first_level_below_50pct": null
+      },
+      "yaw": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "yaw_15deg",
+            "level": 15.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "yaw_30deg",
+            "level": 30.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "yaw_45deg",
+            "level": 45.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          }
+        ],
+        "first_level_below_100pct": null,
+        "first_level_below_50pct": null
+      },
+      "target": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0.06,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "target_half_50mm",
+            "level": 0.05,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "target_half_40mm",
+            "level": 0.04,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "target_half_35mm",
+            "level": 0.035,
+            "rate": 0.0,
+            "n": 8,
+            "ci": [
+              0.0,
+              0.3244156195108769
+            ],
+            "categories": {
+              "placement_outside_target": 8
+            }
+          },
+          {
+            "condition": "target_half_30mm",
+            "level": 0.03,
+            "rate": 0.0,
+            "n": 8,
+            "ci": [
+              0.0,
+              0.3244156195108769
+            ],
+            "categories": {
+              "placement_outside_target": 8
+            }
+          }
+        ],
+        "first_level_below_100pct": "target_half_35mm",
+        "first_level_below_50pct": "target_half_35mm"
+      },
+      "delay": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "delay_1steps",
+            "level": 1.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "delay_2steps",
+            "level": 2.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "delay_4steps",
+            "level": 4.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "delay_8steps",
+            "level": 8.0,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          }
+        ],
+        "first_level_below_100pct": null,
+        "first_level_below_50pct": null
+      },
+      "noise": {
+        "levels": [
+          {
+            "condition": "stress_nominal",
+            "level": 0.0,
+            "rate": 1.0,
+            "n": 8
+          },
+          {
+            "condition": "obs_noise_2mm",
+            "level": 0.002,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "obs_noise_5mm",
+            "level": 0.005,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "obs_noise_10mm",
+            "level": 0.01,
+            "rate": 1.0,
+            "n": 8,
+            "ci": [
+              0.6755843804891231,
+              1.0
+            ],
+            "categories": {}
+          },
+          {
+            "condition": "obs_noise_20mm",
+            "level": 0.02,
+            "rate": 0.625,
+            "n": 8,
+            "ci": [
+              0.30573785458380187,
+              0.863158240538479
+            ],
+            "categories": {
+              "placement_outside_target": 3
+            }
+          }
+        ],
+        "first_level_below_100pct": "obs_noise_20mm",
+        "first_level_below_50pct": null
+      }
+    }
+  },
+  "failures": [
+    {
+      "category": "lift_failed",
+      "family": "friction",
+      "condition": "friction_0.15",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 6,
+      "seed": 1708541971,
+      "trial_id": "4f962814-8c7a-4f4f-aec9-02e9a5b49f4c",
+      "session_id": "961a5ea6-2d80-4605-91f7-b30639a03f25",
+      "failed_criteria": [
+        "lift: block never rose >= min_lift_m",
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.49258910603666217,
+      "max_contact_normal_force_n": 49.18330234138887,
+      "video": "runs/961a5ea6-2d80-4605-91f7-b30639a03f25/trials/4f962814-8c7a-4f4f-aec9-02e9a5b49f4c/video.mp4",
+      "trace": "runs/961a5ea6-2d80-4605-91f7-b30639a03f25/trials/4f962814-8c7a-4f4f-aec9-02e9a5b49f4c/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "size",
+      "condition": "half_size_35mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 2,
+      "seed": 2187471304,
+      "trial_id": "9b2ed160-d74b-47d7-93a7-d921543c2605",
+      "session_id": "7194b4e9-049a-40fe-8edb-b8ce0069fd7e",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.036598193024148996,
+      "max_contact_normal_force_n": 262.68847821288944,
+      "video": "runs/7194b4e9-049a-40fe-8edb-b8ce0069fd7e/trials/9b2ed160-d74b-47d7-93a7-d921543c2605/video.mp4",
+      "trace": "runs/7194b4e9-049a-40fe-8edb-b8ce0069fd7e/trials/9b2ed160-d74b-47d7-93a7-d921543c2605/trace.jsonl"
+    },
+    {
+      "category": "release_failed",
+      "family": "size",
+      "condition": "half_size_35mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 3,
+      "seed": 4038630901,
+      "trial_id": "d5a4a4b1-deb5-493c-99c6-1d9d042dac9e",
+      "session_id": "7194b4e9-049a-40fe-8edb-b8ce0069fd7e",
+      "failed_criteria": [
+        "release: gripper not open / still touching block",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.0013987387817313323,
+      "max_contact_normal_force_n": 273.3722785870812,
+      "video": "runs/7194b4e9-049a-40fe-8edb-b8ce0069fd7e/trials/d5a4a4b1-deb5-493c-99c6-1d9d042dac9e/video.mp4",
+      "trace": "runs/7194b4e9-049a-40fe-8edb-b8ce0069fd7e/trials/d5a4a4b1-deb5-493c-99c6-1d9d042dac9e/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_moderate",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 3,
+      "seed": 4051250718,
+      "trial_id": "9fe312c6-e291-4e2f-a2c7-b647dfd72912",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.012278861809341672,
+      "max_contact_normal_force_n": 51.17297461171506,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/9fe312c6-e291-4e2f-a2c7-b647dfd72912/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/9fe312c6-e291-4e2f-a2c7-b647dfd72912/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_moderate",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 3,
+      "seed": 4051250718,
+      "trial_id": "656c8c90-b8a9-4e04-9359-eab21adc5e24",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.014818567481111761,
+      "max_contact_normal_force_n": 23.974603490145512,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/656c8c90-b8a9-4e04-9359-eab21adc5e24/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/656c8c90-b8a9-4e04-9359-eab21adc5e24/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 3,
+      "seed": 2972445533,
+      "trial_id": "dbd0dd77-ed00-4859-93f7-41b8722d99b3",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.016717192204239593,
+      "max_contact_normal_force_n": 317.2987570171029,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/dbd0dd77-ed00-4859-93f7-41b8722d99b3/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/dbd0dd77-ed00-4859-93f7-41b8722d99b3/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 4,
+      "seed": 4172318345,
+      "trial_id": "c5f0b4da-b599-409c-9c68-51204abb163c",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.02366005415859559,
+      "max_contact_normal_force_n": 320.88363013575895,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/c5f0b4da-b599-409c-9c68-51204abb163c/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/c5f0b4da-b599-409c-9c68-51204abb163c/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 5,
+      "seed": 596121027,
+      "trial_id": "063e41bc-d278-409f-9e2b-d53ebed28e7a",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.011855183909796577,
+      "max_contact_normal_force_n": 310.23297699817005,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/063e41bc-d278-409f-9e2b-d53ebed28e7a/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/063e41bc-d278-409f-9e2b-d53ebed28e7a/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 6,
+      "seed": 133596335,
+      "trial_id": "95308272-8e32-4bf3-ac84-2bd2d9fd05cb",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.011740652830963129,
+      "max_contact_normal_force_n": 307.4342644575807,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/95308272-8e32-4bf3-ac84-2bd2d9fd05cb/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/95308272-8e32-4bf3-ac84-2bd2d9fd05cb/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 7,
+      "seed": 556780486,
+      "trial_id": "44532488-05ee-4df9-98c0-3cc355fd0f39",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.01400781351803842,
+      "max_contact_normal_force_n": 265.29691740837404,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/44532488-05ee-4df9-98c0-3cc355fd0f39/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/44532488-05ee-4df9-98c0-3cc355fd0f39/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 2,
+      "seed": 142329827,
+      "trial_id": "086415c8-af00-4eb6-b470-4a176cf2df0e",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.013050828584938138,
+      "max_contact_normal_force_n": 287.6901259686389,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/086415c8-af00-4eb6-b470-4a176cf2df0e/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/086415c8-af00-4eb6-b470-4a176cf2df0e/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 3,
+      "seed": 2972445533,
+      "trial_id": "55aa1f3e-ef1d-4721-bda1-877c305856b7",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.016369202087334684,
+      "max_contact_normal_force_n": 361.0406669269082,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/55aa1f3e-ef1d-4721-bda1-877c305856b7/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/55aa1f3e-ef1d-4721-bda1-877c305856b7/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 4,
+      "seed": 4172318345,
+      "trial_id": "8a140e00-a427-4e41-a1ca-0de242ccc5c0",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.011548604326249897,
+      "max_contact_normal_force_n": 309.2380005474764,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/8a140e00-a427-4e41-a1ca-0de242ccc5c0/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/8a140e00-a427-4e41-a1ca-0de242ccc5c0/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "joint",
+      "condition": "joint_severe",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 7,
+      "seed": 556780486,
+      "trial_id": "9b55df25-0baf-42f4-932e-f112ea3eaf34",
+      "session_id": "c773b88b-8b85-4700-8b7a-c4b46d5ab613",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.015747747305526118,
+      "max_contact_normal_force_n": 330.4761359733226,
+      "video": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/9b55df25-0baf-42f4-932e-f112ea3eaf34/video.mp4",
+      "trace": "runs/c773b88b-8b85-4700-8b7a-c4b46d5ab613/trials/9b55df25-0baf-42f4-932e-f112ea3eaf34/trace.jsonl"
+    },
+    {
+      "category": "release_failed",
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 0,
+      "seed": 1926800355,
+      "trial_id": "99f9a7f6-fe2c-44c7-af6a-54baf49121f3",
+      "session_id": "04d2f5fe-70e2-462e-aac0-4baa96f3db79",
+      "failed_criteria": [
+        "release: gripper not open / still touching block",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.014136968668938902,
+      "max_contact_normal_force_n": 340.4337299592258,
+      "video": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/99f9a7f6-fe2c-44c7-af6a-54baf49121f3/video.mp4",
+      "trace": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/99f9a7f6-fe2c-44c7-af6a-54baf49121f3/trace.jsonl"
+    },
+    {
+      "category": "release_failed",
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 1,
+      "seed": 3300296477,
+      "trial_id": "2a2fe751-5a2c-400c-8906-66bc38654e21",
+      "session_id": "04d2f5fe-70e2-462e-aac0-4baa96f3db79",
+      "failed_criteria": [
+        "release: gripper not open / still touching block",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.01808827588666816,
+      "max_contact_normal_force_n": 338.73976940807995,
+      "video": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/2a2fe751-5a2c-400c-8906-66bc38654e21/video.mp4",
+      "trace": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/2a2fe751-5a2c-400c-8906-66bc38654e21/trace.jsonl"
+    },
+    {
+      "category": "dropped_in_transit",
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 2,
+      "seed": 931608108,
+      "trial_id": "75a7b0fa-11cc-4676-b993-fd6e4d0ff35b",
+      "session_id": "04d2f5fe-70e2-462e-aac0-4baa96f3db79",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.18934784031443957,
+      "max_contact_normal_force_n": 24.057375283183944,
+      "video": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/75a7b0fa-11cc-4676-b993-fd6e4d0ff35b/video.mp4",
+      "trace": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/75a7b0fa-11cc-4676-b993-fd6e4d0ff35b/trace.jsonl"
+    },
+    {
+      "category": "dropped_in_transit",
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 3,
+      "seed": 383253587,
+      "trial_id": "14f043ab-2ea8-4623-96c1-3c57e2ff9a04",
+      "session_id": "04d2f5fe-70e2-462e-aac0-4baa96f3db79",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.26617103043440904,
+      "max_contact_normal_force_n": 24.076259084060357,
+      "video": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/14f043ab-2ea8-4623-96c1-3c57e2ff9a04/video.mp4",
+      "trace": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/14f043ab-2ea8-4623-96c1-3c57e2ff9a04/trace.jsonl"
+    },
+    {
+      "category": "release_failed",
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 4,
+      "seed": 3378088170,
+      "trial_id": "85af8203-8629-4af5-8f65-d5940f4a30ba",
+      "session_id": "04d2f5fe-70e2-462e-aac0-4baa96f3db79",
+      "failed_criteria": [
+        "release: gripper not open / still touching block",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.013160097202210166,
+      "max_contact_normal_force_n": 317.10093945992514,
+      "video": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/85af8203-8629-4af5-8f65-d5940f4a30ba/video.mp4",
+      "trace": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/85af8203-8629-4af5-8f65-d5940f4a30ba/trace.jsonl"
+    },
+    {
+      "category": "dropped_in_transit",
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 5,
+      "seed": 1510124407,
+      "trial_id": "62f8ffd5-cc92-4949-a8ee-d720df154326",
+      "session_id": "04d2f5fe-70e2-462e-aac0-4baa96f3db79",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.14268183354498606,
+      "max_contact_normal_force_n": 24.055638026599873,
+      "video": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/62f8ffd5-cc92-4949-a8ee-d720df154326/video.mp4",
+      "trace": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/62f8ffd5-cc92-4949-a8ee-d720df154326/trace.jsonl"
+    },
+    {
+      "category": "release_failed",
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 6,
+      "seed": 247937657,
+      "trial_id": "4e4e4d9b-5591-4c6d-9036-bb8a30627431",
+      "session_id": "04d2f5fe-70e2-462e-aac0-4baa96f3db79",
+      "failed_criteria": [
+        "release: gripper not open / still touching block",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.012486071262393776,
+      "max_contact_normal_force_n": 300.88759991010335,
+      "video": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/4e4e4d9b-5591-4c6d-9036-bb8a30627431/video.mp4",
+      "trace": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/4e4e4d9b-5591-4c6d-9036-bb8a30627431/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "mass",
+      "condition": "mass_2.0kg",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 7,
+      "seed": 56613084,
+      "trial_id": "32f0debf-e894-4afc-8ac0-9e434a102cf5",
+      "session_id": "04d2f5fe-70e2-462e-aac0-4baa96f3db79",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "release: gripper not open / still touching block",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.0546798981265851,
+      "max_contact_normal_force_n": 24.057319494028697,
+      "video": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/32f0debf-e894-4afc-8ac0-9e434a102cf5/video.mp4",
+      "trace": "runs/04d2f5fe-70e2-462e-aac0-4baa96f3db79/trials/32f0debf-e894-4afc-8ac0-9e434a102cf5/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "noise",
+      "condition": "obs_noise_20mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 2,
+      "seed": 173069414,
+      "trial_id": "5e291f15-c2d3-49f7-91a3-8d55065ab2fb",
+      "session_id": "5b88f507-c85d-4288-abe3-61f81076d10d",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.04019991015548753,
+      "max_contact_normal_force_n": 43.884774181576205,
+      "video": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/5e291f15-c2d3-49f7-91a3-8d55065ab2fb/video.mp4",
+      "trace": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/5e291f15-c2d3-49f7-91a3-8d55065ab2fb/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "noise",
+      "condition": "obs_noise_20mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 5,
+      "seed": 102976553,
+      "trial_id": "33b55ee5-b245-4fbb-90f2-c7d865a974ed",
+      "session_id": "5b88f507-c85d-4288-abe3-61f81076d10d",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.04614417833075587,
+      "max_contact_normal_force_n": 41.720970893009905,
+      "video": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/33b55ee5-b245-4fbb-90f2-c7d865a974ed/video.mp4",
+      "trace": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/33b55ee5-b245-4fbb-90f2-c7d865a974ed/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "noise",
+      "condition": "obs_noise_20mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 1,
+      "seed": 642476205,
+      "trial_id": "cac3a5f0-6628-4e69-a095-6a8911528ed3",
+      "session_id": "5b88f507-c85d-4288-abe3-61f81076d10d",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.05549691052280382,
+      "max_contact_normal_force_n": 24.118000026218127,
+      "video": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/cac3a5f0-6628-4e69-a095-6a8911528ed3/video.mp4",
+      "trace": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/cac3a5f0-6628-4e69-a095-6a8911528ed3/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "noise",
+      "condition": "obs_noise_20mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 4,
+      "seed": 3959016057,
+      "trial_id": "db07b443-2274-4a1a-8e9e-56fb5d5961e1",
+      "session_id": "5b88f507-c85d-4288-abe3-61f81076d10d",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.04997040771235792,
+      "max_contact_normal_force_n": 23.58070471468459,
+      "video": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/db07b443-2274-4a1a-8e9e-56fb5d5961e1/video.mp4",
+      "trace": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/db07b443-2274-4a1a-8e9e-56fb5d5961e1/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "noise",
+      "condition": "obs_noise_20mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 5,
+      "seed": 102976553,
+      "trial_id": "bc6ab256-873d-41e8-9f73-d198bf0e28ba",
+      "session_id": "5b88f507-c85d-4288-abe3-61f81076d10d",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.056470445322133946,
+      "max_contact_normal_force_n": 23.9304632171042,
+      "video": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/bc6ab256-873d-41e8-9f73-d198bf0e28ba/video.mp4",
+      "trace": "runs/5b88f507-c85d-4288-abe3-61f81076d10d/trials/bc6ab256-873d-41e8-9f73-d198bf0e28ba/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 0,
+      "seed": 1678255759,
+      "trial_id": "e52cfbe7-bf8a-45c9-8e96-0f0c2efca2e4",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.014178595343943673,
+      "max_contact_normal_force_n": 40.040203963912234,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/e52cfbe7-bf8a-45c9-8e96-0f0c2efca2e4/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/e52cfbe7-bf8a-45c9-8e96-0f0c2efca2e4/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 1,
+      "seed": 2775143358,
+      "trial_id": "02b90d6d-9991-4ebe-8330-debe8ae4ba53",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.015449014687300318,
+      "max_contact_normal_force_n": 40.04010922601617,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/02b90d6d-9991-4ebe-8330-debe8ae4ba53/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/02b90d6d-9991-4ebe-8330-debe8ae4ba53/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 2,
+      "seed": 3531623818,
+      "trial_id": "bd80ef8f-9d52-479a-a4ef-d4bafae9401e",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.01850906043925723,
+      "max_contact_normal_force_n": 40.04014906508044,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/bd80ef8f-9d52-479a-a4ef-d4bafae9401e/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/bd80ef8f-9d52-479a-a4ef-d4bafae9401e/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 3,
+      "seed": 1157230675,
+      "trial_id": "74b458ea-943a-4282-8475-dc6f44cba4a6",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.016790112256583927,
+      "max_contact_normal_force_n": 40.04036606484168,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/74b458ea-943a-4282-8475-dc6f44cba4a6/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/74b458ea-943a-4282-8475-dc6f44cba4a6/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 4,
+      "seed": 2900498101,
+      "trial_id": "1330143d-f027-488a-b46a-838303dd16ea",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.014473242723259477,
+      "max_contact_normal_force_n": 40.040246011969785,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/1330143d-f027-488a-b46a-838303dd16ea/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/1330143d-f027-488a-b46a-838303dd16ea/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 5,
+      "seed": 1978606738,
+      "trial_id": "792ad3de-0d71-4b61-b916-7635ad78a580",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.018491290574134202,
+      "max_contact_normal_force_n": 40.04040045213058,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/792ad3de-0d71-4b61-b916-7635ad78a580/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/792ad3de-0d71-4b61-b916-7635ad78a580/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 6,
+      "seed": 1828216496,
+      "trial_id": "bc470600-db9d-4fea-8d6f-6601baf5be2c",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.01705069560800552,
+      "max_contact_normal_force_n": 40.04036356585118,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/bc470600-db9d-4fea-8d6f-6601baf5be2c/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/bc470600-db9d-4fea-8d6f-6601baf5be2c/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 7,
+      "seed": 3592238389,
+      "trial_id": "14f33431-4192-46d5-8ba5-7793d724dac9",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.018417207047709435,
+      "max_contact_normal_force_n": 41.434727506693136,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/14f33431-4192-46d5-8ba5-7793d724dac9/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/14f33431-4192-46d5-8ba5-7793d724dac9/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 0,
+      "seed": 1678255759,
+      "trial_id": "65aac22f-a923-4ce0-9e2c-d29cf151a552",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.01754627889068742,
+      "max_contact_normal_force_n": 23.999588788538503,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/65aac22f-a923-4ce0-9e2c-d29cf151a552/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/65aac22f-a923-4ce0-9e2c-d29cf151a552/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 1,
+      "seed": 2775143358,
+      "trial_id": "97213653-4eec-4b19-892c-d39931487efc",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.016981065126385777,
+      "max_contact_normal_force_n": 23.99934488395904,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/97213653-4eec-4b19-892c-d39931487efc/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/97213653-4eec-4b19-892c-d39931487efc/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 2,
+      "seed": 3531623818,
+      "trial_id": "db1d59ca-2aa4-4bd5-9208-959df4a69b49",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.01828299953667083,
+      "max_contact_normal_force_n": 23.999189295147886,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/db1d59ca-2aa4-4bd5-9208-959df4a69b49/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/db1d59ca-2aa4-4bd5-9208-959df4a69b49/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 3,
+      "seed": 1157230675,
+      "trial_id": "eedfa3e9-695f-4473-b1ed-ffd1297cb580",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.019181280138852782,
+      "max_contact_normal_force_n": 24.000477582245104,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/eedfa3e9-695f-4473-b1ed-ffd1297cb580/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/eedfa3e9-695f-4473-b1ed-ffd1297cb580/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 4,
+      "seed": 2900498101,
+      "trial_id": "56ae3d2b-1578-4668-b4ea-899d5f2bd731",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.01740327770743882,
+      "max_contact_normal_force_n": 24.00065731045847,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/56ae3d2b-1578-4668-b4ea-899d5f2bd731/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/56ae3d2b-1578-4668-b4ea-899d5f2bd731/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 5,
+      "seed": 1978606738,
+      "trial_id": "1c900c3e-68d7-4a59-bfa7-9e26ca2cdcb0",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.019176341146463445,
+      "max_contact_normal_force_n": 24.00170119367216,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/1c900c3e-68d7-4a59-bfa7-9e26ca2cdcb0/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/1c900c3e-68d7-4a59-bfa7-9e26ca2cdcb0/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 6,
+      "seed": 1828216496,
+      "trial_id": "dbf4e62e-6527-4448-9b0b-cb79124421be",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.019152537117393745,
+      "max_contact_normal_force_n": 24.000501700784397,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/dbf4e62e-6527-4448-9b0b-cb79124421be/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/dbf4e62e-6527-4448-9b0b-cb79124421be/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_30mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 7,
+      "seed": 3592238389,
+      "trial_id": "f2cd9446-0e5b-4471-b548-29270d7303ac",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.019187405965502398,
+      "max_contact_normal_force_n": 24.014598645028983,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/f2cd9446-0e5b-4471-b548-29270d7303ac/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/f2cd9446-0e5b-4471-b548-29270d7303ac/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 0,
+      "seed": 4002060892,
+      "trial_id": "dfc0c473-980b-4180-826c-094962a3fbae",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.018500429115316304,
+      "max_contact_normal_force_n": 40.04038809705849,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/dfc0c473-980b-4180-826c-094962a3fbae/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/dfc0c473-980b-4180-826c-094962a3fbae/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 1,
+      "seed": 2142465603,
+      "trial_id": "d995d667-d3f8-4197-aeb0-76a8d5cb535d",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.018504547836011364,
+      "max_contact_normal_force_n": 41.3958254055497,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/d995d667-d3f8-4197-aeb0-76a8d5cb535d/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/d995d667-d3f8-4197-aeb0-76a8d5cb535d/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 2,
+      "seed": 3175120794,
+      "trial_id": "0d49e5ed-9b6a-48ac-a4b1-7606e5503e5c",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.018495812435754863,
+      "max_contact_normal_force_n": 40.04031261755769,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/0d49e5ed-9b6a-48ac-a4b1-7606e5503e5c/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/0d49e5ed-9b6a-48ac-a4b1-7606e5503e5c/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 5,
+      "seed": 2746587452,
+      "trial_id": "6720e164-c9a6-44ac-b0cd-0ebaf4f2049b",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.017324442435148454,
+      "max_contact_normal_force_n": 40.04040293687375,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/6720e164-c9a6-44ac-b0cd-0ebaf4f2049b/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/6720e164-c9a6-44ac-b0cd-0ebaf4f2049b/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 6,
+      "seed": 3099973674,
+      "trial_id": "95a435ae-bf67-46ff-86be-ff6c1ca54229",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.01925586034616997,
+      "max_contact_normal_force_n": 40.04035178066753,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/95a435ae-bf67-46ff-86be-ff6c1ca54229/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/95a435ae-bf67-46ff-86be-ff6c1ca54229/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_a",
+      "trial_index": 7,
+      "seed": 958483315,
+      "trial_id": "b5044e6e-2c6f-45ce-a474-c41ba8f62f1d",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.016753691888311533,
+      "max_contact_normal_force_n": 41.46684499832857,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/b5044e6e-2c6f-45ce-a474-c41ba8f62f1d/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/b5044e6e-2c6f-45ce-a474-c41ba8f62f1d/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 0,
+      "seed": 4002060892,
+      "trial_id": "58e4cf8a-fba9-4590-b588-cd170152e600",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.019990915376964218,
+      "max_contact_normal_force_n": 24.001936695284677,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/58e4cf8a-fba9-4590-b588-cd170152e600/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/58e4cf8a-fba9-4590-b588-cd170152e600/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 1,
+      "seed": 2142465603,
+      "trial_id": "eb22fc8c-c701-44db-9b05-e1f86b4fe9c2",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.015573794131102388,
+      "max_contact_normal_force_n": 24.000458643756986,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/eb22fc8c-c701-44db-9b05-e1f86b4fe9c2/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/eb22fc8c-c701-44db-9b05-e1f86b4fe9c2/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 2,
+      "seed": 3175120794,
+      "trial_id": "4cdf5ef2-7061-423b-bb4b-743ec1bee14f",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.01914824816081786,
+      "max_contact_normal_force_n": 24.00136611138748,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/4cdf5ef2-7061-423b-bb4b-743ec1bee14f/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/4cdf5ef2-7061-423b-bb4b-743ec1bee14f/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 3,
+      "seed": 2295189173,
+      "trial_id": "587fe376-d64b-4dd3-8f33-565242841660",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.019201667158407577,
+      "max_contact_normal_force_n": 24.142018014789024,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/587fe376-d64b-4dd3-8f33-565242841660/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/587fe376-d64b-4dd3-8f33-565242841660/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 4,
+      "seed": 3056692338,
+      "trial_id": "a40ebd8a-2819-4635-b34e-f5853c3dcfda",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.019177090396590345,
+      "max_contact_normal_force_n": 23.999504966054815,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/a40ebd8a-2819-4635-b34e-f5853c3dcfda/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/a40ebd8a-2819-4635-b34e-f5853c3dcfda/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 5,
+      "seed": 2746587452,
+      "trial_id": "ce6d787b-edef-4ed1-a850-c82c5c8c62d2",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.019222905703205218,
+      "max_contact_normal_force_n": 24.006661004130542,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/ce6d787b-edef-4ed1-a850-c82c5c8c62d2/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/ce6d787b-edef-4ed1-a850-c82c5c8c62d2/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 6,
+      "seed": 3099973674,
+      "trial_id": "79e83ab8-2d43-4210-9a90-1a8b6bafb230",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.016516256330307594,
+      "max_contact_normal_force_n": 23.999482806599588,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/79e83ab8-2d43-4210-9a90-1a8b6bafb230/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/79e83ab8-2d43-4210-9a90-1a8b6bafb230/trace.jsonl"
+    },
+    {
+      "category": "placement_outside_target",
+      "family": "target",
+      "condition": "target_half_35mm",
+      "controller_id": "scripted_baseline_b",
+      "trial_index": 7,
+      "seed": 958483315,
+      "trial_id": "7542c616-cdff-4f3a-8e41-30f358b670d3",
+      "session_id": "a2840ca8-4658-478c-9cee-0e511668754f",
+      "failed_criteria": [
+        "placement: block not entirely inside target",
+        "dwell: placement not held for dwell_required_s"
+      ],
+      "final_offset_from_target_m": 0.019216168689622105,
+      "max_contact_normal_force_n": 24.00657191197982,
+      "video": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/7542c616-cdff-4f3a-8e41-30f358b670d3/video.mp4",
+      "trace": "runs/a2840ca8-4658-478c-9cee-0e511668754f/trials/7542c616-cdff-4f3a-8e41-30f358b670d3/trace.jsonl"
+    }
+  ],
+  "sessions": [
+    "7600f2fd-c811-4687-83ac-8b73be7e3306",
+    "04d2f5fe-70e2-462e-aac0-4baa96f3db79",
+    "961a5ea6-2d80-4605-91f7-b30639a03f25",
+    "7194b4e9-049a-40fe-8edb-b8ce0069fd7e",
+    "e6e9ef01-03a6-4be6-9f06-89531dabf431",
+    "a2840ca8-4658-478c-9cee-0e511668754f",
+    "0e29ff82-9603-4b93-86d0-b7b2215ef302",
+    "5b88f507-c85d-4288-abe3-61f81076d10d",
+    "c773b88b-8b85-4700-8b7a-c4b46d5ab613"
+  ],
+  "frozen": {
+    "protocol_id": "stress_v1",
+    "files": {
+      "protocol": "7c6bffc79baf65eaba682ee65f3d4569fa2a2c1500996bf4eba97436af278e68",
+      "conditions": "9895ddaeef3a67f2f372a8e9c1000c3b4b8994dd3af371a44ace0dbb97f810ed",
+      "controllers": "52f81c8eee5a27c7ecaae1aa6d80d186275918086a875a284a5919718a68867b"
+    },
+    "combined_sha256": "d2b6a3d89668924b38a9db29bc5afaff23d1da2e3082220c8cdc8ec0785cc45f",
+    "frozen_at": "2026-10-14T08:01:17.319015+00:00",
+    "git_commit": "5437bb1b5cbae16168a7d15006edeb5bbaa1e3a2",
+    "pilot": {
+      "home": "data\\stress_pilot",
+      "trials": 58,
+      "completed": 58,
+      "task_failures": 7,
+      "problems": [],
+      "clean": true
+    },
+    "seed_sets_disjoint": true,
+    "note": "the evaluation stage refuses to run unless the three files below still match these hashes"
+  }
+}

@@ -204,3 +204,24 @@ def run(
     typer.echo(
         json.dumps({k: summary[k] for k in ("backend_label", "session_ids", "planned", "reports")}, indent=2)
     )
+
+
+@app.command("operator")
+def operator(
+    home: Path = typer.Option(Path("data/operator_demo"), help="Fresh data root for the operator demo."),
+    out: Path = typer.Option(Path("docs/demo/operator"), help="Where to write the summary and reports."),
+) -> None:
+    """The ~90 s operator workflow (simulation): preflight, success, physics failure, corrupt recording
+    rejected, interrupted + recovered run, verified artifact transfer, report. Needs the sim extra."""
+    from robotevalops.cli.operator_demo import run_operator_demo
+
+    try:
+        summary = run_operator_demo(home, out)
+    except RobotEvalOpsError as e:
+        typer.echo(f"error: {e}", err=True)
+        raise typer.Exit(1) from e
+    typer.echo(
+        json.dumps(
+            {"sessions": summary["sessions"], "steps": [s["step"] for s in summary["steps"]]}, indent=2
+        )
+    )

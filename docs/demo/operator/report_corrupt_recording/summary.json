@@ -1,0 +1,677 @@
+{
+  "generated_at": "2026-10-14T08:45:29.989275+00:00",
+  "provenance": [
+    "simulation"
+  ],
+  "controller_types": [
+    "scripted"
+  ],
+  "banner": null,
+  "session_ids": [
+    "95a17e99-453a-4ac3-ba88-e8f3267e1665"
+  ],
+  "sessions": [
+    {
+      "session_id": "95a17e99-453a-4ac3-ba88-e8f3267e1665",
+      "name": "operator-demo-corrupt",
+      "state": "completed",
+      "provenance": "simulation",
+      "backend": "pybullet_panda",
+      "eval_config_hash": "061a1a644330fb6cc0dee37bbb5e7ecbba03faf340d9a706bcdeb19a38400830",
+      "git_commit": "5437bb1b5cbae16168a7d15006edeb5bbaa1e3a2",
+      "software": {
+        "boto3": "1.43.112",
+        "lerobot": "0.4.4",
+        "numpy": "2.2.6",
+        "opencv-python-headless": "4.12.0.88",
+        "pandas": "3.0.6",
+        "platform": "Windows-10-10.0.26220-SP0",
+        "pybullet": "3.2.7",
+        "pydantic": "2.14.1",
+        "python": "3.11.16",
+        "robotevalops": "0.1.0",
+        "streamlit": "1.65.0",
+        "torch": "2.10.0"
+      },
+      "run_dir": "runs/95a17e99-453a-4ac3-ba88-e8f3267e1665",
+      "manifest": "runs/95a17e99-453a-4ac3-ba88-e8f3267e1665/manifest.json",
+      "manifest_exists": true,
+      "controllers": [
+        {
+          "controller_id": "scripted_baseline_a",
+          "type": "scripted",
+          "version": "1",
+          "config_hash": "a1aa4189cacdb2927bc3262fd03343339e21447d388f027152b12a844d8519f7",
+          "artifact_sha256": null
+        }
+      ],
+      "conditions": [
+        {
+          "name": "stress_nominal",
+          "kind": "physics_stress",
+          "version": "1",
+          "params": {},
+          "affects_controller_state": true,
+          "description": "family=reference"
+        }
+      ],
+      "base_seed": 4242,
+      "trials_per_condition": 1
+    }
+  ],
+  "metrics": {
+    "provenances": [
+      "simulation"
+    ],
+    "controller_types": [
+      "scripted"
+    ],
+    "session_ids": [
+      "95a17e99-453a-4ac3-ba88-e8f3267e1665"
+    ],
+    "banner": null,
+    "overall": {
+      "key": {},
+      "provenances": [
+        "simulation"
+      ],
+      "controller_types": [
+        "scripted"
+      ],
+      "session_ids": [
+        "95a17e99-453a-4ac3-ba88-e8f3267e1665"
+      ],
+      "pooled_controller_ids": [],
+      "rubric_versions": [
+        "rubric-v1"
+      ],
+      "planned": 1,
+      "attempted": 1,
+      "completed": 1,
+      "failed": 0,
+      "aborted": 0,
+      "not_attempted": 0,
+      "unscored": 0,
+      "evaluable": 0,
+      "autonomous_successes": 0,
+      "assisted_successes": 0,
+      "unknown_intervention_successes": 0,
+      "success_per_attempt": {
+        "k": 0,
+        "n": 1,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.7934567085261071,
+        "ci_method": "wilson_95"
+      },
+      "success_per_evaluable": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null,
+        "ci_method": "wilson_95"
+      },
+      "intervention_rate": {
+        "k": 0,
+        "n": 1,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.7934567085261071,
+        "ci_method": "wilson_95"
+      },
+      "infra_abort_rate": {
+        "k": 0,
+        "n": 1,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.7934567085261071,
+        "ci_method": "wilson_95"
+      },
+      "infra_reasons_not_attempted": 0,
+      "recording_pass_rate": {
+        "k": 0,
+        "n": 1,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.7934567085261071,
+        "ci_method": "wilson_95"
+      },
+      "recording_unchecked": 0,
+      "recording_qa_error": 0,
+      "raw_task_successes": 1,
+      "unverified_successes": 0,
+      "quality_excluded": 1,
+      "duration": {
+        "n": 1,
+        "mean": 13.600000000000058,
+        "median": 13.600000000000058,
+        "min": 13.600000000000058,
+        "max": 13.600000000000058,
+        "p95": null,
+        "note": "trial duration: n=1 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+      },
+      "reset_duration": {
+        "n": 1,
+        "mean": 0.2029999999795109,
+        "median": 0.2029999999795109,
+        "min": 0.2029999999795109,
+        "max": 0.2029999999795109,
+        "p95": null,
+        "note": "reset duration: n=1 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+      },
+      "artifacts": {
+        "expected": 3,
+        "present_with_hash": 3,
+        "completeness": {
+          "k": 3,
+          "n": 3,
+          "rate": 1.0,
+          "ci_low": 0.43849391955098227,
+          "ci_high": 1.0,
+          "ci_method": "wilson_95"
+        },
+        "missing": 0,
+        "quarantined": 0,
+        "checksum_verified": 0,
+        "checksum_mismatch": 0,
+        "checksum_unverified": 3,
+        "checksum_agreement": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "ci_low": null,
+          "ci_high": null,
+          "ci_method": "wilson_95"
+        }
+      },
+      "warnings": [
+        "[overall] small n: 0 evaluable trial(s) (< 20); intervals are wide and differences are not reliable.",
+        "[overall] 1 scored trial(s) excluded from 'evaluable' because recording QA is not accepted (fail/error/unchecked); 0 of the 1 raw task success(es) are unverified (shown, not hidden)."
+      ]
+    },
+    "by_condition": [
+      {
+        "key": {
+          "condition": "stress_nominal",
+          "provenance": "simulation"
+        },
+        "provenances": [
+          "simulation"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "95a17e99-453a-4ac3-ba88-e8f3267e1665"
+        ],
+        "pooled_controller_ids": [],
+        "rubric_versions": [
+          "rubric-v1"
+        ],
+        "planned": 1,
+        "attempted": 1,
+        "completed": 1,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 0,
+        "autonomous_successes": 0,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "ci_low": null,
+          "ci_high": null,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "recording_qa_error": 0,
+        "raw_task_successes": 1,
+        "unverified_successes": 0,
+        "quality_excluded": 1,
+        "duration": {
+          "n": 1,
+          "mean": 13.600000000000058,
+          "median": 13.600000000000058,
+          "min": 13.600000000000058,
+          "max": 13.600000000000058,
+          "p95": null,
+          "note": "trial duration: n=1 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 1,
+          "mean": 0.2029999999795109,
+          "median": 0.2029999999795109,
+          "min": 0.2029999999795109,
+          "max": 0.2029999999795109,
+          "p95": null,
+          "note": "reset duration: n=1 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 3,
+          "present_with_hash": 3,
+          "completeness": {
+            "k": 3,
+            "n": 3,
+            "rate": 1.0,
+            "ci_low": 0.43849391955098227,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 0,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 3,
+          "checksum_agreement": {
+            "k": 0,
+            "n": 0,
+            "rate": null,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[condition=stress_nominal, provenance=simulation] small n: 0 evaluable trial(s) (< 20); intervals are wide and differences are not reliable.",
+          "[condition=stress_nominal, provenance=simulation] 1 scored trial(s) excluded from 'evaluable' because recording QA is not accepted (fail/error/unchecked); 0 of the 1 raw task success(es) are unverified (shown, not hidden)."
+        ]
+      }
+    ],
+    "by_controller": [
+      {
+        "key": {
+          "controller_id": "scripted_baseline_a",
+          "controller_version": "1",
+          "controller_config_hash": "a1aa4189cacdb2927bc3262fd03343339e21447d388f027152b12a844d8519f7",
+          "controller_type": "scripted",
+          "provenance": "simulation",
+          "rubric_version": "rubric-v1"
+        },
+        "provenances": [
+          "simulation"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "95a17e99-453a-4ac3-ba88-e8f3267e1665"
+        ],
+        "pooled_controller_ids": [],
+        "rubric_versions": [
+          "rubric-v1"
+        ],
+        "planned": 1,
+        "attempted": 1,
+        "completed": 1,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 0,
+        "autonomous_successes": 0,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "ci_low": null,
+          "ci_high": null,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "recording_qa_error": 0,
+        "raw_task_successes": 1,
+        "unverified_successes": 0,
+        "quality_excluded": 1,
+        "duration": {
+          "n": 1,
+          "mean": 13.600000000000058,
+          "median": 13.600000000000058,
+          "min": 13.600000000000058,
+          "max": 13.600000000000058,
+          "p95": null,
+          "note": "trial duration: n=1 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 1,
+          "mean": 0.2029999999795109,
+          "median": 0.2029999999795109,
+          "min": 0.2029999999795109,
+          "max": 0.2029999999795109,
+          "p95": null,
+          "note": "reset duration: n=1 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 3,
+          "present_with_hash": 3,
+          "completeness": {
+            "k": 3,
+            "n": 3,
+            "rate": 1.0,
+            "ci_low": 0.43849391955098227,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 0,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 3,
+          "checksum_agreement": {
+            "k": 0,
+            "n": 0,
+            "rate": null,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=scripted_baseline_a, controller_version=1, controller_config_hash=a1aa4189cacdb2927bc3262fd03343339e21447d388f027152b12a844d8519f7, controller_type=scripted, provenance=simulation, rubric_version=rubric-v1] small n: 0 evaluable trial(s) (< 20); intervals are wide and differences are not reliable.",
+          "[controller_id=scripted_baseline_a, controller_version=1, controller_config_hash=a1aa4189cacdb2927bc3262fd03343339e21447d388f027152b12a844d8519f7, controller_type=scripted, provenance=simulation, rubric_version=rubric-v1] 1 scored trial(s) excluded from 'evaluable' because recording QA is not accepted (fail/error/unchecked); 0 of the 1 raw task success(es) are unverified (shown, not hidden)."
+        ]
+      }
+    ],
+    "by_controller_condition": [
+      {
+        "key": {
+          "controller_id": "scripted_baseline_a",
+          "controller_version": "1",
+          "controller_config_hash": "a1aa4189cacdb2927bc3262fd03343339e21447d388f027152b12a844d8519f7",
+          "controller_type": "scripted",
+          "provenance": "simulation",
+          "rubric_version": "rubric-v1",
+          "condition": "stress_nominal"
+        },
+        "provenances": [
+          "simulation"
+        ],
+        "controller_types": [
+          "scripted"
+        ],
+        "session_ids": [
+          "95a17e99-453a-4ac3-ba88-e8f3267e1665"
+        ],
+        "pooled_controller_ids": [],
+        "rubric_versions": [
+          "rubric-v1"
+        ],
+        "planned": 1,
+        "attempted": 1,
+        "completed": 1,
+        "failed": 0,
+        "aborted": 0,
+        "not_attempted": 0,
+        "unscored": 0,
+        "evaluable": 0,
+        "autonomous_successes": 0,
+        "assisted_successes": 0,
+        "unknown_intervention_successes": 0,
+        "success_per_attempt": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "success_per_evaluable": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "ci_low": null,
+          "ci_high": null,
+          "ci_method": "wilson_95"
+        },
+        "intervention_rate": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "infra_abort_rate": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "infra_reasons_not_attempted": 0,
+        "recording_pass_rate": {
+          "k": 0,
+          "n": 1,
+          "rate": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.7934567085261071,
+          "ci_method": "wilson_95"
+        },
+        "recording_unchecked": 0,
+        "recording_qa_error": 0,
+        "raw_task_successes": 1,
+        "unverified_successes": 0,
+        "quality_excluded": 1,
+        "duration": {
+          "n": 1,
+          "mean": 13.600000000000058,
+          "median": 13.600000000000058,
+          "min": 13.600000000000058,
+          "max": 13.600000000000058,
+          "p95": null,
+          "note": "trial duration: n=1 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "reset_duration": {
+          "n": 1,
+          "mean": 0.2029999999795109,
+          "median": 0.2029999999795109,
+          "min": 0.2029999999795109,
+          "max": 0.2029999999795109,
+          "p95": null,
+          "note": "reset duration: n=1 recorded value(s) only; nothing imputed. 95th percentile not reported (needs n >= 20)."
+        },
+        "artifacts": {
+          "expected": 3,
+          "present_with_hash": 3,
+          "completeness": {
+            "k": 3,
+            "n": 3,
+            "rate": 1.0,
+            "ci_low": 0.43849391955098227,
+            "ci_high": 1.0,
+            "ci_method": "wilson_95"
+          },
+          "missing": 0,
+          "quarantined": 0,
+          "checksum_verified": 0,
+          "checksum_mismatch": 0,
+          "checksum_unverified": 3,
+          "checksum_agreement": {
+            "k": 0,
+            "n": 0,
+            "rate": null,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": "wilson_95"
+          }
+        },
+        "warnings": [
+          "[controller_id=scripted_baseline_a, controller_version=1, controller_config_hash=a1aa4189cacdb2927bc3262fd03343339e21447d388f027152b12a844d8519f7, controller_type=scripted, provenance=simulation, rubric_version=rubric-v1, condition=stress_nominal] small n: 0 evaluable trial(s) (< 20); intervals are wide and differences are not reliable.",
+          "[controller_id=scripted_baseline_a, controller_version=1, controller_config_hash=a1aa4189cacdb2927bc3262fd03343339e21447d388f027152b12a844d8519f7, controller_type=scripted, provenance=simulation, rubric_version=rubric-v1, condition=stress_nominal] 1 scored trial(s) excluded from 'evaluable' because recording QA is not accepted (fail/error/unchecked); 0 of the 1 raw task success(es) are unverified (shown, not hidden)."
+        ]
+      }
+    ],
+    "warnings": [
+      "[overall] small n: 0 evaluable trial(s) (< 20); intervals are wide and differences are not reliable.",
+      "[overall] 1 scored trial(s) excluded from 'evaluable' because recording QA is not accepted (fail/error/unchecked); 0 of the 1 raw task success(es) are unverified (shown, not hidden)."
+    ],
+    "denominator_definitions": {
+      "planned": "all trials given (never-attempted trials stay here)",
+      "attempted": "started_at set (reached RUNNING)",
+      "completed/failed/aborted": "lifecycle state counts",
+      "unscored": "attempted trials with task_outcome=unscored",
+      "evaluable": "COMPLETED, scored success|failure, recording_quality in {pass, flagged}; unchecked/error/fail are excluded and counted in quality_excluded",
+      "raw_task_successes": "COMPLETED + scored success regardless of QA or intervention (unverified)",
+      "success_per_attempt": "VERIFIED autonomous successes (QA pass|flagged) / attempted",
+      "success_per_evaluable": "VERIFIED autonomous successes / evaluable",
+      "intervention_rate": "intervention == assisted / attempted",
+      "infra_abort_rate": "attempted trials terminated by an infra reason / attempted",
+      "recording_pass_rate": "recording_quality == pass / attempted",
+      "artifact_completeness": "present+hash-recorded / expected (expected includes video+trace per attempt)",
+      "checksum_agreement": "verified / transferred (uploaded+verified+mismatch)"
+    }
+  },
+  "failures": {
+    "rows": [
+      {
+        "controller_id": "scripted_baseline_a",
+        "controller_type": "scripted",
+        "provenance": "simulation",
+        "condition": "stress_nominal",
+        "failure_class": "non_autonomous_success",
+        "state": "completed",
+        "termination_reason": "success_criterion_met",
+        "task_outcome": "success",
+        "intervention": "none",
+        "count": 1
+      }
+    ],
+    "qa_flag_counts": {
+      "hash_mismatch": 1,
+      "truncated_video": 1
+    },
+    "total_trials": 1,
+    "class_totals": {
+      "non_autonomous_success": 1
+    },
+    "note": "Every trial appears in exactly one row. infra/abort trials stay unscored and are never counted as task failures; task failures are completed trials scored failure."
+  },
+  "comparisons": [],
+  "limitations": [
+    "The controllers evaluated by this repository are scripted, state-based programs reading simulator state; they are not learned policies and not trained checkpoints.",
+    "Simulation results use a PyBullet Panda arm with rendered simulator frames. This is not the SO-101 arm and not physical hardware; no conclusion about real-robot performance follows.",
+    "Mock-provenance results are seeded fixtures and are never evidence of robotics performance.",
+    "Visual-only conditions (lighting, background, occlusion) do not change what a state-based controller reads; they say nothing about the visual robustness of a learned policy.",
+    "Small sample sizes: Wilson intervals are wide and any difference between controllers is descriptive. p-values from so few discordant pairs do not support significance claims.",
+    "Scoring agreement between independent human scorers and reset-time improvements are not measured by this report; they need independent human measurement (see docs/evaluation-protocol.md)."
+  ],
+  "trials": [
+    {
+      "provenance_banner": "SIMULATION \u2014 PyBullet Panda arm with rendered simulator frames; not the SO-101 and not hardware",
+      "session_id": "95a17e99-453a-4ac3-ba88-e8f3267e1665",
+      "trial_id": "d87f8c1e-7330-4a8d-8896-323fe9379ecd",
+      "schedule_position": 0,
+      "provenance": "simulation",
+      "backend": "pybullet_panda",
+      "controller_id": "scripted_baseline_a",
+      "controller_type": "scripted",
+      "controller_version": "1",
+      "controller_config_hash": "a1aa4189cacdb2927bc3262fd03343339e21447d388f027152b12a844d8519f7",
+      "condition": "stress_nominal",
+      "condition_kind": "physics_stress",
+      "trial_index": 0,
+      "seed": 2407659734,
+      "state": "completed",
+      "attempted": true,
+      "termination_reason": "success_criterion_met",
+      "task_outcome": "success",
+      "score_source": "physics_evidence",
+      "rubric_version": "rubric-v1",
+      "intervention": "none",
+      "recording_quality": "fail",
+      "autonomous_success": false,
+      "failure_class": "non_autonomous_success",
+      "duration_s": 13.600000000000058,
+      "reset_duration_s": 0.2029999999795109,
+      "qa_flags": "truncated_video;hash_mismatch",
+      "n_artifacts": 3,
+      "video_relpath": "runs/95a17e99-453a-4ac3-ba88-e8f3267e1665/trials/d87f8c1e-7330-4a8d-8896-323fe9379ecd/video.mp4",
+      "video_status": "present",
+      "manifest_path": "runs/95a17e99-453a-4ac3-ba88-e8f3267e1665/manifest.json"
+    }
+  ],
+  "sources": [
+    {
+      "trial_id": "d87f8c1e-7330-4a8d-8896-323fe9379ecd",
+      "session_id": "95a17e99-453a-4ac3-ba88-e8f3267e1665",
+      "artifacts": [
+        "runs/95a17e99-453a-4ac3-ba88-e8f3267e1665/trials/d87f8c1e-7330-4a8d-8896-323fe9379ecd/controller.json",
+        "runs/95a17e99-453a-4ac3-ba88-e8f3267e1665/trials/d87f8c1e-7330-4a8d-8896-323fe9379ecd/trace.jsonl",
+        "runs/95a17e99-453a-4ac3-ba88-e8f3267e1665/trials/d87f8c1e-7330-4a8d-8896-323fe9379ecd/video.mp4"
+      ]
+    }
+  ]
+}
