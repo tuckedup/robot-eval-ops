@@ -192,3 +192,15 @@ lerobot-train --policy.type=act --dataset.repo_id=<user>/<dataset> \
 Split data by **whole episodes** (`robotevalops robot import-dataset --path ...` prints a
 deterministic episode-level split); never put adjacent frames of one episode into both train and
 evaluation. A trained checkpoint must be registered as a `learned` controller with its SHA-256.
+
+## Calibration guard, device lease and version pin (audit A4/A6)
+
+* `lerobot-record`/`lerobot-teleoperate` call `robot.connect(calibrate=True)`. On a calibration mismatch LeRobot 0.4.4
+  would disable torque and write registers (empty calibration) or offer to overwrite the motors (valid file). RobotEvalOps
+  launches those tools through `adapters/lerobot_guard.py`, which replaces `calibrate`/`setup_motors` with a refusal;
+  a mismatch aborts with exit 98 ("calibration blocked") and nothing is written. If the guard cannot install, the tool is
+  not started (exit 97). Demonstrated with FAKE buses only (`tests/robotics/test_hardware_guard.py`); never against a real arm.
+* Calibration files must contain all six SO-101 motors with plausible ids/ranges/offsets; `{}` is refused.
+* `robot teleop|record|rollout` create a unique session and lease the physical serial ports (same lease as `session run`);
+  a crashed command is recovered with `robotevalops session recover <id>`.
+* Motion commands are built only for lerobot 0.4.4 (`TESTED_LEROBOT_VERSIONS`); any other version is refused.

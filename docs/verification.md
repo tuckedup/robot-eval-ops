@@ -1,5 +1,11 @@
 # Verification record
 
+> **Superseded counts.** The test totals in sections 3-4 below (578/53/745) describe commit `095ffb0` and did not
+> reproduce at that commit (audit reruns: 691 offline passed, 43 physics passed). Current, machine-generated results
+> (commit, versions, per-directory outcomes, skip reasons) are in `docs/verification-run.json`, produced by
+> `scripts/verify_all.sh`. Audit findings and fixes: `docs/audit-remediation.md`. The simulation numbers in section 4
+> are unchanged original acceptance evidence.
+
 Everything here was executed in this repository's environment on 2026-10-13. Nothing is claimed beyond what is listed.
 Software test outcomes, mock fixtures, physics results, imported-dataset QA, hardware results and proposed targets are
 kept in separate sections.

@@ -24,3 +24,18 @@ Subagent tool access is by `tools:` allowlist; ownership is enforced by instruct
 
 Lead-made edits to worker-owned files (to keep ownership honest): `tests/verification/` assertions updated for fixed behaviour
 (VF-02, VF-08, VF-11); `cli/robot_cmds.py` gate-before-discovery reorder found by the clean-clone run.
+
+## Reopened after the independent audit (see `docs/audit-remediation.md`)
+
+| ID | Task | Status | Evidence |
+|---|---|---|---|
+| A1 | QA fails closed (error state, verified-success rule) | done | `tests/core/test_qa_fail_closed.py` |
+| A2/A3 | Dataset QA substance + LeRobot v3/v2.1 support, real public dataset | done | `tests/data/test_dataset_import.py`, `docs/real-data/` |
+| A4 | Calibration content check + no-auto-calibration guard (fake buses) | done | `tests/robotics/test_hardware_guard.py` |
+| A5 | Wheel ships configs; Docker uses lock | done / Docker build NOT executed (daemon not running) | `tests/verification/test_packaging.py` |
+| A6 | Durable sessions + physical-port lease for hardware CLI | done | `tests/robotics/test_hardware_lease.py` |
+| A7/A8 | Consecutive grasp contact; identity-keyed grouping and pairing | done | `tests/robotics/test_grasp_contact_rule.py`, `tests/eval/test_identity_pooling.py` |
+| X1 | Paired duration analysis | done | `docs/analysis/paired_duration_full_sim/` |
+| X2 | Frozen failure-oriented stress study | done | `docs/stress-study/results_stress_v1/` |
+| X3 | Operator demo | done | `docs/walkthrough-90s.md`, `docs/demo/operator/` |
+| V2 | Independent re-audit of the fixes | see `docs/verification-reaudit.md` | - |

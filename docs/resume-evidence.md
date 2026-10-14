@@ -3,27 +3,27 @@
 Only completed, measured work. Each bullet links to the artifact that supports it. Do not edit numbers without
 re-running the linked command. Everything below is simulation/software; **no robot hardware was operated.**
 
-## Bullets backed by evidence
+## Bullets backed by evidence (two, measured; simulation/software only)
 
-1. **Built a reproducible robot-evaluation pipeline and ran a 100-trial PyBullet Panda pick-and-place study**
-   (2 versioned scripted controllers × 5 conditions × 10 paired seeds): outcomes derived from recorded physics state
-   (grasp contact, lift, containment, release, 2 s dwell), 100/100 trials recorded with video + state/action traces,
-   100/100 recording-QA pass, and 300/300 artifacts SHA-256-verified after a local-store round trip. Every trial stays in the
-   denominators; rates carry Wilson 95% intervals.
-   Evidence: `docs/demo/sim-full-100/summary.md` · `docs/verification.md` §4 · command
-   `robotevalops demo run --backend sim --config src/robotevalops/configs/eval_full_sim.yaml`.
-   *(Scripted state-based controllers in simulation: not a learned-policy or real-world result.)*
+1. **Evaluation and failure analysis in simulation.** Built a paired robot-evaluation pipeline (persisted trial
+   lifecycle, physics-evidence scoring, QA that fails closed) and used it for a pre-specified stress study of two scripted
+   pick-and-place controllers: protocol piloted on separate seeds, frozen by hash, then 464 held-out trials with 407 verified
+   successes and 57 failures categorised from simulator evidence, each linked to its video; the two controllers had different
+   failure envelopes (one fails at a 2 kg block, the other when the target is tightened to 35 mm). Reanalysed an earlier
+   100-trial run correctly: 50 pairs are 11 distinct start scenarios, B 25.9% shorter in simulated time (95% interval
+   24.4-27.4%). Evidence: `docs/stress-study/results_stress_v1/report.md`, `docs/analysis/paired_duration_full_sim/analysis.md`.
+   *(Panda in PyBullet, scripted controllers; not a real-robot, throughput or learned-policy result.)*
 
-2. **Designed a ten-case fault-injection and data-QA suite** (missing/truncated video, non-monotonic timestamps, NaN
-   actions, wrong schema, missing model artifact, duplicate IDs, hash mismatch, transfer timeout, interrupted runner):
-   10/10 detected with actionable errors, source evidence preserved, and no fault able to end as a success; backed by a
-   745-test suite (ruff + mypy clean; 578 offline + 53 physics re-run in a clean clone) and a clean-clone reproduction.
-   Evidence: `docs/fault-injection-report.md` · `docs/verification.md` §3, §6.
+2. **Data-integrity checks for robot recordings.** Wrote LeRobot v2.1/v3 dataset QA (finite state/action, timestamp and
+   index continuity across shards, per-camera decode and frame alignment, actual episode ids) and ran it on a public SO-101
+   dataset (`lerobot/svla_so101_pickplace`, Apache-2.0, 50 episodes, 11,939 frames, 2 AV1 cameras: 50/50 accepted, with
+   a revision-pinned provenance record); a NaN injected into a copy is rejected for exactly that episode; corrupted trial
+   recordings are rejected and cannot count as successes, and an interrupted run recovers without a false success.
+   Evidence: `docs/real-data/svla_so101_pickplace/`, `docs/demo/operator/`, `docs/audit-remediation.md`.
+   *(The demonstrations were collected by others; no robot hardware was operated.)*
 
-3. **Ran a multi-agent build with an independent adversarial verifier**: four specialist engineer agents plus a
-   verifier who did not write the code; it found 19 defects (1 blocker, 5 major, including a QA-to-metrics wiring gap and a
-   success rule that accepted pushed blocks). All were fixed and turned into regression tests.
-   Evidence: `docs/verification-findings.md` · `docs/implementation-status.md` · `.claude/agents/`.
+Do not use "built and teleoperated an SO-101" or any hardware sentence unless it is independently true. Agent-team
+construction is how the software was built, not a robotics credential.
 
 ## Future hardware bullets (placeholders — do NOT use until measured)
 
