@@ -100,6 +100,11 @@ class RecordingQuality(StrEnum):
     PASS = "pass"
     FLAGGED = "flagged"  # warnings only
     FAIL = "fail"  # error-level QA flags; record quarantined
+    ERROR = "error"  # QA could not run or complete (hook raised, report unwritable); evidence is unverified
+
+
+# Only these states are accepted evidence. unchecked/error are UNVERIFIED and fail; fail is rejected.
+QA_ELIGIBLE = frozenset({RecordingQuality.PASS, RecordingQuality.FLAGGED})
 
 
 class Intervention(StrEnum):
@@ -146,6 +151,7 @@ class QACode(StrEnum):
     TRANSFER_TIMEOUT = "transfer_timeout"
     INTERRUPTED_RUNNER = "interrupted_runner"
     LOW_COMPLETENESS = "low_completeness"
+    QA_EXECUTION_ERROR = "qa_execution_error"
 
 
 class Severity(StrEnum):
@@ -314,14 +320,15 @@ class TrialRecord(_M):
 
 
 def is_autonomous_success(t: TrialRecord) -> bool:
-    """Autonomous success requires ALL of: completed run, scored success, zero intervention,
-    and a non-teleoperated controller. Assisted/unknown intervention never counts."""
+    """VERIFIED autonomous success requires ALL of: completed run, scored success, zero intervention,
+    a non-teleoperated controller and an explicit accepted QA state (pass|flagged). Assisted/unknown
+    intervention and unchecked/error/fail recordings never count; the raw task outcome stays visible."""
     return (
         t.state == TrialState.COMPLETED
         and t.task_outcome == TaskOutcome.SUCCESS
         and t.intervention == Intervention.NONE
         and t.controller_type != ControllerType.TELEOPERATED
-        and t.recording_quality != RecordingQuality.FAIL
+        and t.recording_quality in QA_ELIGIBLE
     )
 
 
@@ -400,6 +407,8 @@ class QAReport(_M):
 
     @property
     def quality(self) -> RecordingQuality:
+        if any(f.code == QACode.QA_EXECUTION_ERROR for f in self.flags):
+            return RecordingQuality.ERROR  # QA itself did not complete: not a verdict on the recording
         if any(f.severity == Severity.ERROR for f in self.flags):
             return RecordingQuality.FAIL
         return RecordingQuality.FLAGGED if self.flags else RecordingQuality.PASS

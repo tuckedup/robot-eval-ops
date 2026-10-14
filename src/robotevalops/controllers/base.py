@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+from importlib import resources
 from pathlib import Path
 from typing import Any
 
@@ -18,8 +19,9 @@ class StopRequestedError(RobotEvalOpsError):
 
 
 def configs_dir() -> Path:
-    """Repository `configs/` directory (src layout: <repo>/src/robotevalops/controllers/base.py)."""
-    return Path(__file__).resolve().parents[3] / "configs"
+    """Default YAML configs shipped INSIDE the package (`robotevalops/configs`), so an installed wheel works
+    from any directory. Users may still pass their own config paths explicitly."""
+    return Path(str(resources.files("robotevalops").joinpath("configs")))
 
 
 def _load_list(path: str | Path) -> list[dict[str, Any]]:

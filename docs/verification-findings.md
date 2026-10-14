@@ -1,6 +1,6 @@
 # Independent verification findings (V1)
 
-Verifier: independent of the implementation. Scope: read-only on `src/`, `configs/`, other docs and other workers'
+Verifier: independent of the implementation. Scope: read-only on `src/`, `src/robotevalops/configs/`, other docs and other workers'
 tests; added tests only under `tests/verification/`. Date of runs: 2026-10-13, Windows 11, Python 3.11 (`.venv`).
 Everything below was run in this environment unless stated; nothing was run against real hardware or real AWS.
 
@@ -40,7 +40,7 @@ a success/QA verdict can be wrong, or the acceptance gate is red; minor = harden
 | VF-09 | minor | Input validation | `ID_RE`, `PORT_RE`, `REPO_RE` use `re.match` with `$`, which accepts a trailing newline: `follower_id='fol\n'`, `follower_port='COM3\n'`, `dataset_repo_id='a/b\n'` validate and land in argv elements and calibration file names. No shell is involved so no injection was achieved (all 14 hostile strings x 5 fields rejected). | `pytest ... -k trailing_newline_is_rejected` (xfail strict) | Robotics (`fullmatch`) |
 | VF-14 | minor | Provenance labelling | `summary.csv` of a MOCK session has no "MOCK FIXTURE" text (only `provenance=mock` and `score_source=mock_fixture` columns in every row). Banner is present in report.html, summary.md, summary.json, the three plots and `demo-summary.json`. The fault-injection report states "provenance=mock; not robot data" once. | `pytest tests/verification/test_reproducibility_and_reports.py -k mock_banner_text_also_in_csv` (xfail strict) | Eval |
 | VF-15 | minor | Rubric vs code | `docs/evaluation-protocol.md` / scoring rubric: block must be entirely inside, "not touching or straddling the boundary". Code accepts touching: `corners_inside_square` uses `<=` (`sim_pybullet.py:142-143`). A block whose edge is exactly on the boundary scores success. Only the bottom face is tested, so a tilted block with an overhanging top is also accepted. Measure-zero in practice. | `sim_pybullet.py:136-144` | Robotics / Eval (pick one wording) |
-| VF-16 | minor | Docs | README is the placeholder "(README is written at integration time.)". `docs/verification.md` and `docs/resume-evidence.md` are referenced as the home of measured values (`evaluation-protocol.md` section 6, `configs/targets.yaml`) but do not exist yet. | `ls docs` | Lead |
+| VF-16 | minor | Docs | README is the placeholder "(README is written at integration time.)". `docs/verification.md` and `docs/resume-evidence.md` are referenced as the home of measured values (`evaluation-protocol.md` section 6, `src/robotevalops/configs/targets.yaml`) but do not exist yet. | `ls docs` | Lead |
 | VF-17 | minor | Hardware scope (documented) | `docs/hardware-setup.md` says parquet to `trace.jsonl` is not implemented. Consequence not stated: every hardware trial has a video but no trace, so once a QA hook is wired it gets `missing_artifact` ERROR and `recording_quality=fail`, i.e. zero hardware trials can ever be `evaluable`. | code read: `hardware_so101.run_episode` returns `RecordingSummary(video_relpath=...)` only | Robotics / Lead (state it) |
 
 ## 3. Attacks that FAILED to break the system (covered, all passing in `tests/verification/`)

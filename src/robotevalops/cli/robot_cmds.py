@@ -8,6 +8,7 @@ the library only). Nothing here was verified against real hardware.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import tempfile
 from pathlib import Path
@@ -37,8 +38,11 @@ app = typer.Typer(
     help="Robotics: adapters, simulation smoke, SO-101 hardware wrapper, datasets.", no_args_is_help=True
 )
 
-DEFAULT_CONFIG = typer.Option(None, "--config", help="SO-101 YAML (see configs/hardware/so101.example.yaml)")
+DEFAULT_CONFIG = typer.Option(
+    None, "--config", help="SO-101 YAML (see src/robotevalops/configs/hardware/so101.example.yaml)"
+)
 JSON_OPT = typer.Option(False, "--json", help="Compact machine-readable JSON")
+HOME_OPT = typer.Option(None, "--home", help="Data root holding robotevalops.db (default $ROBOTEVALOPS_HOME)")
 
 
 def _emit(obj: Any, as_json: bool) -> None:
@@ -170,13 +174,18 @@ def _hardware_flow(
     episodes: int | None,
     policy_path: str | None,
     as_json: bool,
+    home: Path | None = None,
 ) -> None:
+    """teleop/record/rollout. Dry-run never persists or executes anything. A real run is a durable session:
+    unique session id, per-session operator acknowledgement, the same physical-port lease `session run` takes,
+    persisted command evidence, and a terminal session state, whatever happens."""
     cfg = _load_cfg(config, as_json)
+    dry_session = "dry-run"
     adapter = SO101HardwareAdapter(
         cfg,
         hardware_mode=hardware_mode,
-        acknowledgement=OperatorAcknowledgement(ack_operator, "cli-session") if ack_operator else None,
-        session_id="cli-session",
+        acknowledgement=OperatorAcknowledgement(ack_operator, dry_session) if ack_operator else None,
+        session_id=dry_session,
     )
     wrapper = adapter.wrapper
     if not dry_run:
@@ -200,8 +209,8 @@ def _hardware_flow(
     except RobotEvalOpsError as e:
         _fail(str(e), 2, as_json)
         raise
-    calib = wrapper.calibration_checks()
     if dry_run:
+        calib = wrapper.calibration_checks()
         gate_reason = adapter.gate().refusal()
         _emit(
             {
@@ -219,19 +228,97 @@ def _hardware_flow(
             as_json,
         )
         return
-    pre = adapter.preflight()
-    if not pre.ok:
-        _fail(
-            "refused: preflight failed: " + "; ".join(f"{c.name}: {c.detail}" for c in pre.failures()),
-            2,
-            as_json,
-        )
+    _run_supervised(kind, cfg, plan, hardware_mode, str(ack_operator), timeout, as_json, home)
+
+
+def _run_supervised(
+    kind: str,
+    cfg: SO101Config,
+    plan: CommandPlan,
+    hardware_mode: bool,
+    operator: str,
+    timeout: float,
+    as_json: bool,
+    home: Path | None,
+) -> None:
+    from robotevalops.core.devices import hardware_lock_keys
+    from robotevalops.core.service import EvalService
+    from robotevalops.errors import DeviceBusyError
+    from robotevalops.schemas import Provenance, SessionState
+    from robotevalops.util import atomic_write_text
+
+    svc = EvalService(home)
+    keys = hardware_lock_keys([cfg.follower_port, cfg.leader_port])
+    sess = svc.create_session(
+        f"robot-{kind}",
+        Provenance.PHYSICAL_HARDWARE,
+        "so101_lerobot",
+        purpose=kind,
+        operator=operator,
+        notes=f"standalone `robot {kind}` command (supervised; not a scored evaluation)",
+    )
+    sid = sess.session_id
+    svc.acknowledge_operator(sid, operator)  # bound to THIS unique session only
+    leased = False
+
+    def finish(state: SessionState, note: str) -> None:
+        if leased:
+            svc.release_devices(keys, sid)
+        svc.transition_session(sid, state, note=note)
+
     try:
-        res = wrapper.run(plan, gate=adapter.gate(), timeout_s=timeout)
-    except RobotEvalOpsError as e:
-        _fail(str(e), 2, as_json)
+        svc.acquire_devices(keys, sid)
+        leased = True
+    except DeviceBusyError as e:
+        svc.transition_session(sid, SessionState.ABORTED, note=f"refused: {e}")
+        _fail(f"refused: {e}", 2, as_json)
         raise
-    _emit(res.as_dict(), as_json)
+    adapter = SO101HardwareAdapter(
+        cfg,
+        hardware_mode=hardware_mode,
+        acknowledgement=OperatorAcknowledgement(operator, sid),
+        session_id=sid,
+    )
+    try:
+        pre = adapter.preflight()
+        if not pre.ok:
+            msg = "refused: preflight failed: " + "; ".join(f"{c.name}: {c.detail}" for c in pre.failures())
+            svc.record_event("hardware_refused", sid, reason=msg)
+            finish(SessionState.ABORTED, msg)
+            leased = False
+            _fail(msg, 2, as_json)
+        svc.mark_preflight_passed(sid)
+        svc.transition_session(sid, SessionState.RUNNING)
+        svc.record_event("hardware_command_start", sid, command=kind, argv=plan.argv, lease=keys)
+        try:
+            res = adapter.wrapper.run(plan, gate=adapter.gate(), timeout_s=timeout)
+        except RobotEvalOpsError as e:
+            svc.record_event("hardware_command_refused", sid, error=str(e))
+            finish(SessionState.ABORTED, f"refused: {e}")
+            leased = False
+            _fail(str(e), 2, as_json)
+            raise
+        out = {**res.as_dict(), "session_id": sid, "lease": keys}
+        atomic_write_text(
+            svc.run_dir(sid) / "hardware_command.json", json.dumps(out, indent=2, default=str) + "\n"
+        )
+        svc.record_event("hardware_command_end", sid, status=res.status, returncode=res.returncode)
+        final = (
+            SessionState.COMPLETED
+            if res.ok
+            else (SessionState.ABORTED if res.status == "stopped" else SessionState.FAILED)
+        )
+        finish(final, f"{kind}: {res.status}")
+        leased = False
+    except typer.Exit:
+        raise
+    except BaseException as e:  # incl. KeyboardInterrupt: never leave a RUNNING session holding the lease
+        if leased:
+            svc.record_event("hardware_command_interrupted", sid, error=f"{type(e).__name__}: {e}")
+            with contextlib.suppress(Exception):
+                finish(SessionState.ABORTED, f"interrupted: {type(e).__name__}")
+        raise
+    _emit(out, as_json)
     if not res.ok:
         raise typer.Exit(1)
 
@@ -244,9 +331,10 @@ def teleop(
     dry_run: bool = typer.Option(False, "--dry-run"),
     timeout: float = typer.Option(600.0, "--timeout"),
     as_json: bool = JSON_OPT,
+    home: Path | None = HOME_OPT,
 ) -> None:
     """Teleoperate follower with leader (lerobot-teleoperate). Needs hardware mode + ack + preflight."""
-    _hardware_flow("teleop", config, hardware_mode, ack_operator, dry_run, timeout, None, None, as_json)
+    _hardware_flow("teleop", config, hardware_mode, ack_operator, dry_run, timeout, None, None, as_json, home)
 
 
 @app.command("record")
@@ -258,9 +346,12 @@ def record(
     timeout: float = typer.Option(3600.0, "--timeout"),
     episodes: int | None = typer.Option(None, "--episodes", min=1),
     as_json: bool = JSON_OPT,
+    home: Path | None = HOME_OPT,
 ) -> None:
     """Record teleoperated episodes (lerobot-record). Needs hardware mode + ack + preflight."""
-    _hardware_flow("record", config, hardware_mode, ack_operator, dry_run, timeout, episodes, None, as_json)
+    _hardware_flow(
+        "record", config, hardware_mode, ack_operator, dry_run, timeout, episodes, None, as_json, home
+    )
 
 
 @app.command("rollout")
@@ -273,10 +364,20 @@ def rollout(
     episodes: int | None = typer.Option(None, "--episodes", min=1),
     policy_path: str | None = typer.Option(None, "--policy-path"),
     as_json: bool = JSON_OPT,
+    home: Path | None = HOME_OPT,
 ) -> None:
     """Supervised learned-policy rollout (lerobot-record --policy.path); needs mode + ack + preflight."""
     _hardware_flow(
-        "rollout", config, hardware_mode, ack_operator, dry_run, timeout, episodes, policy_path, as_json
+        "rollout",
+        config,
+        hardware_mode,
+        ack_operator,
+        dry_run,
+        timeout,
+        episodes,
+        policy_path,
+        as_json,
+        home,
     )
 
 
@@ -285,25 +386,77 @@ def import_dataset(
     path: Path | None = typer.Option(None, "--path", help="LeRobot-compatible dataset directory"),
     eval_fraction: float = typer.Option(0.2, "--eval-fraction"),
     seed: int = typer.Option(0, "--split-seed"),
+    episodes: list[int] = typer.Option([], "--episode", help="QA/split only these ACTUAL episode ids"),
+    out: Path | None = typer.Option(None, "--out", help="Write import_record.json here"),
+    source_url: str = typer.Option("", "--source-url", help="where the dataset came from"),
+    source_revision: str = typer.Option("", "--source-revision", help="commit/revision that was downloaded"),
+    license_name: str = typer.Option("", "--license", help="dataset licence as stated by its source"),
+    max_mb: float = typer.Option(500.0, "--max-mb", help="refuse datasets larger than this"),
+    require_video: bool = typer.Option(True, "--require-video/--no-require-video"),
     as_json: bool = JSON_OPT,
 ) -> None:
-    """Inspect a LeRobot-format dataset read-only and print an episode-level train/eval split."""
+    """Import a LeRobot dataset: content QA (finite state/action, timestamps, camera decode + alignment), an
+    episode-level split over the ACCEPTED actual episode ids, and a provenance record. Read-only.
+    Exit 0 accepted, 1 rejected, 3 incomplete (some criterion could not be verified)."""
+    from robotevalops.adapters.lerobot_dataset import TESTED_LEROBOT_VERSION
+    from robotevalops.qa.dataset_import import qa_lerobot_dataset
+    from robotevalops.util import atomic_write_text, sha256_file, utcnow
+
     if path is None:
-        _emit(
-            {
-                "dataset": None,
-                "message": "no dataset provided (--path); none exists in this repository; nothing imported.",
-            },
-            as_json,
-        )
+        _emit({"dataset": None, "message": "no dataset provided (--path); nothing imported."}, as_json)
         return
     try:
         summary = inspect_dataset(path)
-        n = summary.get("total_episodes")
+        files = sorted(p for p in Path(path).rglob("*") if p.is_file())
+        total_mb = sum(p.stat().st_size for p in files) / 1e6
+        if total_mb > max_mb:
+            raise RobotEvalOpsError(f"dataset is {total_mb:.0f} MB, above --max-mb {max_mb:g}; refusing")
+        rep = qa_lerobot_dataset(path, episodes=episodes or None, require_video=require_video)
         split = None
-        if isinstance(n, int) and n >= 2:
-            split = split_episodes(list(range(n)), eval_fraction, seed)
+        ok_eps = rep.accepted_episodes
+        if len(ok_eps) >= 2:
+            split = split_episodes(ok_eps, eval_fraction, seed)
     except RobotEvalOpsError as e:
         _fail(str(e), 2, as_json)
         raise
-    _emit({"dataset": summary, "episode_split": split, "split_unit": "whole episodes"}, as_json)
+    record = {
+        "imported_at": utcnow().isoformat(),
+        "provenance": "imported_real_recording",
+        "not_collected_by_owner": "imported demonstrations were NOT collected by whoever runs this tool",
+        "source": {
+            "url": source_url,
+            "revision": source_revision,
+            "license": license_name,
+            "local_path": str(path),
+        },
+        "download_bound_mb": max_mb,
+        "size_mb": round(total_mb, 2),
+        "files": {p.relative_to(path).as_posix(): sha256_file(p) for p in files},
+        "tested_lerobot_version": TESTED_LEROBOT_VERSION,
+        "dataset": summary,
+        "qa": rep.to_dict(),
+        "split": {
+            "unit": "whole actual episode ids (accepted only)",
+            "seed": seed,
+            "eval_fraction": eval_fraction,
+            **(split or {}),
+        },
+    }
+    if out is not None:
+        out.mkdir(parents=True, exist_ok=True)
+        atomic_write_text(out / "import_record.json", json.dumps(record, indent=2, default=str) + "\n")
+    _emit(
+        {
+            "status": rep.status,
+            "accepted_episodes": rep.accepted_episodes,
+            "rejected_episodes": rep.rejected_episodes,
+            "reasons": rep.status_reasons,
+            "split": record["split"],
+            "record": str(out / "import_record.json") if out else None,
+        },
+        as_json,
+    )
+    if rep.status == "rejected":
+        raise typer.Exit(1)
+    if rep.status == "incomplete":
+        raise typer.Exit(3)

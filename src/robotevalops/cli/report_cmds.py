@@ -271,3 +271,92 @@ def dashboard(
     if home:
         env["ROBOTEVALOPS_HOME"] = str(Path(home).resolve())
     raise typer.Exit(subprocess.call(cmd, env=env))
+
+
+@app.command("paired-duration")
+@_guarded
+def paired_duration(
+    controller_a: str = typer.Option(..., "--a", help="controller_id A"),
+    controller_b: str = typer.Option(..., "--b", help="controller_id B"),
+    out: Path = typer.Option(..., "--out", help="Directory for analysis.json / analysis.md / plots"),
+    home: Path | None = HomeOpt,
+    session_id: list[str] = typer.Option([], "--session-id", help="Default: every session in the database"),
+    as_json: bool = JsonOpt,
+) -> None:
+    """Paired duration + trade-off analysis of two controllers. READ-ONLY on the source data: the database
+    is copied to a temp dir first and every artifact hash is verified before the numbers are used."""
+    import shutil
+    import tempfile
+
+    from robotevalops.analysis.paired_duration import analyze, render_markdown
+    from robotevalops.analysis.plots import plot_scenario_diffs, plot_trajectories
+    from robotevalops.util import atomic_write_text, get_home, sha256_file
+
+    src = get_home(home)
+    db = src / "robotevalops.db"
+    if not db.is_file():
+        raise RobotEvalOpsError(f"no robotevalops.db under {src}")
+    before = sha256_file(db)
+    with tempfile.TemporaryDirectory() as tmp:
+        for f in src.glob("robotevalops.db*"):
+            shutil.copy2(f, Path(tmp) / f.name)
+        svc = EvalService(tmp)
+        ids = session_id or [s.session_id for s in svc.list_sessions()]
+        trials = _trials(svc, ids)
+    mism = []
+    for t in trials:
+        for a in t.artifacts:
+            p = src / "runs" / t.session_id / a.relpath
+            if not p.is_file() or (a.sha256 and sha256_file(p) != a.sha256):
+                mism.append(f"{t.trial_id}:{a.relpath}")
+    if mism:
+        raise RobotEvalOpsError(
+            f"{len(mism)} artifact(s) missing or hash-mismatched; refusing to analyse: {mism[:5]}"
+        )
+    params = {
+        c: next(
+            (
+                json.loads(p.read_text(encoding="utf-8"))
+                for p in [
+                    src / "runs" / t.session_id / a.relpath
+                    for t in trials
+                    if t.controller_id == c
+                    for a in t.artifacts
+                    if a.role.value == "config"
+                ][:1]
+            ),
+            {},
+        )
+        for c in (controller_a, controller_b)
+    }
+    params = {
+        c: {**p.get("spec", {}).get("config", {}), "config_hash": p.get("config_hash")}
+        for c, p in params.items()
+    }
+    res = analyze(trials, controller_a, controller_b, params, run_root=src / "runs")
+    out.mkdir(parents=True, exist_ok=True)
+    traces = {}
+    for c in (controller_a, controller_b):
+        t = next(
+            t for t in trials if t.controller_id == c and t.condition_name == "nominal" and t.trial_index == 0
+        )
+        traces[c] = (
+            src / "runs" / t.session_id / next(a.relpath for a in t.artifacts if a.role.value == "trace")
+        )
+    plot_trajectories(
+        traces, out / "trajectories_nominal.png", f"Nominal start, trial 0: {controller_a} vs {controller_b}"
+    )
+    plot_scenario_diffs(res, out / "paired_differences.png")
+    data = res.to_dict()
+    data["source"] = {
+        "home": str(src),
+        "db_sha256_before": before,
+        "db_sha256_after": sha256_file(db),
+        "artifacts_verified": sum(len(t.artifacts) for t in trials),
+        "sessions": ids,
+    }
+    if data["source"]["db_sha256_after"] != before:
+        raise RobotEvalOpsError("source database changed during analysis (it must be untouched)")
+    atomic_write_text(out / "analysis.json", json.dumps(data, indent=2, default=str) + "\n")
+    atomic_write_text(out / "analysis.md", render_markdown(res))
+    _emit(data["duration"] if as_json else data, as_json, render_markdown(res))

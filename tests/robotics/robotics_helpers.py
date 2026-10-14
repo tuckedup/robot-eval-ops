@@ -94,14 +94,32 @@ def make_cfg(**kw: object) -> SO101Config:
     return SO101Config.model_validate(base)
 
 
-def make_calibration(root: Path, cfg: SO101Config) -> None:
+VALID_CALIBRATION = {
+    name: {
+        "id": i,
+        "drive_mode": 0,
+        "homing_offset": 10 * i,
+        "range_min": 100 * i,
+        "range_max": 100 * i + 2000,
+    }
+    for i, name in enumerate(
+        ("shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll", "gripper"), start=1
+    )
+}
+
+
+def make_calibration(root: Path, cfg: SO101Config, content: dict | None = None) -> None:
+    """Write SYNTHETIC but structurally valid joint-calibration JSON (not from any real arm)."""
+    import json
+
+    payload = VALID_CALIBRATION if content is None else content
     for sub, name, ident in (
         ("robots", "so_follower", cfg.follower_id),
         ("teleoperators", "so_leader", cfg.leader_id),
     ):
         d = root / sub / name
         d.mkdir(parents=True, exist_ok=True)
-        (d / f"{ident}.json").write_text("{}", encoding="utf-8")
+        (d / f"{ident}.json").write_text(json.dumps(payload), encoding="utf-8")
 
 
 def fake_info(ov: dict[str, list[str]]) -> LeRobotInfo:

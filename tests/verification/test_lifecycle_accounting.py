@@ -63,7 +63,9 @@ def _start(svc: EvalService, tid: str) -> None:
         svc.transition_trial(tid, st)
 
 
-def _finish(svc, tid, reason=TerminationReason.SUCCESS_CRITERION_MET, outcome=None, interv=None, dur=1.0):
+def _finish(
+    svc, tid, reason=TerminationReason.SUCCESS_CRITERION_MET, outcome=None, interv=None, dur=1.0, quality=None
+):
     return svc.record_trial_result(
         tid,
         termination_reason=reason,
@@ -71,6 +73,7 @@ def _finish(svc, tid, reason=TerminationReason.SUCCESS_CRITERION_MET, outcome=No
         task_outcome=outcome,
         score_source=ScoreSource.MOCK_FIXTURE if outcome else None,
         intervention=interv,
+        recording_quality=quality,
     )
 
 
@@ -263,7 +266,7 @@ def test_intervention_and_controller_type_never_yield_autonomous_success(tmp_pat
     for idx, interv in enumerate((Intervention.NONE, Intervention.ASSISTED, Intervention.UNKNOWN)):
         tid = by[("c0", idx)]
         _start(svc, tid)
-        _finish(svc, tid, outcome=TaskOutcome.SUCCESS, interv=interv)
+        _finish(svc, tid, outcome=TaskOutcome.SUCCESS, interv=interv, quality=RecordingQuality.PASS)
     got = [is_autonomous_success(svc.get_trial(by[("c0", i)])) for i in range(3)]
     assert got == [True, False, False]
     # teleoperated with intervention none and a success must never be autonomous

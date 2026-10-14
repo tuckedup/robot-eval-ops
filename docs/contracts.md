@@ -7,9 +7,9 @@ Authoritative for all workers. Code contracts: `schemas.py`, `lifecycle_rules.py
 
 | Owner | Source subtree | Test subtree |
 |---|---|---|
-| Lead | `pyproject.toml`, `uv.lock`, `schemas.py`, `lifecycle_rules.py`, `errors.py`, `util.py`, `adapters/base.py`, `storage/base.py`, `cli/main.py`, `cli/demo_cmds.py`, `scripts/`, `.github/`, `Dockerfile`, `README.md`, `CLAUDE.md`, `.claude/`, `docs/implementation-status.md`, `docs/verification.md`, `docs/resume-evidence.md`, `configs/targets.yaml`, `tests/integration/` | `tests/integration/` |
-| Core | `core/**`, `cli/session_cmds.py`, `config.py` (eval-config YAML loading + `configs/*.yaml` eval templates), `docs/architecture.md`, `docs/data-schema.md` (DB + lifecycle parts) | `tests/core/**` |
-| Robotics | `adapters/mock.py`, `adapters/sim_*.py`, `adapters/hardware_*.py`, `adapters/lerobot_*.py`, `adapters/registry.py`, `controllers/**`, `cli/robot_cmds.py`, `configs/hardware/**`, `configs/controllers/**`, `docs/hardware-setup.md` | `tests/robotics/**` |
+| Lead | `pyproject.toml`, `uv.lock`, `schemas.py`, `lifecycle_rules.py`, `errors.py`, `util.py`, `adapters/base.py`, `storage/base.py`, `cli/main.py`, `cli/demo_cmds.py`, `scripts/`, `.github/`, `Dockerfile`, `README.md`, `CLAUDE.md`, `.claude/`, `docs/implementation-status.md`, `docs/verification.md`, `docs/resume-evidence.md`, `src/robotevalops/configs/targets.yaml`, `tests/integration/` | `tests/integration/` |
+| Core | `core/**`, `cli/session_cmds.py`, `config.py` (eval-config YAML loading + `src/robotevalops/configs/*.yaml` eval templates), `docs/architecture.md`, `docs/data-schema.md` (DB + lifecycle parts) | `tests/core/**` |
+| Robotics | `adapters/mock.py`, `adapters/sim_*.py`, `adapters/hardware_*.py`, `adapters/lerobot_*.py`, `adapters/registry.py`, `controllers/**`, `cli/robot_cmds.py`, `src/robotevalops/configs/hardware/**`, `src/robotevalops/configs/controllers/**`, `docs/hardware-setup.md` | `tests/robotics/**` |
 | Data/storage | `recording/**`, `qa/**`, `storage/{local,s3,package,retry}.py`, `faults/**`, `cli/data_cmds.py`, `docs/troubleshooting.md` (storage/QA parts), `docs/templates/**` (acceptance checklist) | `tests/data/**` |
 | Eval/reporting | `metrics/**`, `reporting/**`, `dashboard/**`, `scoring.py`, `cli/report_cmds.py`, `docs/evaluation-protocol.md`, `docs/operating-procedure.md`, rubric/reset-checklist/bug template under `docs/templates/` | `tests/eval/**` |
 | Verifier | READ-ONLY on `src/`; writes only `tests/verification/**`, `docs/verification-findings.md` | `tests/verification/**` |

@@ -96,13 +96,16 @@ def test_errors_are_clear(tmp_path):
         load_eval_config(write(tmp_path / "j.yaml", base(controllers_from="empty.yaml", conditions=COND)))
 
 
-def test_shipped_eval_templates_parse_when_referenced_files_exist():
-    root = Path(__file__).resolve().parents[2]
+def test_shipped_eval_templates_parse_from_the_package():
+    from robotevalops.controllers.base import configs_dir
+
+    root = configs_dir()
+    assert "robotevalops" in root.parts  # shipped inside the package, not a repo-root directory
     expected = {"eval_smoke_mock": 12, "eval_smoke_sim": 10, "eval_full_sim": 100}
     for name, count in expected.items():
-        path = root / "configs" / f"{name}.yaml"
+        path = root / f"{name}.yaml"
         raw = yaml.safe_load(path.read_text(encoding="utf-8"))
         assert raw["provenance"] in ("mock", "simulation")
-        refs = [root / raw["controllers_from"], root / raw["conditions_from"]]
-        if all(r.is_file() for r in refs):  # robotics-owned lists may not exist yet
-            assert load_eval_config(path).planned_count == count
+        assert (path.parent / raw["controllers_from"]).is_file()  # resolved next to the config
+        assert (path.parent / raw["conditions_from"]).is_file()
+        assert load_eval_config(path).planned_count == count

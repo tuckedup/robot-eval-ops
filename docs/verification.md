@@ -42,7 +42,7 @@ Full development-tree suite before that fix (all markers except `s3_real`): **74
 
 ## 4. Simulation (PyBullet Panda) — physics results
 
-Full template `configs/eval_full_sim.yaml` (2 scripted controllers × 5 conditions × 10 trials), run on the final code:
+Full template `src/robotevalops/configs/eval_full_sim.yaml` (2 scripted controllers × 5 conditions × 10 trials), run on the final code:
 planned 100 / attempted 100 / completed 100 / failed 0 / aborted 0 / unscored 0; autonomous success 100/100,
 Wilson 95% [0.963, 1.000]; recording-QA pass 100/100; artifacts 300/300 present and SHA-256-verified through the local
 store; mean trial duration 11.31 s (median 11.53, min 9.35, max 13.95; simulated time, n=100); mean reset 0.26 s; block
@@ -90,7 +90,7 @@ a second independent review.
 - **Real AWS S3:** not executed (`-m s3_real`, needs `ROBOTEVALOPS_S3_BUCKET`); moto-mocked tests only.
 - **GitHub Actions workflow** (`.github/workflows/ci.yml`) and **Dockerfile:** written, not run (no remote, Docker not exercised).
 - **Human measurements:** scoring agreement and reset-time improvement — templates only, no data.
-- **Targets** (`configs/targets.yaml`): 60 demonstrations/3 sessions not attempted (no hardware, no fake demos);
+- **Targets** (`src/robotevalops/configs/targets.yaml`): 60 demonstrations/3 sessions not attempted (no hardware, no fake demos);
   100 evaluation trials executed in simulation only; 10 fault cases detected 10/10; checksum agreement 300/300 for the
   local-store round trip (not S3); required-metadata completeness is computed per manifest by the code, but no hardware
   manifests exist.

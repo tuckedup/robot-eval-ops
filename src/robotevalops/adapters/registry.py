@@ -4,7 +4,8 @@ Backends: ``mock`` (fixture), ``pybullet_panda`` (simulation), ``so101_lerobot``
 ``lerobot_import`` is import-only (no adapter; see ``robotevalops robot import-dataset``).
 
 Hardware sessions: the adapter reads its SO-101 YAML from ``$ROBOTEVALOPS_SO101_CONFIG`` (or
-``configs/hardware/so101.yaml`` when present). ``hardware_mode`` is True ONLY when the environment
+``<home>/hardware/so101.yaml``, then the packaged ``hardware/so101.yaml``, when present).
+``hardware_mode`` is True ONLY when the environment
 variable ``ROBOTEVALOPS_HARDWARE_MODE=1`` is set; the operator acknowledgement comes from the stored
 session ack (``session.operator_ack_at``). Without these the adapter refuses motion.
 """
@@ -20,6 +21,7 @@ from robotevalops.adapters.base import Controller, RobotAdapter
 from robotevalops.controllers.base import configs_dir
 from robotevalops.errors import CapabilityUnavailableError
 from robotevalops.schemas import ControllerSpec, ControllerType
+from robotevalops.util import get_home
 
 BACKENDS = ("mock", "pybullet_panda", "so101_lerobot", "lerobot_import")
 
@@ -72,7 +74,26 @@ def _so101_config_path() -> Path:
     env = os.environ.get("ROBOTEVALOPS_SO101_CONFIG")
     if env:
         return Path(env)
-    return configs_dir() / "hardware" / "so101.yaml"
+    in_home = (
+        get_home() / "hardware" / "so101.yaml"
+    )  # operator-owned, writable, outside the installed package
+    return in_home if in_home.is_file() else configs_dir() / "hardware" / "so101.yaml"
+
+
+def device_lease_keys(session: Any) -> list[str]:
+    """Physical-port lease keys for a session, derived from the SO-101 config the adapter would use. Any
+    command or session that drives the same serial ports collides, whatever alias/config path names them."""
+    from robotevalops.core.devices import hardware_lock_keys
+
+    if getattr(session, "backend", None) != "so101_lerobot":
+        return []
+    path = _so101_config_path()
+    if not path.is_file():
+        return []
+    from robotevalops.adapters.lerobot_wrapper import load_so101_config
+
+    cfg = load_so101_config(path)
+    return hardware_lock_keys([cfg.follower_port, cfg.leader_port])
 
 
 def get_adapter(backend: str, session: Any = None) -> RobotAdapter:
@@ -95,7 +116,8 @@ def get_adapter(backend: str, session: Any = None) -> RobotAdapter:
         if not path.is_file():
             raise CapabilityUnavailableError(
                 f"backend 'so101_lerobot' needs an SO-101 config at {path}; copy "
-                "configs/hardware/so101.example.yaml and edit it (or set ROBOTEVALOPS_SO101_CONFIG)"
+                "robotevalops/configs/hardware/so101.example.yaml and edit it "
+                "(or set ROBOTEVALOPS_SO101_CONFIG)"
             )
         cfg = load_so101_config(path)
         sid = str(getattr(session, "session_id", "") or "")

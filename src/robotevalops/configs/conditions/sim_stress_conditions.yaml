@@ -1,0 +1,220 @@
+# Physics-stress conditions for the PyBullet Panda pick-place sim (backend: pybullet_panda).
+# Every condition is kind: physics_stress: the SEEDED +-4 cm block-position draw of `object_position`
+# (same stream, so seed k gives the same start offset) PLUS the named physical factor(s) at a bounded level.
+# Factors not named stay nominal. Bounds are clamped in code (adapters/sim_pybullet.py STRESS_BOUNDS).
+# These change PHYSICS or the controller's observation/actuation, not pixels. No success flag is touched:
+# success is still decided by simulator evidence only. Scripted controllers only; nothing here is learned.
+- name: stress_nominal
+  kind: physics_stress
+  version: '1'
+  params: {}
+  affects_controller_state: true
+  description: family=reference
+- name: mass_0.2kg
+  kind: physics_stress
+  version: '1'
+  params:
+    block_mass_kg: 0.2
+  affects_controller_state: true
+  description: family=mass
+- name: mass_0.5kg
+  kind: physics_stress
+  version: '1'
+  params:
+    block_mass_kg: 0.5
+  affects_controller_state: true
+  description: family=mass
+- name: mass_1.0kg
+  kind: physics_stress
+  version: '1'
+  params:
+    block_mass_kg: 1.0
+  affects_controller_state: true
+  description: family=mass
+- name: mass_2.0kg
+  kind: physics_stress
+  version: '1'
+  params:
+    block_mass_kg: 2.0
+  affects_controller_state: true
+  description: family=mass
+- name: friction_0.6
+  kind: physics_stress
+  version: '1'
+  params:
+    block_friction: 0.6
+  affects_controller_state: true
+  description: family=friction
+- name: friction_0.4
+  kind: physics_stress
+  version: '1'
+  params:
+    block_friction: 0.4
+  affects_controller_state: true
+  description: family=friction
+- name: friction_0.25
+  kind: physics_stress
+  version: '1'
+  params:
+    block_friction: 0.25
+  affects_controller_state: true
+  description: family=friction
+- name: friction_0.15
+  kind: physics_stress
+  version: '1'
+  params:
+    block_friction: 0.15
+  affects_controller_state: true
+  description: family=friction
+- name: half_size_25mm
+  kind: physics_stress
+  version: '1'
+  params:
+    block_half_size_m: 0.025
+  affects_controller_state: true
+  description: family=size
+- name: half_size_30mm
+  kind: physics_stress
+  version: '1'
+  params:
+    block_half_size_m: 0.03
+  affects_controller_state: true
+  description: family=size
+- name: half_size_35mm
+  kind: physics_stress
+  version: '1'
+  params:
+    block_half_size_m: 0.035
+  affects_controller_state: true
+  description: family=size
+- name: yaw_15deg
+  kind: physics_stress
+  version: '1'
+  params:
+    block_yaw_deg: 15
+  affects_controller_state: true
+  description: family=yaw
+- name: yaw_30deg
+  kind: physics_stress
+  version: '1'
+  params:
+    block_yaw_deg: 30
+  affects_controller_state: true
+  description: family=yaw
+- name: yaw_45deg
+  kind: physics_stress
+  version: '1'
+  params:
+    block_yaw_deg: 45
+  affects_controller_state: true
+  description: family=yaw
+- name: target_half_50mm
+  kind: physics_stress
+  version: '1'
+  params:
+    target_half_m: 0.05
+  affects_controller_state: true
+  description: family=target
+- name: target_half_40mm
+  kind: physics_stress
+  version: '1'
+  params:
+    target_half_m: 0.04
+  affects_controller_state: true
+  description: family=target
+- name: target_half_35mm
+  kind: physics_stress
+  version: '1'
+  params:
+    target_half_m: 0.035
+  affects_controller_state: true
+  description: family=target
+- name: target_half_30mm
+  kind: physics_stress
+  version: '1'
+  params:
+    target_half_m: 0.03
+  affects_controller_state: true
+  description: family=target
+- name: delay_1steps
+  kind: physics_stress
+  version: '1'
+  params:
+    control_delay_steps: 1
+  affects_controller_state: true
+  description: family=delay
+- name: delay_2steps
+  kind: physics_stress
+  version: '1'
+  params:
+    control_delay_steps: 2
+  affects_controller_state: true
+  description: family=delay
+- name: delay_4steps
+  kind: physics_stress
+  version: '1'
+  params:
+    control_delay_steps: 4
+  affects_controller_state: true
+  description: family=delay
+- name: delay_8steps
+  kind: physics_stress
+  version: '1'
+  params:
+    control_delay_steps: 8
+  affects_controller_state: true
+  description: family=delay
+- name: obs_noise_2mm
+  kind: physics_stress
+  version: '1'
+  params:
+    obs_noise_std_m: 0.002
+  affects_controller_state: true
+  description: family=noise
+- name: obs_noise_5mm
+  kind: physics_stress
+  version: '1'
+  params:
+    obs_noise_std_m: 0.005
+  affects_controller_state: true
+  description: family=noise
+- name: obs_noise_10mm
+  kind: physics_stress
+  version: '1'
+  params:
+    obs_noise_std_m: 0.01
+  affects_controller_state: true
+  description: family=noise
+- name: obs_noise_20mm
+  kind: physics_stress
+  version: '1'
+  params:
+    obs_noise_std_m: 0.02
+  affects_controller_state: true
+  description: family=noise
+- name: joint_moderate
+  kind: physics_stress
+  version: '1'
+  params:
+    block_mass_kg: 0.3
+    block_friction: 0.5
+    block_half_size_m: 0.027
+    block_yaw_deg: 20
+    target_half_m: 0.045
+    control_delay_steps: 2
+    obs_noise_std_m: 0.005
+  affects_controller_state: true
+  description: family=joint
+- name: joint_severe
+  kind: physics_stress
+  version: '1'
+  params:
+    block_mass_kg: 0.6
+    block_friction: 0.35
+    block_half_size_m: 0.03
+    block_yaw_deg: 30
+    target_half_m: 0.04
+    control_delay_steps: 4
+    obs_noise_std_m: 0.01
+  affects_controller_state: true
+  description: family=joint

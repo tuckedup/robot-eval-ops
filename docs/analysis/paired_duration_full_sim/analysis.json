@@ -1,0 +1,440 @@
+{
+  "controller_a": "scripted_baseline_a",
+  "controller_b": "scripted_baseline_b",
+  "session_ids": [
+    "693a7a68-beb1-4f74-af00-48ef65824482"
+  ],
+  "n_trial_pairs": 50,
+  "n_scenarios": 11,
+  "n_replayed_scenarios": 1,
+  "scenario_table": [
+    {
+      "scenario_block_start_xy": "0.4697,-0.1203",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 13.500000000000057,
+      "duration_b_s": 9.349999999999998,
+      "diff_a_minus_b_s": 4.150000000000059,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.4717,-0.1309",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 12.900000000000048,
+      "duration_b_s": 10.000000000000007,
+      "diff_a_minus_b_s": 2.900000000000041,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.4810,-0.1129",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 12.800000000000047,
+      "duration_b_s": 9.900000000000006,
+      "diff_a_minus_b_s": 2.900000000000041,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.4926,-0.1584",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 13.100000000000051,
+      "duration_b_s": 10.15000000000001,
+      "diff_a_minus_b_s": 2.950000000000042,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.4952,-0.1750",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 13.950000000000063,
+      "duration_b_s": 10.25000000000001,
+      "diff_a_minus_b_s": 3.7000000000000526,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.5000,-0.1369",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 12.950000000000049,
+      "duration_b_s": 9.45,
+      "diff_a_minus_b_s": 3.5000000000000497,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.5000,-0.1500",
+      "trials_per_controller": 40,
+      "conditions": [
+        "background",
+        "lighting",
+        "nominal",
+        "occlusion"
+      ],
+      "duration_a_s": 13.000000000000052,
+      "duration_b_s": 9.55,
+      "diff_a_minus_b_s": 3.450000000000051,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.5001,-0.1489",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 13.00000000000005,
+      "duration_b_s": 9.55,
+      "diff_a_minus_b_s": 3.450000000000049,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.5113,-0.1656",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 13.850000000000062,
+      "duration_b_s": 10.20000000000001,
+      "diff_a_minus_b_s": 3.650000000000052,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.5172,-0.1115",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 12.800000000000047,
+      "duration_b_s": 9.399999999999999,
+      "diff_a_minus_b_s": 3.4000000000000483,
+      "replays_identical": true
+    },
+    {
+      "scenario_block_start_xy": "0.5255,-0.1109",
+      "trials_per_controller": 1,
+      "conditions": [
+        "object_position"
+      ],
+      "duration_a_s": 12.800000000000047,
+      "duration_b_s": 9.399999999999999,
+      "diff_a_minus_b_s": 3.4000000000000483,
+      "replays_identical": true
+    }
+  ],
+  "condition_table": [
+    {
+      "condition": "background",
+      "n_pairs": 10,
+      "distinct_scenarios": 1,
+      "mean_a_s": 13.000000000000052,
+      "mean_b_s": 9.55,
+      "mean_diff_a_minus_b_s": 3.450000000000051,
+      "sd_a_s": 0.0,
+      "sd_b_s": 0.0
+    },
+    {
+      "condition": "lighting",
+      "n_pairs": 10,
+      "distinct_scenarios": 1,
+      "mean_a_s": 13.000000000000052,
+      "mean_b_s": 9.55,
+      "mean_diff_a_minus_b_s": 3.450000000000051,
+      "sd_a_s": 0.0,
+      "sd_b_s": 0.0
+    },
+    {
+      "condition": "nominal",
+      "n_pairs": 10,
+      "distinct_scenarios": 1,
+      "mean_a_s": 13.000000000000052,
+      "mean_b_s": 9.55,
+      "mean_diff_a_minus_b_s": 3.450000000000051,
+      "sd_a_s": 0.0,
+      "sd_b_s": 0.0
+    },
+    {
+      "condition": "object_position",
+      "n_pairs": 10,
+      "distinct_scenarios": 10,
+      "mean_a_s": 13.165000000000052,
+      "mean_b_s": 9.765000000000004,
+      "mean_diff_a_minus_b_s": 3.4000000000000483,
+      "sd_a_s": 0.4177618939060921,
+      "sd_b_s": 0.35074919814591665
+    },
+    {
+      "condition": "occlusion",
+      "n_pairs": 10,
+      "distinct_scenarios": 1,
+      "mean_a_s": 13.000000000000052,
+      "mean_b_s": 9.55,
+      "mean_diff_a_minus_b_s": 3.450000000000051,
+      "sd_a_s": 0.0,
+      "sd_b_s": 0.0
+    }
+  ],
+  "duration": {
+    "name": "duration",
+    "unit": "s (simulated)",
+    "n_scenarios": 11,
+    "mean_a": 13.150000000000052,
+    "mean_b": 9.74545454545455,
+    "mean_diff_a_minus_b": 3.4045454545455027,
+    "diff_interval": {
+      "mean": 3.4045454545455027,
+      "ci_low": 3.195454545454591,
+      "ci_high": 3.622727272727324,
+      "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+    },
+    "relative_change_b_vs_a": -0.25890079502247065,
+    "rel_interval": {
+      "mean": -0.25890079502247065,
+      "ci_low": -0.273510161901484,
+      "ci_high": -0.24435175530066286,
+      "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+    },
+    "n_a_greater": 11,
+    "n_b_greater": 0,
+    "n_ties": 0,
+    "sign_test_p_two_sided": 0.0009765625,
+    "per_scenario_diffs": [
+      4.150000000000059,
+      2.900000000000041,
+      2.900000000000041,
+      2.950000000000042,
+      3.7000000000000526,
+      3.5000000000000497,
+      3.450000000000051,
+      3.450000000000049,
+      3.650000000000052,
+      3.4000000000000483,
+      3.4000000000000483
+    ]
+  },
+  "trial_weighted": {
+    "n_trial_pairs": 50.0,
+    "mean_a_s": 13.03300000000005,
+    "mean_b_s": 9.593000000000002,
+    "relative_change_b_vs_a": -0.2639453694467916
+  },
+  "tradeoffs": [
+    {
+      "name": "max_contact_normal_force_n",
+      "unit": "N",
+      "n_scenarios": 11,
+      "mean_a": 40.04293281433044,
+      "mean_b": 24.001149520615886,
+      "mean_diff_a_minus_b": 16.04178329371455,
+      "diff_interval": {
+        "mean": 16.04178329371455,
+        "ci_low": 16.03751574888622,
+        "ci_high": 16.047995825281145,
+        "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+      },
+      "relative_change_b_vs_a": -0.4006145945427247,
+      "rel_interval": {
+        "mean": -0.4006145945427247,
+        "ci_low": -0.40071669665898235,
+        "ci_high": -0.40053408196681667,
+        "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+      },
+      "n_a_greater": 11,
+      "n_b_greater": 0,
+      "n_ties": 0,
+      "sign_test_p_two_sided": 0.0009765625,
+      "per_scenario_diffs": [
+        16.038677073606777,
+        16.030537544351077,
+        16.039001523338158,
+        16.039960762718735,
+        16.069417403183287,
+        16.039870159697053,
+        16.040209788355064,
+        16.04019575606955,
+        16.04081908183168,
+        16.04033506213112,
+        16.040592075577536
+      ]
+    },
+    {
+      "name": "final_distance_to_target_center_m",
+      "unit": "m",
+      "n_scenarios": 11,
+      "mean_a": 0.0159129969729934,
+      "mean_b": 0.017820174475509296,
+      "mean_diff_a_minus_b": -0.0019071775025158967,
+      "diff_interval": {
+        "mean": -0.0019071775025158967,
+        "ci_low": -0.00337033839315327,
+        "ci_high": -0.0004903643858403578,
+        "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+      },
+      "relative_change_b_vs_a": 0.11985030260186975,
+      "rel_interval": {
+        "mean": 0.11985030260186975,
+        "ci_low": 0.02853785650509474,
+        "ci_high": 0.23094477508299027,
+        "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+      },
+      "n_a_greater": 4,
+      "n_b_greater": 7,
+      "n_ties": 0,
+      "sign_test_p_two_sided": 0.548828125,
+      "per_scenario_diffs": [
+        0.0016613643287603855,
+        -0.004595058828901561,
+        -0.0010708465433503685,
+        -0.006022156466971327,
+        0.00021012437655311064,
+        -0.002246081309453387,
+        0.0006509204028201099,
+        -0.0042827957631960175,
+        0.00014334805514451196,
+        -0.0010045408079357929,
+        -0.00442322997114453
+      ]
+    },
+    {
+      "name": "block_final_speed_mps",
+      "unit": "m/s",
+      "n_scenarios": 11,
+      "mean_a": 2.6532186831388433e-05,
+      "mean_b": 1.2371242321175996e-05,
+      "mean_diff_a_minus_b": 1.4160944510212431e-05,
+      "diff_interval": {
+        "mean": 1.4160944510212431e-05,
+        "ci_low": -6.45674510579047e-09,
+        "ci_high": 2.833725599408316e-05,
+        "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+      },
+      "relative_change_b_vs_a": -0.5337270011026601,
+      "rel_interval": {
+        "mean": -0.5337270011026601,
+        "ci_low": -0.6961285854023695,
+        "ci_high": 0.0005225068055883582,
+        "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+      },
+      "n_a_greater": 3,
+      "n_b_greater": 8,
+      "n_ties": 0,
+      "sign_test_p_two_sided": 0.2265625,
+      "per_scenario_diffs": [
+        5.1986438482563755e-05,
+        -6.081373730393033e-08,
+        -3.442144530923205e-08,
+        -6.104460494866625e-10,
+        5.1947863600164385e-05,
+        -1.3580079853639396e-09,
+        -1.2881517816887988e-09,
+        -1.2952660678438167e-09,
+        5.1938447001682254e-05,
+        -1.290567446897626e-09,
+        -1.281850129204192e-09
+      ]
+    },
+    {
+      "name": "max_block_height_m",
+      "unit": "m",
+      "n_scenarios": 11,
+      "mean_a": 0.2197573552504131,
+      "mean_b": 0.27969624671218,
+      "mean_diff_a_minus_b": -0.0599388914617669,
+      "diff_interval": {
+        "mean": -0.0599388914617669,
+        "ci_low": -0.05994116965318978,
+        "ci_high": -0.059936554205618754,
+        "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+      },
+      "relative_change_b_vs_a": 0.2727503313528081,
+      "rel_interval": {
+        "mean": 0.2727503313528081,
+        "ci_low": 0.27274066680324305,
+        "ci_high": 0.27275971341157923,
+        "method": "percentile bootstrap over scenarios (20000 resamples, fixed seed), 95%"
+      },
+      "n_a_greater": 0,
+      "n_b_greater": 11,
+      "n_ties": 0,
+      "sign_test_p_two_sided": 0.0009765625,
+      "per_scenario_diffs": [
+        -0.059945270714996585,
+        -0.05994481103574181,
+        -0.0599417851268195,
+        -0.0599397170042647,
+        -0.05993932420919468,
+        -0.05993840874017911,
+        -0.059938681667180804,
+        -0.059938193893295355,
+        -0.05993602003317766,
+        -0.059933478862765954,
+        -0.05993211479181973
+      ]
+    }
+  ],
+  "phases": {
+    "scripted_baseline_a": {
+      "approach_s": 3.699999999999995,
+      "carry_s": 7.100000000000024,
+      "release_and_dwell_s": 2.600000000000037,
+      "total_s": 13.400000000000055
+    },
+    "scripted_baseline_b": {
+      "approach_s": 2.499999999999999,
+      "carry_s": 4.899999999999983,
+      "release_and_dwell_s": 1.9000000000000155,
+      "total_s": 9.299999999999997
+    }
+  },
+  "controller_params": {
+    "scripted_baseline_a": {
+      "descend_speed": 0.08,
+      "grasp_z": 0.02,
+      "grip_force": 20.0,
+      "hover_z": 0.2,
+      "joint_speed_limit": 1.2,
+      "lift_z": 0.22,
+      "move_speed": 0.2,
+      "config_hash": "a1aa4189cacdb2927bc3262fd03343339e21447d388f027152b12a844d8519f7"
+    },
+    "scripted_baseline_b": {
+      "close_settle_steps": 6,
+      "descend_speed": 0.15,
+      "grasp_z": 0.02,
+      "grip_force": 12.0,
+      "hover_z": 0.28,
+      "joint_speed_limit": 1.6,
+      "lift_z": 0.28,
+      "move_speed": 0.35,
+      "config_hash": "2d94da7084af9d1d11e544fbf5994e31be849783dc3c18c8f73e344fa2c2bad6"
+    }
+  },
+  "caveats": [
+    "Durations are SIMULATED seconds (PyBullet Panda, 20 Hz control). They are not robot throughput, reset time, or any real-world measurement; the arm is a Panda, not an SO-101.",
+    "Deterministic replay: lighting/background/occlusion only change rendered pixels that these state-based scripted controllers never read, and the nominal start is fixed. Those trials replay one physical scenario, so they are collapsed before inference. Trial counts overstate the evidence.",
+    "Inference units are distinct start scenarios (a bounded +-4 cm perturbation around one nominal pose). Intervals describe that start distribution in this simulator only; they do not generalise to other objects, friction, masses, delays or a real arm.",
+    "Both controllers succeeded on every trial, so duration is the only discriminating outcome here. A faster controller is not shown to be better: see the trade-off table (contact force, placement accuracy, final block speed) and the failure study for what the speed costs.",
+    "Both durations include a fixed 2.0 s placement dwell, so the relative saving in ACTIVE time is larger than the relative saving in total time."
+  ],
+  "unpaired": [],
+  "source": {
+    "home": "D:\\robot-eval-ops\\data\\full_sim",
+    "db_sha256_before": "f2ff60dd6812ba58a37b99e61d118ad75c5896fef42e05c8d4f87a6228382cef",
+    "db_sha256_after": "f2ff60dd6812ba58a37b99e61d118ad75c5896fef42e05c8d4f87a6228382cef",
+    "artifacts_verified": 300,
+    "sessions": [
+      "693a7a68-beb1-4f74-af00-48ef65824482"
+    ]
+  }
+}

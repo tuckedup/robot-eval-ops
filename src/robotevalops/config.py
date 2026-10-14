@@ -1,8 +1,8 @@
-"""Load and validate EvalConfig YAML templates (configs/eval_*.yaml).
+"""Load and validate EvalConfig YAML templates (src/robotevalops/configs/eval_*.yaml).
 
 Controllers and conditions may be given inline (`controllers:` / `conditions:`) or as paths to YAML list files
-(`controllers_from:` / `conditions_from:`). Relative paths are resolved against the repo root (nearest parent
-of the config containing pyproject.toml) first, then against the config file's directory.
+(`controllers_from:` / `conditions_from:`). Relative paths are resolved against the config file's directory
+first, then against the repo root (nearest parent of the config containing pyproject.toml).
 """
 
 from __future__ import annotations
@@ -43,11 +43,12 @@ def _resolve_ref(ref: str, cfg_path: Path, key: str) -> Path:
     if p.is_absolute():
         candidates = [p]
     else:
-        candidates = []
+        # config-file directory FIRST (an installed wheel has no repo root, and an unrelated pyproject.toml in
+        # an ancestor directory must never shadow the config's own sibling files), then the repo root.
+        candidates = [cfg_path.parent / p]
         root = find_repo_root(cfg_path.parent.resolve())
         if root is not None:
             candidates.append(root / p)
-        candidates.append(cfg_path.parent / p)
     for c in candidates:
         if c.is_file():
             return c

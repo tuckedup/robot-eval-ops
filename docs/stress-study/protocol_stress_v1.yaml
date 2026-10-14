@@ -1,0 +1,103 @@
+# FROZEN PROTOCOL (see docs/stress-study/README.md). Do not edit after `robotevalops study freeze`;
+# a change means a new protocol_id.
+protocol_id: stress_v1
+title: 'Pre-specified physics stress study: scripted_baseline_a vs scripted_baseline_b'
+controllers_from: controllers/sim_scripted.yaml
+conditions_from: conditions/sim_stress_conditions.yaml
+backend: pybullet_panda
+provenance: simulation
+pilot:
+  base_seed: 9001
+  trials_per_condition: 1
+  purpose: feasibility only; never reported as a result
+evaluation:
+  base_seed: 52000
+  trials_per_condition: 8
+task:
+  task_id: pick_place_block_v1
+  attempt_timeout_s: 30.0
+  dwell_required_s: 2.0
+families:
+  reference:
+  - stress_nominal
+  mass:
+  - mass_0.2kg
+  - mass_0.5kg
+  - mass_1.0kg
+  - mass_2.0kg
+  friction:
+  - friction_0.6
+  - friction_0.4
+  - friction_0.25
+  - friction_0.15
+  size:
+  - half_size_25mm
+  - half_size_30mm
+  - half_size_35mm
+  yaw:
+  - yaw_15deg
+  - yaw_30deg
+  - yaw_45deg
+  target:
+  - target_half_50mm
+  - target_half_40mm
+  - target_half_35mm
+  - target_half_30mm
+  delay:
+  - delay_1steps
+  - delay_2steps
+  - delay_4steps
+  - delay_8steps
+  noise:
+  - obs_noise_2mm
+  - obs_noise_5mm
+  - obs_noise_10mm
+  - obs_noise_20mm
+  joint:
+  - joint_moderate
+  - joint_severe
+factor_of_family:
+  mass: block_mass_kg
+  friction: block_friction
+  size: block_half_size_m
+  yaw: block_yaw_deg
+  target: target_half_m
+  delay: control_delay_steps
+  noise: obs_noise_std_m
+severity_order: listed order within a family, mildest first; nominal value precedes the first level
+nominal_levels:
+  block_mass_kg: 0.05
+  block_friction: 1.0
+  block_half_size_m: 0.02
+  block_yaw_deg: 0
+  target_half_m: 0.06
+  control_delay_steps: 0
+  obs_noise_std_m: 0.0
+hypotheses:
+- 'H1 (descriptive): within each single-factor family, success rate does not increase with severity; the failure
+  envelope is the first level whose success rate is below 100% and the first below 50%.'
+- 'H2: the two controllers have different failure envelopes on at least one family (they differ in grip force 20
+  N vs 12 N, speed, hover height). Direction is NOT predicted.'
+- 'H3: failures under tighter targets are placement-offset driven (final block offset from the target centre), not
+  grasp failures. Checked from recorded evidence.'
+analysis:
+  per_cell: success_per_attempt = verified autonomous successes / attempted trials, Wilson 95% interval
+  denominator: every attempted trial; infra failures stay in the denominator and are listed
+  envelope: 'per controller and family: first level with success < 100%, first level with success < 50%'
+  failure_categories:
+  - grasp_failed (no >=5 consecutive bilateral-contact steps)
+  - lift_failed (grasp ok, block never rose 3 cm)
+  - dropped_in_transit (lifted, block ended >= 0.10 m from the target centre)
+  - placement_outside_target (lifted, ended near the target but not entirely inside)
+  - release_failed (inside target but gripper not open / still touching)
+  - dwell_not_held (placed and released, dwell not met)
+  - infra_failure (not a task outcome)
+  links: every failure row carries trial id, session id, video path and trace path
+  no_selection: all attempted trials are reported; no trial is dropped, re-run or re-seeded after results are seen,
+    except infra failures which are re-run unchanged and logged
+seeds: tuning/pilot seeds and held-out evaluation seeds come from different base seeds; the study refuses to run
+  if the two derived seed sets overlap
+interpretation_limits:
+- 'Panda arm in PyBullet, scripted controllers: no claim about a real robot or any learned policy.'
+- Eight seeds per cell are a small, bounded start perturbation set; rates carry wide intervals.
+- A factor level is a physical stress, not a real-world prior; the envelope is within this simulator.

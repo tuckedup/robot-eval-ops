@@ -57,6 +57,11 @@ LEROBOT_SOURCES = {
     "source": "https://github.com/huggingface/lerobot",
 }
 CONFIRM_TOKEN = "I_UNDERSTAND_THIS_MOVES_THE_ROBOT"
+# Tools that connect() the arm and could auto-calibrate: launched via adapters/lerobot_guard.py
+GUARDED_TOOLS = frozenset({"lerobot-record", "lerobot-teleoperate"})
+# The argv builders and the calibration guard were checked ONLY against these installed lerobot versions (on
+# Python 3.11, Windows). Other versions (uv.lock also resolves 0.6.1 for Python 3.12) are refused for motion.
+TESTED_LEROBOT_VERSIONS = frozenset({"0.4.4"})
 
 # --------------------------------------------------------------------------- validation
 
@@ -96,7 +101,7 @@ class CameraSpec(BaseModel):
 
 
 class SO101Config(BaseModel):
-    """Operator configuration for one SO-101 follower + leader pair (see configs/hardware).
+    """Operator configuration for one SO-101 follower + leader pair (see src/robotevalops/configs/hardware).
 
     JOINT calibration (motor ranges, made by ``lerobot-calibrate``) is referenced via the ids and
     optional calibration directories. CAMERA calibration (intrinsics/extrinsics) is separate and is
@@ -333,6 +338,58 @@ def calibration_candidates(role: Literal["follower", "leader"], cfg: SO101Config
     return [calibration_root() / sub / n / f"{ident}.json" for n in names]
 
 
+SO101_MOTOR_IDS: dict[str, int] = {
+    "shoulder_pan": 1,
+    "shoulder_lift": 2,
+    "elbow_flex": 3,
+    "wrist_flex": 4,
+    "wrist_roll": 5,
+    "gripper": 6,
+}
+_CAL_FIELDS = ("id", "drive_mode", "homing_offset", "range_min", "range_max")
+
+
+def validate_calibration_content(path: Path) -> list[str]:
+    """Problems with a LeRobot joint-calibration JSON (``{motor: {id, drive_mode, homing_offset, range_min,
+    range_max}}``), empty list if sound. An empty ``{}`` or a file missing any SO-101 motor is not one:
+    LeRobot would treat it as uncalibrated and start motor calibration. This checks the FILE only; whether it
+    matches the motors' stored values can only be known with the arm connected (see lerobot_guard)."""
+    import json as _json
+
+    try:
+        data = _json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        return [f"unreadable calibration JSON: {e}"]
+    if not isinstance(data, dict) or not data:
+        return ["calibration file is empty (no motors); LeRobot would start motor calibration"]
+    problems: list[str] = []
+    for name in sorted(set(SO101_MOTOR_IDS) - set(data)):
+        problems.append(f"motor {name!r} missing")
+    for name in sorted(set(data) - set(SO101_MOTOR_IDS)):
+        problems.append(f"unexpected motor {name!r} (SO-101 has {sorted(SO101_MOTOR_IDS)})")
+    for name, want_id in SO101_MOTOR_IDS.items():
+        rec = data.get(name)
+        if rec is None:
+            continue
+        if not isinstance(rec, dict):
+            problems.append(f"{name}: entry is not an object")
+            continue
+        bad = [f for f in _CAL_FIELDS if isinstance(rec.get(f), bool) or not isinstance(rec.get(f), int)]
+        if bad:
+            problems.append(f"{name}: missing/non-integer field(s) {bad}")
+            continue
+        if rec["id"] != want_id:
+            problems.append(f"{name}: id {rec['id']} != expected {want_id}")
+        if rec["drive_mode"] not in (0, 1):
+            problems.append(f"{name}: drive_mode {rec['drive_mode']} not in (0, 1)")
+        if not -2047 <= rec["homing_offset"] <= 2047:
+            problems.append(f"{name}: homing_offset {rec['homing_offset']} outside +-2047")
+        lo, hi = rec["range_min"], rec["range_max"]
+        if not (0 <= lo < hi <= 4095):
+            problems.append(f"{name}: range [{lo}, {hi}] is not 0 <= min < max <= 4095")
+    return problems
+
+
 # --------------------------------------------------------------------------- argv builders
 
 CommandKind = Literal["teleoperate", "record", "rollout", "calibrate", "replay"]
@@ -419,7 +476,20 @@ class LeRobotWrapper:
             cands = calibration_candidates(role, self.config)
             hit = next((c for c in cands if c.is_file()), None)
             if hit:
-                out.append(PreflightCheck(f"{role}_joint_calibration_file", True, str(hit)))
+                problems = validate_calibration_content(hit)
+                if problems:
+                    out.append(
+                        PreflightCheck(
+                            f"{role}_joint_calibration_file",
+                            False,
+                            f"{hit} is not a usable calibration: "
+                            + "; ".join(problems)
+                            + ". An operator must "
+                            f"run lerobot-calibrate for the {role} by hand; this tool never calibrates.",
+                        )
+                    )
+                else:
+                    out.append(PreflightCheck(f"{role}_joint_calibration_file", True, str(hit)))
             else:
                 out.append(
                     PreflightCheck(
@@ -439,6 +509,17 @@ class LeRobotWrapper:
                 f"{tool} not found (lerobot installed: {self.info.installed}); install lerobot with the "
                 "feetech extra per https://huggingface.co/docs/lerobot/so101"
             )
+        if tool in GUARDED_TOOLS and tool not in self.overrides:
+            if self.info.version not in TESTED_LEROBOT_VERSIONS:
+                raise CapabilityUnavailableError(
+                    f"installed lerobot {self.info.version} is untested: command construction and the "
+                    f"calibration guard were verified only against {sorted(TESTED_LEROBOT_VERSIONS)}; "
+                    "refusing to build a "
+                    "moving command (see docs/lerobot-datasets.md and docs/hardware-setup.md)"
+                )
+            # Real moving tools always start through the calibration guard (lerobot_guard.py). An explicit
+            # override is a test/fake executable and is used as given.
+            return [sys.executable, "-m", "robotevalops.adapters.lerobot_guard", tool]
         return list(prefix)
 
     # --- builders (dry-run capable; they never execute anything) -----------------
@@ -668,5 +749,22 @@ def execute_argv(
     if status == "stopped":
         return _res("stopped", proc.returncode, out, err, "software stop requested; process killed")
     if proc.returncode != 0:
+        if proc.returncode == 98 or "ROBOTEVALOPS_CALIBRATION_BLOCKED" in err:
+            return _res(
+                "nonzero_exit",
+                proc.returncode,
+                out,
+                err,
+                "calibration blocked: the motors' calibration does not match the calibration file; nothing "
+                "was written to the motors. An operator must run lerobot-calibrate by hand.",
+            )
+        if proc.returncode == 97:
+            return _res(
+                "nonzero_exit",
+                proc.returncode,
+                out,
+                err,
+                "calibration guard could not be installed; the LeRobot tool was NOT started",
+            )
         return _res("nonzero_exit", proc.returncode, out, err, f"exit code {proc.returncode}")
     return _res("ok", 0, out, err)

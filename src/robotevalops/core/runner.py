@@ -17,7 +17,7 @@ import os
 import socket
 import threading
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -33,7 +33,9 @@ from robotevalops.schemas import (
     ControllerSpec,
     Intervention,
     Provenance,
+    QACode,
     QAReport,
+    RecordingQuality,
     ScoreSource,
     SessionRecord,
     SessionState,
@@ -77,6 +79,7 @@ class Runner:
         logger: logging.Logger | None = None,
         *,
         stop_poll_interval_s: float = 0.05,
+        device_keys: Callable[[SessionRecord], Sequence[str]] | None = None,
     ) -> None:
         self.service = service
         self.adapter_factory = adapter_factory
@@ -86,6 +89,7 @@ class Runner:
         self.manifest_hook = manifest_hook
         self._logger = logger
         self.stop_poll_interval_s = stop_poll_interval_s
+        self._device_keys = device_keys
 
     # ------------------------------------------------------------------ public
     def run_session(self, session_id: str, max_trials: int | None = None) -> RunReport:
@@ -100,15 +104,15 @@ class Runner:
         log = self._logger or get_logger(
             f"robotevalops.runner.{session_id}", svc.run_dir(session_id) / "session.log.jsonl"
         )
-        device_key = (session.device_id or session.backend) if self._is_physical(session) else None
+        device_keys: list[str] = self._lease_keys(session) if self._is_physical(session) else []
         locked = False
         adapter: RobotAdapter | None = None
         watcher_done = threading.Event()
         watcher: threading.Thread | None = None
         report = RunReport(session_id, session.state)
         try:
-            if device_key is not None:
-                svc.acquire_device(device_key, session_id)
+            if device_keys:
+                svc.acquire_devices(device_keys, session_id)
                 locked = True
             if session.state in (SessionState.PLANNED, SessionState.PREFLIGHT):
                 # mock/simulation only (physical needs READY, enforced in _gate); every trial still runs
@@ -134,8 +138,8 @@ class Runner:
                     adapter.close()
                 except Exception:  # noqa: BLE001 - closing must not mask the real error
                     log.exception("adapter.close failed")
-            if locked and device_key is not None:
-                svc.release_device(device_key, session_id)
+            if locked and device_keys:
+                svc.release_devices(device_keys, session_id)
             if own_logger:
                 for h in list(log.handlers):
                     if getattr(h, "_roe_file", None):
@@ -152,6 +156,14 @@ class Runner:
         return report
 
     # ------------------------------------------------------------------ gating
+    def _lease_keys(self, session: SessionRecord) -> list[str]:
+        """Lease keys for a physical session: the physical-port keys from `device_keys` (if supplied) plus the
+        session's device label (or backend name), so any alias of the same hardware collides."""
+        keys = {session.device_id or session.backend}
+        if self._device_keys is not None:
+            keys.update(self._device_keys(session))
+        return sorted(keys)
+
     @staticmethod
     def _is_physical(session: SessionRecord) -> bool:
         return session.provenance == Provenance.PHYSICAL_HARDWARE
@@ -518,7 +530,21 @@ class Runner:
                 trial.trial_id, report.quality, [f.code.value for f in report.flags]
             )
 
-        self._safe_hook("qa_hook", call, trial.session_id, trial.trial_id, log)
+        try:
+            call()
+        except Exception as e:  # noqa: BLE001 - a crashed QA must never be mistaken for a passed QA
+            err = f"{type(e).__name__}: {e}"
+            log.exception("qa_hook failed")
+            self.service.record_event("qa_hook_error", trial.session_id, trial.trial_id, error=err)
+            try:
+                self.service.set_recording_quality(
+                    trial.trial_id,
+                    RecordingQuality.ERROR,
+                    [QACode.QA_EXECUTION_ERROR.value],
+                    qa_error=err,
+                )
+            except Exception:  # noqa: BLE001 - trial stays `unchecked`, which is also never accepted evidence
+                log.exception("could not persist QA error state")
 
     def _safe_hook(
         self, name: str, fn: Callable[[], Any], session_id: str, trial_id: str | None, log: logging.Logger

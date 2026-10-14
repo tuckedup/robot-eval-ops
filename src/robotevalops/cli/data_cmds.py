@@ -21,6 +21,7 @@ from robotevalops.qa.trial_qa import qa_trial
 from robotevalops.recording.manifest import read_manifest, validate_manifest, write_manifest
 from robotevalops.schemas import (
     ArtifactStatus,
+    QACode,
     QAFlag,
     QAReport,
     RecordingQuality,
@@ -116,7 +117,34 @@ def _merge_manifest_flags(reports: list[QAReport], mflags: list[QAFlag]) -> list
     return out
 
 
-_RANK = {RecordingQuality.PASS: 0, RecordingQuality.FLAGGED: 1, RecordingQuality.FAIL: 2}
+_RANK = {
+    RecordingQuality.PASS: 0,
+    RecordingQuality.FLAGGED: 1,
+    RecordingQuality.ERROR: 2,
+    RecordingQuality.FAIL: 3,
+}
+
+
+def _safe_qa_trial(run_dir: Path, t: Any, *, require_video: bool) -> QAReport:
+    """qa_trial, but a crash becomes a persisted QA_EXECUTION_ERROR report instead of aborting the batch
+    (and never a pass)."""
+    try:
+        return qa_trial(run_dir, t, require_video=require_video)
+    except Exception as exc:  # noqa: BLE001
+        msg = f"{type(exc).__name__}: {exc}"
+        return QAReport(
+            subject=t.trial_id,
+            accepted=False,
+            rejection_reasons=[f"QA could not complete: {msg}"],
+            flags=[
+                QAFlag(
+                    code=QACode.QA_EXECUTION_ERROR,
+                    severity=Severity.ERROR,
+                    message=f"QA crashed ({msg}); recording UNVERIFIED. Fix the cause, re-run validate.",
+                    subject=t.trial_id,
+                )
+            ],
+        )
 
 
 def _persist_quality(svc: Any, reports: list[QAReport]) -> tuple[list[str], list[str]]:
@@ -166,7 +194,7 @@ def validate(
         skipped = [t.trial_id for t in manifest.trials if t.state not in terminal]  # nothing recorded yet
         reports = _merge_manifest_flags(
             [
-                qa_trial(run_dir, t, require_video=require_video)
+                _safe_qa_trial(run_dir, t, require_video=require_video)
                 for t in manifest.trials
                 if t.state in terminal
             ],

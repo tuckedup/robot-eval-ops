@@ -7,7 +7,7 @@ from __future__ import annotations
 import typer
 
 from robotevalops import __version__
-from robotevalops.cli import data_cmds, demo_cmds, report_cmds, robot_cmds, session_cmds
+from robotevalops.cli import data_cmds, demo_cmds, report_cmds, robot_cmds, session_cmds, study_cmds
 
 app = typer.Typer(
     help="RobotEvalOps: reproducible robot-policy evaluation and data QA.", no_args_is_help=True
@@ -17,6 +17,7 @@ app.add_typer(robot_cmds.app, name="robot")
 app.add_typer(data_cmds.app, name="data")
 app.add_typer(report_cmds.app, name="report")
 app.add_typer(demo_cmds.app, name="demo")
+app.add_typer(study_cmds.app, name="study")
 
 
 @app.command()

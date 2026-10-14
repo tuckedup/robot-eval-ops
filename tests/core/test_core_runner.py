@@ -54,7 +54,7 @@ def by_cond(svc, session):
 def test_success_failure_paths_and_scoring_sources(svc):
     s = make_session(svc, {"ok": "success", "bad": "failure"})
     ad = FakeAdapter({"ok": "success", "bad": "failure"})
-    _, rep = run(svc, s, ad)
+    _, rep = run(svc, s, ad, qa_hook=lambda trial, _d: QAReport(subject=trial.trial_id))
     t = by_cond(svc, s)
     assert rep.final_session_state == SessionState.COMPLETED
     assert t["ok"].state == T.COMPLETED and t["ok"].task_outcome == TaskOutcome.SUCCESS

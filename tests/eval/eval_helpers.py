@@ -43,6 +43,7 @@ def make_trial(
     controller_type: ControllerType = ControllerType.SCRIPTED,
     session_id: str = "s1",
     seed: int | None = None,
+    controller_config_hash: str = "h" * 8,
     **extra,
 ) -> TrialRecord:
     n = next(_ids)
@@ -56,7 +57,7 @@ def make_trial(
         controller_id=controller_id,
         controller_type=controller_type,
         controller_version="1",
-        controller_config_hash="h" * 8,
+        controller_config_hash=controller_config_hash,
         condition_name=condition,
         condition_kind="nominal",
         trial_index=ti,

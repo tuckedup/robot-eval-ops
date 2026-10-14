@@ -274,6 +274,8 @@ def run(
         controller_factory,
         qa_hook=qa_hook,
         manifest_hook=manifest_hook,
+        # physical-port leases, shared with `robot teleop|record|rollout`
+        device_keys=getattr(reg, "device_lease_keys", None),
     )
     report = runner.run_session(session_id, max_trials=max_trials)
     out = {

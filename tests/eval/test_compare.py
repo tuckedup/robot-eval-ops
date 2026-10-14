@@ -64,7 +64,14 @@ def test_unpaired_and_ineligible_are_listed_not_dropped():
             controller_id="B", condition="x", trial_index=2, state=F, reason=TerminationReason.INFRA_FAILURE
         ),  # B infra failed
         make_trial(
-            controller_id="A", condition="x", trial_index=3, state=C, outcome=S, reason=OK, intervention=ASS
+            controller_id="A",
+            condition="x",
+            trial_index=3,
+            state=C,
+            outcome=S,
+            reason=OK,
+            intervention=ASS,
+            quality=PASS,
         ),
         _t("B", "x", 3, 1),  # A scored but assisted -> evaluable, counts as non-success for A
         _t("A", "x", 4, 1, seed=1),

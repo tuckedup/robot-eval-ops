@@ -64,7 +64,7 @@ serial port of each board. **This repository never runs setup-motors, flashing o
 
 ## 5. Configuration
 
-Copy `configs/hardware/so101.example.yaml` to `configs/hardware/so101.yaml` and edit ids, ports,
+Copy `src/robotevalops/configs/hardware/so101.example.yaml` to `src/robotevalops/configs/hardware/so101.yaml` and edit ids, ports,
 cameras and task. All strings are validated with strict patterns (ids `[A-Za-z0-9_-]{1,64}`, ports
 `COMn` or `/dev/...` without spaces/shell characters, repo ids `user/name`). Commands are
 executed as **argument lists with `shell=False`**; no operator string is placed in a shell line.
@@ -78,7 +78,7 @@ The preflight opens each configured camera device briefly to confirm it can be o
 ```
 robotevalops robot adapters                      # backends and availability
 robotevalops robot lerobot-info                  # installed version, entry points, source URLs
-robotevalops robot hardware-check --config configs/hardware/so101.yaml   # NON-MOVING preflight
+robotevalops robot hardware-check --config src/robotevalops/configs/hardware/so101.yaml   # NON-MOVING preflight
 robotevalops robot teleop   --config ... --dry-run                       # prints exact argv
 robotevalops robot record   --config ... --dry-run
 robotevalops robot rollout  --config ... --policy-path <ckpt> --dry-run

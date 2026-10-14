@@ -698,9 +698,11 @@ class EvalService:
         *,
         actor: str | None = None,
         reason: str | None = None,
+        qa_error: str | None = None,
     ) -> TrialRecord:
         """Set QA quality. The event records the previous quality, actor and reason. Moving a trial away from
-        `fail` (to pass/flagged/unchecked) requires an actor and a non-empty reason."""
+        `fail` (to pass/flagged/unchecked/error) requires an actor and a non-empty reason. `qa_error` persists
+        the QA execution error in trial evidence (it is cleared when a later QA run completes)."""
         quality = RecordingQuality(quality)
         flags = list(dict.fromkeys(str(f) for f in qa_flags))
         with self.db.tx() as c:
@@ -714,11 +716,17 @@ class EvalService:
                     f"trial {trial_id} has recording_quality=fail; changing it to {quality.value} requires "
                     "actor and a non-empty reason"
                 )
-            self._update_trial(
-                c,
-                trial_id,
-                {"recording_quality": quality.value, "qa_flags_json": dumps(flags)},
-            )
+            cols: dict[str, Any] = {"recording_quality": quality.value, "qa_flags_json": dumps(flags)}
+            if qa_error is not None:
+                cols["evidence_json"] = dumps({**t.evidence, "qa_error": qa_error})
+            elif "qa_error" in t.evidence and quality != RecordingQuality.ERROR:
+                cols["evidence_json"] = dumps(
+                    {
+                        **{k: v for k, v in t.evidence.items() if k != "qa_error"},
+                        "qa_error_cleared_by": quality.value,
+                    }
+                )
+            self._update_trial(c, trial_id, cols)
             self._event(
                 c,
                 "recording_quality",
@@ -909,6 +917,43 @@ class EvalService:
                 (device_id, session_id, utcnow().isoformat()),
             )
             self._event(c, "device_acquired", session_id, device_id=device_id)
+
+    def acquire_devices(self, device_ids: Iterable[str], session_id: str) -> None:
+        """All-or-nothing lease of several physical-device keys in ONE transaction (sorted order, so two
+        contenders can never deadlock or each end up holding half)."""
+        keys = sorted(set(device_ids))
+        with self.db.tx() as c:
+            self._session(c, session_id)
+            held = (
+                {
+                    r["device_id"]: r["session_id"]
+                    for r in c.execute(
+                        f"SELECT device_id, session_id FROM device_locks WHERE device_id IN ({','.join('?' * len(keys))})",  # noqa: S608,E501
+                        keys,
+                    ).fetchall()
+                }
+                if keys
+                else {}
+            )
+            busy = {d: sid for d, sid in held.items() if sid != session_id}
+            if busy:
+                d, sid = next(iter(sorted(busy.items())))
+                raise DeviceBusyError(
+                    f"device {d!r} is locked by session {sid}; stop that runner, then run "
+                    "`robotevalops session recover <id>` if it crashed"
+                )
+            for d in keys:
+                if d in held:
+                    continue
+                c.execute(
+                    "INSERT INTO device_locks(device_id, session_id, acquired_at) VALUES (?,?,?)",
+                    (d, session_id, utcnow().isoformat()),
+                )
+                self._event(c, "device_acquired", session_id, device_id=d)
+
+    def release_devices(self, device_ids: Iterable[str], session_id: str) -> None:
+        for d in sorted(set(device_ids)):
+            self.release_device(d, session_id)
 
     def release_device(self, device_id: str, session_id: str) -> bool:
         """Release the lock if `session_id` owns it. Returns whether a lock was released."""

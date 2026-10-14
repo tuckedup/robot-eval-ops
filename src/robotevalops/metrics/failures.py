@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from robotevalops.schemas import (
     INFRA_REASONS,
+    RecordingQuality,
     TaskOutcome,
     TrialRecord,
     TrialState,
@@ -18,12 +19,15 @@ from robotevalops.schemas import (
 
 
 def failure_class(t: TrialRecord) -> str:
-    """autonomous_success | non_autonomous_success | task_failure | completed_unscored | infra_failure |
+    """autonomous_success | non_autonomous_success | unverified_success | task_failure | completed_unscored |
+    infra_failure |
     aborted_operator_or_stop | aborted_infra | not_attempted | in_progress."""
     if t.state == TrialState.COMPLETED:
         if is_autonomous_success(t):
             return "autonomous_success"
         if t.task_outcome == TaskOutcome.SUCCESS:
+            if t.recording_quality in (RecordingQuality.UNCHECKED, RecordingQuality.ERROR):
+                return "unverified_success"  # task outcome recorded but QA never accepted the evidence
             return "non_autonomous_success"  # assisted/unknown intervention or recording quality fail
         if t.task_outcome == TaskOutcome.FAILURE:
             return "task_failure"

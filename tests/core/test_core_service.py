@@ -60,7 +60,14 @@ def to_running(svc: EvalService, tid: str) -> None:
     drive(svc, tid, T.RUNNING)
 
 
-def finish_ok(svc, tid, *, intervention=Intervention.NONE, outcome=TaskOutcome.SUCCESS):
+def finish_ok(
+    svc,
+    tid,
+    *,
+    intervention=Intervention.NONE,
+    outcome=TaskOutcome.SUCCESS,
+    quality=RecordingQuality.PASS,
+):
     to_running(svc, tid)
     return svc.record_trial_result(
         tid,
@@ -69,6 +76,7 @@ def finish_ok(svc, tid, *, intervention=Intervention.NONE, outcome=TaskOutcome.S
         task_outcome=outcome,
         score_source=ScoreSource.MOCK_FIXTURE,
         intervention=intervention,
+        recording_quality=quality,
     )
 
 
@@ -307,7 +315,10 @@ def test_hardware_style_trial_stays_unscored_until_scored(svc, planned):
         scorer="alice",
         intervention=Intervention.NONE,
     )
-    assert scored.task_outcome == TaskOutcome.SUCCESS and scored.is_autonomous_success
+    assert scored.task_outcome == TaskOutcome.SUCCESS
+    assert not scored.is_autonomous_success  # QA never ran: unverified evidence is not verified success
+    verified = svc.set_recording_quality(tid, RecordingQuality.PASS)
+    assert verified.is_autonomous_success
 
 
 def test_score_protection(svc, planned):

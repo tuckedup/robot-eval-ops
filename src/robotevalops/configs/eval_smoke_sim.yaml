@@ -9,5 +9,5 @@ task:
   task_id: pick_place_block_v1
   attempt_timeout_s: 30.0
   dwell_required_s: 2.0
-controllers_from: configs/controllers/sim_scripted.yaml
-conditions_from: configs/conditions/sim_conditions.yaml
+controllers_from: controllers/sim_scripted.yaml
+conditions_from: conditions/sim_conditions.yaml

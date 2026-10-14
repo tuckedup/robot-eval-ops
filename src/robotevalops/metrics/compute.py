@@ -2,7 +2,7 @@
 
 planned    = every trial given (rows never vanish)
 attempted  = started_at set (reached RUNNING)
-evaluable  = COMPLETED and scored (success|failure) and recording_quality != fail
+evaluable  = COMPLETED and scored (success|failure) and recording_quality in {pass, flagged}
 Autonomous success is `schemas.is_autonomous_success` (assisted/unknown intervention never counts).
 Nothing is imputed: durations come only from recorded values; empty denominators yield None.
 """
@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 from robotevalops.metrics.stats import describe, rate, wilson_interval
 from robotevalops.schemas import (
     INFRA_REASONS,
+    QA_ELIGIBLE,
     ArtifactRef,
     ArtifactRole,
     ArtifactStatus,
@@ -96,6 +97,8 @@ class GroupMetrics(BaseModel):
     provenances: list[str]
     controller_types: list[str]
     session_ids: list[str]
+    pooled_controller_ids: list[str] = Field(default_factory=list)  # ids seen with >1 config hash here
+    rubric_versions: list[str] = Field(default_factory=list)
     planned: int
     attempted: int
     completed: int
@@ -114,7 +117,10 @@ class GroupMetrics(BaseModel):
     infra_reasons_not_attempted: int
     recording_pass_rate: Rate
     recording_unchecked: int  # attempted trials with recording_quality == unchecked (no QA result)
-    quality_excluded: int  # completed+scored but recording_quality == fail
+    recording_qa_error: int = 0  # attempted trials whose QA execution failed (recording_quality == error)
+    raw_task_successes: int = 0  # completed + scored success, regardless of QA/intervention (NOT verified)
+    unverified_successes: int = 0  # raw successes whose QA is unchecked/error (neither accepted nor rejected)
+    quality_excluded: int  # completed+scored but recording_quality not accepted (fail, error or unchecked)
     duration: DurationStats
     reset_duration: DurationStats
     artifacts: ArtifactCompleteness
@@ -139,9 +145,13 @@ DEFINITIONS = {
     "attempted": "started_at set (reached RUNNING)",
     "completed/failed/aborted": "lifecycle state counts",
     "unscored": "attempted trials with task_outcome=unscored",
-    "evaluable": "COMPLETED, scored success|failure, recording_quality != fail",
-    "success_per_attempt": "autonomous successes / attempted",
-    "success_per_evaluable": "autonomous successes / evaluable",
+    "evaluable": (
+        "COMPLETED, scored success|failure, recording_quality in {pass, flagged}; "
+        "unchecked/error/fail are excluded and counted in quality_excluded"
+    ),
+    "raw_task_successes": "COMPLETED + scored success regardless of QA or intervention (unverified)",
+    "success_per_attempt": "VERIFIED autonomous successes (QA pass|flagged) / attempted",
+    "success_per_evaluable": "VERIFIED autonomous successes / evaluable",
     "intervention_rate": "intervention == assisted / attempted",
     "infra_abort_rate": "attempted trials terminated by an infra reason / attempted",
     "recording_pass_rate": "recording_quality == pass / attempted",
@@ -218,10 +228,16 @@ def _group_warnings(g: GroupMetrics) -> list[str]:
             "run 'robotevalops data validate' (or session run, which now runs QA) "
             "before trusting evaluable counts"
         )
+    if g.recording_qa_error:
+        w.append(
+            f"[{label}] {g.recording_qa_error} trial(s) have recording QA ERRORS (QA could not complete); "
+            "their outcomes are unverified and NOT counted as evaluable or autonomous successes."
+        )
     if g.quality_excluded:
         w.append(
-            f"[{label}] {g.quality_excluded} scored trial(s) excluded from 'evaluable' by recording "
-            "quality = fail (shown, not hidden)."
+            f"[{label}] {g.quality_excluded} scored trial(s) excluded from 'evaluable' because recording "
+            f"QA is not accepted (fail/error/unchecked); {g.unverified_successes} of the "
+            f"{g.raw_task_successes} raw task success(es) are unverified (shown, not hidden)."
         )
     if g.assisted_successes or g.unknown_intervention_successes:
         w.append(
@@ -234,6 +250,14 @@ def _group_warnings(g: GroupMetrics) -> list[str]:
         w.append(f"[{label}] {g.artifacts.checksum_mismatch} artifact checksum mismatch(es).")
     if len(g.provenances) > 1:
         w.append(f"[{label}] mixes provenance {g.provenances}; do not pool these results.")
+    if g.pooled_controller_ids:
+        w.append(
+            f"[{label}] controller id(s) {g.pooled_controller_ids} appear with different config hashes "
+            "(same name, different parameters); per-controller rows are keyed by config hash, but this "
+            "aggregate mixes them."
+        )
+    if len(g.rubric_versions) > 1:
+        w.append(f"[{label}] mixes scoring rubric versions {g.rubric_versions}; do not pool these results.")
     return w
 
 
@@ -245,7 +269,7 @@ def compute_group(trials: Sequence[TrialRecord], key: dict[str, str] | None = No
         for t in ts
         if t.state == TrialState.COMPLETED and t.task_outcome in (TaskOutcome.SUCCESS, TaskOutcome.FAILURE)
     ]
-    evaluable = [t for t in scored if t.recording_quality != RecordingQuality.FAIL]
+    evaluable = [t for t in scored if t.recording_quality in QA_ELIGIBLE]
     auto = sum(is_autonomous_success(t) for t in ts)
     n_att = len(attempted_t)
     succ = [t for t in ts if t.state == TrialState.COMPLETED and t.task_outcome == TaskOutcome.SUCCESS]
@@ -254,6 +278,12 @@ def compute_group(trials: Sequence[TrialRecord], key: dict[str, str] | None = No
         provenances=sorted({t.provenance.value for t in ts}),
         controller_types=sorted({t.controller_type.value for t in ts}),
         session_ids=sorted({t.session_id for t in ts}),
+        pooled_controller_ids=sorted(
+            cid
+            for cid in {t.controller_id for t in ts}
+            if len({t.controller_config_hash for t in ts if t.controller_id == cid}) > 1
+        ),
+        rubric_versions=sorted({t.rubric_version for t in ts}),
         planned=len(ts),
         attempted=n_att,
         completed=sum(t.state == TrialState.COMPLETED for t in ts),
@@ -276,6 +306,11 @@ def compute_group(trials: Sequence[TrialRecord], key: dict[str, str] | None = No
             sum(t.recording_quality == RecordingQuality.PASS for t in attempted_t), n_att
         ),
         recording_unchecked=sum(t.recording_quality == RecordingQuality.UNCHECKED for t in attempted_t),
+        recording_qa_error=sum(t.recording_quality == RecordingQuality.ERROR for t in attempted_t),
+        raw_task_successes=len(succ),
+        unverified_successes=sum(
+            t.recording_quality in (RecordingQuality.UNCHECKED, RecordingQuality.ERROR) for t in succ
+        ),
         quality_excluded=len(scored) - len(evaluable),
         duration=DurationStats.of([t.duration_s for t in ts if t.duration_s is not None], "trial duration"),
         reset_duration=DurationStats.of(
@@ -288,7 +323,16 @@ def compute_group(trials: Sequence[TrialRecord], key: dict[str, str] | None = No
 
 
 def _controller_key(t: TrialRecord) -> tuple[str, ...]:
-    return (t.controller_id, t.controller_version, t.controller_type.value, t.provenance.value)
+    # config hash + rubric version are part of the identity: same-named controllers with different parameters,
+    # or results scored under different rubrics, are never pooled into one row.
+    return (
+        t.controller_id,
+        t.controller_version,
+        t.controller_config_hash,
+        t.controller_type.value,
+        t.provenance.value,
+        t.rubric_version,
+    )
 
 
 def compute_metrics(trials: Sequence[TrialRecord]) -> MetricsReport:
@@ -301,7 +345,14 @@ def compute_metrics(trials: Sequence[TrialRecord]) -> MetricsReport:
             buckets.setdefault(keyfn(t), []).append(t)
         return [compute_group(v, dict(zip(keynames, k, strict=True))) for k, v in sorted(buckets.items())]
 
-    ckeys = ("controller_id", "controller_version", "controller_type", "provenance")
+    ckeys = (
+        "controller_id",
+        "controller_version",
+        "controller_config_hash",
+        "controller_type",
+        "provenance",
+        "rubric_version",
+    )
     by_condition = _group(lambda t: (t.condition_name, t.provenance.value), ("condition", "provenance"))
     by_controller = _group(_controller_key, ckeys)
     by_cc = _group(lambda t: (*_controller_key(t), t.condition_name), (*ckeys, "condition"))

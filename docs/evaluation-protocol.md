@@ -76,7 +76,7 @@ reported when n >= 20. Missing durations are never imputed.
 
 ## 4. Conditions and pairing
 
-Conditions are bounded and versioned (`configs/conditions/*.yaml`): `nominal`, `object_position`, `lighting`,
+Conditions are bounded and versioned (`src/robotevalops/configs/conditions/*.yaml`): `nominal`, `object_position`, `lighting`,
 `background`, `occlusion`. Only `object_position` changes simulator state read by a state-based controller
 (`affects_controller_state: true`); lighting, background and occlusion are visual-only, so a scripted state-based
 controller is expected to be unaffected. That says nothing about the visual robustness of a learned policy.
@@ -89,22 +89,22 @@ descriptive.
 
 ## 5. Full template and smoke runs
 
-- **Full simulation template** (`configs/eval_full_sim.yaml`): 2 controllers x 5 conditions x 10 trials = **100
+- **Full simulation template** (`src/robotevalops/configs/eval_full_sim.yaml`): 2 controllers x 5 conditions x 10 trials = **100
   planned trials**, provenance `simulation` (Panda).
-- **Smoke runs** (`configs/eval_smoke_mock.yaml`, `configs/eval_smoke_sim.yaml`): small plumbing checks. Mock smoke
+- **Smoke runs** (`src/robotevalops/configs/eval_smoke_mock.yaml`, `src/robotevalops/configs/eval_smoke_sim.yaml`): small plumbing checks. Mock smoke
   runs test software only; neither smoke run is a performance measurement.
 - A run that stops early still reports all 100 planned trials; the unattempted ones remain visible as `planned`.
 
 ## 6. Targets versus measured
 
-`configs/targets.yaml` holds **proposed targets only** (for example 100 evaluation trials, 10 fault cases, 100%
+`src/robotevalops/configs/targets.yaml` holds **proposed targets only** (for example 100 evaluation trials, 10 fault cases, 100%
 checksum agreement). They are goals, not results. Measured values appear only in generated reports and
 `docs/verification.md`, with the session id, config hash and manifest path that produced them. A report never copies
 a target into a result.
 
 ## 7. What needs independent human measurement
 
-These are listed under `needs_independent_human_measurement` in `configs/targets.yaml` and are not produced by
+These are listed under `needs_independent_human_measurement` in `src/robotevalops/configs/targets.yaml` and are not produced by
 software alone:
 
 - **Scoring agreement**: two humans score the same videos independently (blind to each other); record them in

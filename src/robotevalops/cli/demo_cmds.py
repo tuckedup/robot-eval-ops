@@ -14,6 +14,7 @@ from typing import Any
 
 import typer
 
+from robotevalops.controllers.base import configs_dir
 from robotevalops.core.runner import Runner
 from robotevalops.core.service import EvalService
 from robotevalops.errors import RobotEvalOpsError
@@ -22,7 +23,6 @@ from robotevalops.util import atomic_write_text
 
 app = typer.Typer(help="Run the end-to-end demo workflow.", no_args_is_help=True)
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
 
 MOCK_BANNER = "MOCK FIXTURE - not evidence of robotics performance"
 
@@ -89,7 +89,7 @@ def run(
     steps: list[dict[str, Any]] = []
     sim = backend in ("sim", "pybullet_panda")
     real_backend = "pybullet_panda" if sim else "mock"
-    cfg_path = config or REPO_ROOT / "configs" / ("eval_smoke_sim.yaml" if sim else "eval_smoke_mock.yaml")
+    cfg_path = config or configs_dir() / ("eval_smoke_sim.yaml" if sim else "eval_smoke_mock.yaml")
     if not cfg_path.exists():
         raise typer.BadParameter(f"config {cfg_path} not found (run from the repository root)")
     cfg: EvalConfig = load_eval_config(cfg_path)

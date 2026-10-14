@@ -76,7 +76,7 @@ uv run ruff check . && uv run ruff format --check . && uv run mypy src
 The full evaluation template (2 controllers × 5 conditions × 10 trials = 100 planned trials):
 
 ```bash
-uv run robotevalops demo run --backend sim --config configs/eval_full_sim.yaml --home data/full_sim --skip-faults   # ~20-25 min CPU
+uv run robotevalops demo run --backend sim --config src/robotevalops/configs/eval_full_sim.yaml --home data/full_sim --skip-faults   # ~20-25 min CPU
 ```
 
 Step-by-step CLI (what `demo run` chains): `session create/plan/run/recover/stop/export-manifest`,
@@ -112,7 +112,7 @@ use synthetic mock fixtures and mocked storage — they test the detectors, not 
 
 ## Hardware pathway (SO-101 + LeRobot) — not hardware-verified
 
-Config template `configs/hardware/so101.example.yaml`, wrapper `adapters/lerobot_wrapper.py`, adapter
+Config template `src/robotevalops/configs/hardware/so101.example.yaml`, wrapper `adapters/lerobot_wrapper.py`, adapter
 `adapters/hardware_so101.py`, operator guide [docs/hardware-setup.md](docs/hardware-setup.md). Safety posture:
 nothing moves, calibrates, flashes or replays during install or CI; motion needs explicit hardware mode, a
 per-session operator acknowledgement and a passing non-moving preflight; the wrapper refuses to launch
@@ -136,7 +136,7 @@ tested against a mock (moto); real-AWS verification is an opt-in test (`ROBOTEVA
 [hardware setup](docs/hardware-setup.md) · [troubleshooting](docs/troubleshooting.md) ·
 [verification](docs/verification.md) · [independent findings](docs/verification-findings.md) ·
 [resume evidence](docs/resume-evidence.md) · [90-second walkthrough](docs/walkthrough-90s.md) ·
-templates in [docs/templates/](docs/templates) · proposed targets in `configs/targets.yaml` (goals, not results).
+templates in [docs/templates/](docs/templates) · proposed targets in `src/robotevalops/configs/targets.yaml` (goals, not results).
 
 ## Limitations
 
@@ -147,7 +147,7 @@ templates in [docs/templates/](docs/templates) · proposed targets in `configs/t
 - Real-AWS transfers, real LeRobot datasets, and hardware video scoring are unexercised.
 - Windows file-symlink escape tests are skipped on accounts that cannot create symlinks (directory junctions were tested).
 - No screenshots were captured.
-- Targets in `configs/targets.yaml` (60 demos / 3 sessions, 100 trials, ≥95% demo QA acceptance, …) are proposals.
+- Targets in `src/robotevalops/configs/targets.yaml` (60 demos / 3 sessions, 100 trials, ≥95% demo QA acceptance, …) are proposals.
   Only the 100-trial simulation template and the ten fault cases have been executed here.
 - License: not chosen (needs the owner's decision).
 

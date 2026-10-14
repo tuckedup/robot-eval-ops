@@ -320,15 +320,17 @@ def test_cli_adapters_and_import_without_dataset():
     assert r.exit_code == 0 and json.loads(r.stdout)["dataset"] is None
 
 
-def test_cli_import_dataset_split(tmp_path):
+def test_cli_import_dataset_without_episode_metadata_is_rejected_and_never_invents_ids(tmp_path):
     (tmp_path / "meta").mkdir()
     (tmp_path / "meta" / "info.json").write_text(
         json.dumps({"total_episodes": 10, "fps": 30}), encoding="utf-8"
     )
     r = runner.invoke(app, ["import-dataset", "--path", str(tmp_path), "--json"])
     out = json.loads(r.stdout)
-    assert r.exit_code == 0 and out["split_unit"] == "whole episodes"
-    assert sorted(out["episode_split"]["train"] + out["episode_split"]["eval"]) == list(range(10))
+    assert r.exit_code == 1 and out["status"] == "rejected"
+    assert (
+        out["accepted_episodes"] == [] and out["split"].get("train") is None
+    )  # no range(total_episodes) fabrication
 
 
 def test_cli_dry_run_prints_argv_and_does_not_execute(tmp_path):

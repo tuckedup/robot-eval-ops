@@ -45,7 +45,7 @@ def test_assisted_success_not_autonomous_and_infra_stays_in_denominator():
     ts = [
         make_trial(state=C, outcome=S, reason=OK, intervention=NONE, quality=PASS),
         make_trial(state=C, outcome=S, reason=OK, intervention=NONE, quality=PASS),
-        make_trial(state=C, outcome=S, reason=OK, intervention=ASS),
+        make_trial(state=C, outcome=S, reason=OK, intervention=ASS, quality=PASS),
         make_trial(state=F, reason=TerminationReason.INFRA_FAILURE),
     ]
     g = compute_group(ts)

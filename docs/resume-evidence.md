@@ -11,7 +11,7 @@ re-running the linked command. Everything below is simulation/software; **no rob
    100/100 recording-QA pass, and 300/300 artifacts SHA-256-verified after a local-store round trip. Every trial stays in the
    denominators; rates carry Wilson 95% intervals.
    Evidence: `docs/demo/sim-full-100/summary.md` · `docs/verification.md` §4 · command
-   `robotevalops demo run --backend sim --config configs/eval_full_sim.yaml`.
+   `robotevalops demo run --backend sim --config src/robotevalops/configs/eval_full_sim.yaml`.
    *(Scripted state-based controllers in simulation: not a learned-policy or real-world result.)*
 
 2. **Designed a ten-case fault-injection and data-QA suite** (missing/truncated video, non-monotonic timestamps, NaN

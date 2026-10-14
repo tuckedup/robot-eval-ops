@@ -9,5 +9,5 @@ task:
   task_id: pick_place_block_v1
   attempt_timeout_s: 30.0
   dwell_required_s: 2.0
-controllers_from: configs/controllers/mock_scripted.yaml
-conditions_from: configs/conditions/mock_conditions.yaml
+controllers_from: controllers/mock_scripted.yaml
+conditions_from: conditions/mock_conditions.yaml

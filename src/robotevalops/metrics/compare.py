@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from robotevalops.metrics.compute import Rate
 from robotevalops.metrics.stats import exact_mcnemar_p
 from robotevalops.schemas import (
-    RecordingQuality,
+    QA_ELIGIBLE,
     TaskOutcome,
     TrialRecord,
     TrialState,
@@ -26,6 +26,7 @@ SIGNIFICANCE_CAVEAT = (
 
 
 class PairIssue(BaseModel):
+    session_id: str = ""
     condition: str
     trial_index: int
     reason: str  # missing_partner | not_evaluable_a | not_evaluable_b | seed_mismatch | duplicate
@@ -53,6 +54,9 @@ class Comparison(BaseModel):
     overall: PairedCell
     by_condition: list[PairedCell]
     unpaired: list[PairIssue] = Field(default_factory=list)
+    pairing_unit: str = "same session + condition + trial_index, equal seed"
+    session_ids: list[str] = Field(default_factory=list)
+    controller_config_hashes: dict[str, list[str]] = Field(default_factory=dict)
     caveat: str = SIGNIFICANCE_CAVEAT
     notes: list[str] = Field(default_factory=list)
 
@@ -61,7 +65,7 @@ def _evaluable(t: TrialRecord) -> bool:
     return (
         t.state == TrialState.COMPLETED
         and t.task_outcome in (TaskOutcome.SUCCESS, TaskOutcome.FAILURE)
-        and t.recording_quality != RecordingQuality.FAIL
+        and t.recording_quality in QA_ELIGIBLE
     )
 
 
@@ -90,17 +94,19 @@ def compare_controllers(trials: Sequence[TrialRecord], controller_a: str, contro
     ts = list(trials)
     a_ts = [t for t in ts if t.controller_id == controller_a]
     b_ts = [t for t in ts if t.controller_id == controller_b]
-    idx_a: dict[tuple[str, int], list[TrialRecord]] = {}
-    idx_b: dict[tuple[str, int], list[TrialRecord]] = {}
+    # A pair is formed only WITHIN one session: trial_index 3 of session X and trial_index 3 of session Y are
+    # different experiments, even when the controller ids and conditions match.
+    idx_a: dict[tuple[str, str, int], list[TrialRecord]] = {}
+    idx_b: dict[tuple[str, str, int], list[TrialRecord]] = {}
     for t in a_ts:
-        idx_a.setdefault((t.condition_name, t.trial_index), []).append(t)
+        idx_a.setdefault((t.session_id, t.condition_name, t.trial_index), []).append(t)
     for t in b_ts:
-        idx_b.setdefault((t.condition_name, t.trial_index), []).append(t)
+        idx_b.setdefault((t.session_id, t.condition_name, t.trial_index), []).append(t)
     pairs: dict[str, list[tuple[TrialRecord, TrialRecord]]] = {}
     issues: list[PairIssue] = []
     conds = {t.condition_name for t in a_ts + b_ts}
     for key in sorted(set(idx_a) | set(idx_b)):
-        cond, ti = key
+        sid, cond, ti = key
         la, lb = idx_a.get(key, []), idx_b.get(key, [])
         ida = la[0].trial_id if la else None
         idb = lb[0].trial_id if lb else None
@@ -118,7 +124,14 @@ def compare_controllers(trials: Sequence[TrialRecord], controller_a: str, contro
             reason = None
         if reason:
             issues.append(
-                PairIssue(condition=cond, trial_index=ti, reason=reason, trial_id_a=ida, trial_id_b=idb)
+                PairIssue(
+                    session_id=sid,
+                    condition=cond,
+                    trial_index=ti,
+                    reason=reason,
+                    trial_id_a=ida,
+                    trial_id_b=idb,
+                )
             )
         else:
             pairs.setdefault(cond, []).append((la[0], lb[0]))
@@ -128,6 +141,16 @@ def compare_controllers(trials: Sequence[TrialRecord], controller_a: str, contro
         notes.append(f"{len(issues)} trial position(s) could not be analysed as pairs; see 'unpaired'.")
     if not a_ts or not b_ts:
         notes.append("one of the controllers has no trials in the selected data.")
+    hashes = {
+        cid: sorted({t.controller_config_hash for t in grp})
+        for cid, grp in ((controller_a, a_ts), (controller_b, b_ts))
+    }
+    for cid, hs in hashes.items():
+        if len(hs) > 1:
+            notes.append(
+                f"controller {cid!r} appears with {len(hs)} different config hashes; same-named controllers "
+                "with different parameters are different treatments. Select one session or version."
+            )
     return Comparison(
         controller_a=controller_a,
         controller_b=controller_b,
@@ -139,5 +162,7 @@ def compare_controllers(trials: Sequence[TrialRecord], controller_a: str, contro
         overall=_cell("ALL", all_pairs),
         by_condition=[_cell(c, pairs.get(c, [])) for c in sorted(conds)],
         unpaired=issues,
+        session_ids=sorted({t.session_id for t in a_ts + b_ts}),
+        controller_config_hashes=hashes,
         notes=notes,
     )

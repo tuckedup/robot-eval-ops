@@ -67,7 +67,7 @@ BLOCK_NOMINAL_XY = (0.50, -0.15)
 TARGET_CENTER = (0.50, 0.20)
 TARGET_HALF = 0.06
 MIN_LIFT_M = 0.03  # block must rise >= 3 cm above its resting height at some point
-MIN_BILATERAL_STEPS = 5  # control steps (0.25 s) with BOTH fingers touching the block
+MIN_BILATERAL_STEPS = 5  # CONSECUTIVE control steps (0.25 s) with BOTH fingers touching the block
 OPEN_THRESHOLD_M = 0.06  # sum of both finger positions
 EE_LINK = 11  # panda_grasptarget
 ARM_JOINTS = list(range(7))
@@ -126,26 +126,35 @@ def _rot(quat: np.ndarray) -> np.ndarray:
 
 
 def footprint_fraction_in_square(
-    pos: np.ndarray, quat: np.ndarray, center: tuple[float, float], half: float, n: int = 21
+    pos: np.ndarray,
+    quat: np.ndarray,
+    center: tuple[float, float],
+    half: float,
+    n: int = 21,
+    block_half: float = BLOCK_HALF,
 ) -> float:
     """Fraction of the block's bottom-face area lying inside the target square (grid sampling)."""
-    g = np.linspace(-BLOCK_HALF, BLOCK_HALF, n)
+    g = np.linspace(-block_half, block_half, n)
     gx, gy = np.meshgrid(g, g)
-    local = np.stack([gx.ravel(), gy.ravel(), np.full(gx.size, -BLOCK_HALF)], axis=1)
+    local = np.stack([gx.ravel(), gy.ravel(), np.full(gx.size, -block_half)], axis=1)
     world = local @ _rot(quat).T + pos
     inside = (np.abs(world[:, 0] - center[0]) < half) & (np.abs(world[:, 1] - center[1]) < half)
     return float(inside.mean())
 
 
 def corners_inside_square(
-    pos: np.ndarray, quat: np.ndarray, center: tuple[float, float], half: float
+    pos: np.ndarray,
+    quat: np.ndarray,
+    center: tuple[float, float],
+    half: float,
+    block_half: float = BLOCK_HALF,
 ) -> bool:
     """True iff ALL 8 corners of the cube (bottom and top face, so tilt/overhang counts) lie
     STRICTLY inside the square region in x and y. Tolerance policy: none; a corner exactly on the
     boundary (or beyond) is NOT inside."""
     corners = np.array(
         [
-            [sx * BLOCK_HALF, sy * BLOCK_HALF, sz * BLOCK_HALF]
+            [sx * block_half, sy * block_half, sz * block_half]
             for sx in (-1, 1)
             for sy in (-1, 1)
             for sz in (-1, 1)
@@ -155,6 +164,40 @@ def corners_inside_square(
     return bool(
         np.all(np.abs(world[:, 0] - center[0]) < half) and np.all(np.abs(world[:, 1] - center[1]) < half)
     )
+
+
+# Hard physical bounds for the `physics_stress` condition: a config can never push a factor outside these.
+STRESS_BOUNDS: dict[str, tuple[float, float]] = {
+    "block_mass_kg": (0.01, 3.0),
+    "block_friction": (0.05, 2.0),
+    "block_half_size_m": (0.015, 0.035),
+    "block_yaw_deg": (-60.0, 60.0),
+    "target_half_m": (0.022, 0.06),
+    "control_delay_steps": (0.0, 10.0),
+    "obs_noise_std_m": (0.0, 0.03),
+    "max_offset_m": (0.0, 0.06),
+}
+STRESS_NOMINAL: dict[str, float] = {
+    "block_mass_kg": BLOCK_MASS,
+    "block_friction": 1.0,
+    "block_half_size_m": BLOCK_HALF,
+    "block_yaw_deg": 0.0,
+    "target_half_m": TARGET_HALF,
+    "control_delay_steps": 0.0,
+    "obs_noise_std_m": 0.0,
+    "max_offset_m": 0.04,
+}
+
+
+def stress_params(condition: ConditionSpec) -> dict[str, float]:
+    """Clamped physics_stress parameters (nominal for any factor not named). Values are clamped to
+    STRESS_BOUNDS and the clamped value is what is recorded as applied."""
+    out = {}
+    for k, nominal in STRESS_NOMINAL.items():
+        lo, hi = STRESS_BOUNDS[k]
+        out[k] = min(max(condition_param(condition, k, nominal), lo), hi)
+    out["control_delay_steps"] = float(round(out["control_delay_steps"]))
+    return out
 
 
 class PyBulletPandaAdapter(RobotAdapter):
@@ -192,6 +235,12 @@ class PyBulletPandaAdapter(RobotAdapter):
         self._occlusion: tuple[int, int, int, int] | None = None
         self._dwell_required = 2.0
         self._ev: dict[str, Any] = {}
+        self._block_half = BLOCK_HALF
+        self._target_half = TARGET_HALF
+        self._delay_steps = 0
+        self._cmd_queue: list[tuple[list[float], float, float]] = []
+        self._obs_noise_std = 0.0
+        self._obs_rng: np.random.Generator | None = None
 
     def _connect(self) -> int:
         if self._cid is None:
@@ -266,10 +315,17 @@ class PyBulletPandaAdapter(RobotAdapter):
         )
         self._floor = p.createMultiBody(0, fcol, fvis, [0.35, 0.0, -0.52], physicsClientId=cid)
         p.changeDynamics(self._table, -1, lateralFriction=0.8, physicsClientId=cid)
+        stress = stress_params(condition) if condition.kind == "physics_stress" else None
+        if stress is not None:
+            self._block_half = stress["block_half_size_m"]
+            self._target_half = stress["target_half_m"]
+            self._delay_steps = int(stress["control_delay_steps"])
+            self._obs_noise_std = stress["obs_noise_std_m"]
+            self._obs_rng = seeded_rng(seed, "obs_noise")
         # --- target marker (visual only)
         mvis = p.createVisualShape(
             p.GEOM_BOX,
-            halfExtents=[TARGET_HALF, TARGET_HALF, 0.0005],
+            halfExtents=[self._target_half, self._target_half, 0.0005],
             rgbaColor=[0.1, 0.7, 0.2, 1],
             physicsClientId=cid,
         )
@@ -290,20 +346,39 @@ class PyBulletPandaAdapter(RobotAdapter):
         # --- block (state-affecting condition: seeded bounded offset)
         sx, sy = BLOCK_NOMINAL_XY
         self._applied = {"condition_kind": condition.kind, "condition_name": condition.name}
-        if condition.kind == "object_position":
-            m = condition_param(condition, "max_offset_m", 0.04)
+        if condition.kind == "object_position" or stress is not None:
+            # physics_stress reuses the object_position stream, so seed k gives the same offset in both
+            m = (
+                stress["max_offset_m"]
+                if stress is not None
+                else condition_param(condition, "max_offset_m", 0.04)
+            )
             m = min(abs(m), 0.06)  # hard bound regardless of config
             off = seeded_rng(seed, "object_position").uniform(-m, m, size=2)
             sx, sy = sx + float(off[0]), sy + float(off[1])
             self._applied.update({"block_offset_m": [float(off[0]), float(off[1])], "max_offset_m": m})
-        bcol = p.createCollisionShape(p.GEOM_BOX, halfExtents=[BLOCK_HALF] * 3, physicsClientId=cid)
+        bh = self._block_half
+        mass, mu, yaw = BLOCK_MASS, 1.0, 0.0
+        if stress is not None:
+            mass, mu, yaw = (
+                stress["block_mass_kg"],
+                stress["block_friction"],
+                math.radians(stress["block_yaw_deg"]),
+            )
+            self._applied.update({"physics_stress": dict(stress)})
+        bcol = p.createCollisionShape(p.GEOM_BOX, halfExtents=[bh] * 3, physicsClientId=cid)
         bvis = p.createVisualShape(
-            p.GEOM_BOX, halfExtents=[BLOCK_HALF] * 3, rgbaColor=[0.85, 0.1, 0.1, 1], physicsClientId=cid
+            p.GEOM_BOX, halfExtents=[bh] * 3, rgbaColor=[0.85, 0.1, 0.1, 1], physicsClientId=cid
         )
         self._block = p.createMultiBody(
-            BLOCK_MASS, bcol, bvis, [sx, sy, BLOCK_HALF + 0.0002], physicsClientId=cid
+            mass,
+            bcol,
+            bvis,
+            [sx, sy, bh + 0.0002],
+            p.getQuaternionFromEuler([0.0, 0.0, yaw]),
+            physicsClientId=cid,
         )
-        p.changeDynamics(self._block, -1, lateralFriction=1.0, physicsClientId=cid)
+        p.changeDynamics(self._block, -1, lateralFriction=mu, physicsClientId=cid)
 
         # --- visual-only conditions (separate RNG stream; never touches physics)
         self._light = {"dir": _NOMINAL_LIGHT_DIR, "scale": 1.0}
@@ -349,7 +424,9 @@ class PyBulletPandaAdapter(RobotAdapter):
         self._block_start = np.array(p.getBasePositionAndOrientation(self._block, physicsClientId=cid)[0])
         self._ev = {
             "gripper_contact_steps": 0,
-            "both_finger_contact_steps": 0,
+            "both_finger_contact_steps": 0,  # accumulated (informational)
+            "both_finger_contact_run": 0,  # current CONSECUTIVE run
+            "max_both_finger_contact_run": 0,  # longest consecutive run: the grasp criterion
             "max_block_z_m": float(self._block_start[2]),
             "max_contact_normal_force_n": 0.0,
         }
@@ -421,6 +498,10 @@ class PyBulletPandaAdapter(RobotAdapter):
         js = p.getJointStates(self._panda, ARM_JOINTS, physicsClientId=cid)
         ls = p.getLinkState(self._panda, EE_LINK, computeForwardKinematics=1, physicsClientId=cid)
         bpos, bquat = self._block_pose()
+        if self._obs_noise_std > 0.0 and self._obs_rng is not None:
+            # OBSERVED block position only (what the controller sees); the physics and the success check
+            # always use the true pose.
+            bpos = bpos + self._obs_rng.normal(0.0, self._obs_noise_std, size=3)
         return {
             "joint_pos": [float(s[0]) for s in js],
             "joint_vel": [float(s[1]) for s in js],
@@ -430,7 +511,7 @@ class PyBulletPandaAdapter(RobotAdapter):
             "block_pos_world": [float(v) for v in bpos],
             "block_quat_world": [float(v) for v in bquat],
             "target_center_world": [TARGET_CENTER[0], TARGET_CENTER[1], 0.0],
-            "target_half_size_m": [TARGET_HALF],
+            "target_half_size_m": [self._target_half],
         }
 
     def state_vector(self, st: dict[str, list[float]]) -> list[float]:
@@ -461,17 +542,26 @@ class PyBulletPandaAdapter(RobotAdapter):
             lows.append(info[8])
             highs.append(info[9])
         q = [min(max(x, lo), hi) for x, lo, hi in zip(v[:7], lows, highs, strict=True)]
-        self._target[:7] = q
-        self._finger_target = min(max(v[7], 0.0), 0.04)
-        self._finger_force = min(max(v[8], 0.0), 40.0)
+        cmd = (q, min(max(v[7], 0.0), 0.04), min(max(v[8], 0.0), 40.0))
+        if self._delay_steps > 0:
+            # actuation delay: a command takes effect `delay` control steps later; until the first delayed
+            # command arrives the arm keeps its previous targets
+            self._cmd_queue.append(cmd)
+            if len(self._cmd_queue) <= self._delay_steps:
+                return
+            cmd = self._cmd_queue.pop(0)
+        self._target[:7] = cmd[0]
+        self._finger_target = cmd[1]
+        self._finger_force = cmd[2]
 
     def _grasp_evidence(self) -> dict[str, Any]:
         ev = self._ev
         lift = ev["max_block_z_m"] - float(self._block_start[2])
-        both = int(ev["both_finger_contact_steps"])
+        both = int(ev["max_both_finger_contact_run"])  # CONSECUTIVE steps; broken contact restarts the count
         return {
             "grasped": bool(both >= MIN_BILATERAL_STEPS and lift >= MIN_LIFT_M),
             "bilateral_contact_ok": bool(both >= MIN_BILATERAL_STEPS),
+            "grasp_contact_rule": "consecutive_steps_v2",
             "lift_ok": bool(lift >= MIN_LIFT_M),
             "min_bilateral_contact_steps": MIN_BILATERAL_STEPS,
             "min_lift_m": MIN_LIFT_M,
@@ -480,7 +570,7 @@ class PyBulletPandaAdapter(RobotAdapter):
     def _update_task(self) -> None:
         pos, quat = self._block_pose()
         n_pts, n_fingers, fsum = self._contacts()
-        inside = corners_inside_square(pos, quat, TARGET_CENTER, TARGET_HALF)
+        inside = corners_inside_square(pos, quat, TARGET_CENTER, self._target_half, self._block_half)
         released = self._finger_width() >= OPEN_THRESHOLD_M and n_pts == 0
         ev = self._ev
         ev["max_block_z_m"] = max(ev["max_block_z_m"], float(pos[2]))
@@ -489,6 +579,12 @@ class PyBulletPandaAdapter(RobotAdapter):
             ev["gripper_contact_steps"] += 1
         if n_fingers >= 2:
             ev["both_finger_contact_steps"] += 1
+            ev["both_finger_contact_run"] += 1
+            ev["max_both_finger_contact_run"] = max(
+                ev["max_both_finger_contact_run"], ev["both_finger_contact_run"]
+            )
+        else:
+            ev["both_finger_contact_run"] = 0  # contact lost: the sustained-contact count restarts
         if inside and released:
             self._dwell += 1.0 / CONTROL_HZ
         else:
@@ -559,8 +655,12 @@ class PyBulletPandaAdapter(RobotAdapter):
             "block_final_quat": [float(x) for x in quat],
             "block_displacement_m": float(np.linalg.norm(pos[:2] - self._block_start[:2])),
             "block_final_speed_mps": float(np.linalg.norm(lin)),
-            "in_target_fraction": footprint_fraction_in_square(pos, quat, TARGET_CENTER, TARGET_HALF),
-            "all_corners_inside": corners_inside_square(pos, quat, TARGET_CENTER, TARGET_HALF),
+            "in_target_fraction": footprint_fraction_in_square(
+                pos, quat, TARGET_CENTER, self._target_half, block_half=self._block_half
+            ),
+            "all_corners_inside": corners_inside_square(
+                pos, quat, TARGET_CENTER, self._target_half, self._block_half
+            ),
             "released": bool(width >= OPEN_THRESHOLD_M and n_pts == 0),
             "gripper_width_m": width,
             "gripper_block_contact_points_final": n_pts,
@@ -571,13 +671,15 @@ class PyBulletPandaAdapter(RobotAdapter):
             "dwell_s_max": ev.get("dwell_s_max", 0.0),
             "gripper_contact_steps": ev["gripper_contact_steps"],
             "both_finger_contact_steps": ev["both_finger_contact_steps"],
+            "max_consecutive_both_finger_contact_steps": ev["max_both_finger_contact_run"],
             "max_block_height_m": ev["max_block_z_m"],
             "lift_m": ev["max_block_z_m"] - float(self._block_start[2]),
             "max_contact_normal_force_n": ev["max_contact_normal_force_n"],
             "control_steps": self._steps,
             "sim_time_s": self._t,
             "target_center_xy": list(TARGET_CENTER),
-            "target_half_size_m": TARGET_HALF,
+            "target_half_size_m": self._target_half,
+            "block_half_size_m": self._block_half,
             "applied_condition": self._applied,
             "frames": f"rendered simulator frames (TinyRenderer {FRAME_W}x{FRAME_H}); not camera data",
             "robot": "franka_panda (simulation only; not SO-101)",
