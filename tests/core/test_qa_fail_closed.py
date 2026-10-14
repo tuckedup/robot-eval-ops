@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import pytest
-from conftest import FakeAdapter, NoopController
 from test_core_runner import by_cond, make_session, run
 
+from conftest import FakeAdapter, NoopController
 from robotevalops.core.runner import Runner
 from robotevalops.metrics.compute import compute_group
 from robotevalops.metrics.failures import failure_class
@@ -106,3 +106,20 @@ def test_unwritable_qa_report_fails_closed(svc, monkeypatch):
     t = by_cond(svc, s)["a"]
     assert t.recording_quality == RecordingQuality.ERROR and not t.is_autonomous_success
     assert "PermissionError" in t.evidence["qa_error"]
+
+
+def test_rejected_report_without_error_flag_is_never_pass(svc):
+    """Verifier finding: accepted=False with only rubric reasons used to yield quality=pass."""
+    rep = QAReport(subject="t", accepted=False, rejection_reasons=["duration 0.5s < 1.0s"])
+    assert rep.quality == RecordingQuality.FLAGGED
+    s = make_session(svc, {"a": "success"})
+    run(
+        svc,
+        s,
+        FakeAdapter(),
+        qa_hook=lambda t, d: QAReport(
+            subject=t.trial_id, accepted=False, rejection_reasons=["no outcome label"]
+        ),
+    )
+    t = by_cond(svc, s)["a"]
+    assert t.recording_quality == RecordingQuality.FLAGGED  # visible, not PASS

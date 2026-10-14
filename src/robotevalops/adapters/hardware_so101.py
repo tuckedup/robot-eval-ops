@@ -26,7 +26,13 @@ from robotevalops.adapters.base import (
     RobotAdapter,
     StepResult,
 )
-from robotevalops.adapters.lerobot_dataset import episode_to_trace
+from robotevalops.adapters.lerobot_dataset import (
+    EpisodeMeta,
+    EpisodeTable,
+    episode_to_trace,
+    extract_episode_video,
+    load_episode_table,
+)
 from robotevalops.adapters.lerobot_wrapper import (
     CameraSpec,
     HardwareGate,
@@ -306,12 +312,35 @@ class SO101HardwareAdapter(RobotAdapter):
         summary = RecordingSummary(video_kind="physical_camera")
         if res.ok:
             vids = sorted((ds_root / "videos").rglob("*.mp4")) if (ds_root / "videos").is_dir() else []
-            if vids:
-                shutil.copyfile(vids[0], out_dir / "video.mp4")
+            table = self._episode_table(ds_root)
+            if table is not None and table.episodes:
+                # metadata-driven: ONE episode, ONE camera, only that episode's frames
+                meta_ep = table.get(min(table.ids))
+                assert meta_ep is not None
+                cam = self._pick_camera(table, meta_ep)
+                fps_v = float(self._read_fps(ds_root) or 0.0)
+                ex = (
+                    extract_episode_video(ds_root, meta_ep, cam, out_dir / "video.mp4", fps_v)
+                    if cam and fps_v
+                    else {"ok": False, "frames": 0, "reason": "no camera feature or fps in dataset metadata"}
+                )
+                ev["video_extraction"] = ex
+                if not ex["ok"]:
+                    vids = []
+                else:
+                    ev["video_source"] = f"{ex['source']}[{ex['window'][0]}:{ex['window'][1]}] ({cam})"
+                    tr = episode_to_trace(ds_root, out_dir / "trace.jsonl", episode=meta_ep.episode_index)
+                    ev["trace_conversion"] = tr
+                    decoded = int(ex["frames"])
+            elif vids:
+                shutil.copyfile(
+                    vids[0], out_dir / "video.mp4"
+                )  # legacy loose layout without episode metadata
                 ev["video_source"] = str(vids[0])
                 tr = episode_to_trace(ds_root, out_dir / "trace.jsonl")
                 ev["trace_conversion"] = tr
                 decoded = _count_decodable_frames(out_dir / "video.mp4")
+            if vids:
                 rows = int(tr["rows"]) if tr["ok"] else 0
                 summary = RecordingSummary(
                     video_relpath="video.mp4",
@@ -332,7 +361,12 @@ class SO101HardwareAdapter(RobotAdapter):
                     ev["trace_absent_reason"] = tr["reason"]
             else:
                 reason = TerminationReason.RECORDING_FAILURE
-                error = "lerobot exited 0 but no video (*.mp4) was found under the dataset videos/ directory"
+                why = (ev.get("video_extraction") or {}).get("reason")
+                error = (
+                    f"lerobot exited 0 but this episode's camera frames could not be extracted: {why}"
+                    if why
+                    else "lerobot exited 0 but no video (*.mp4) was found under the dataset videos/ directory"
+                )
         return EpisodeResult(
             termination_reason=reason,
             duration_s=res.duration_s,
@@ -342,6 +376,22 @@ class SO101HardwareAdapter(RobotAdapter):
             intervention_detected=False,
             error=error,
         )
+
+    @staticmethod
+    def _episode_table(ds_root: Path) -> EpisodeTable | None:
+        try:
+            info = json.loads((ds_root / "meta" / "info.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+        return load_episode_table(ds_root, info)
+
+    def _pick_camera(self, table: EpisodeTable, ep: EpisodeMeta) -> str | None:
+        """Configured camera whose key is `observation.images.<name>`, else the first camera key."""
+        keys = sorted(ep.videos)
+        for name in self.config.cameras:
+            if f"observation.images.{name}" in keys:
+                return f"observation.images.{name}"
+        return keys[0] if keys else None
 
     @staticmethod
     def _read_fps(ds_root: Path) -> float | None:

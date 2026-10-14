@@ -52,6 +52,8 @@ DROPPED_DISTANCE_M = 0.10
 
 
 def load_protocol(path: str | Path) -> dict[str, Any]:
+    if not Path(path).is_file():
+        raise RobotEvalOpsError(f"protocol file not found: {path} (pass --protocol <file>)")
     data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
     if not isinstance(data, dict) or "protocol_id" not in data:
         raise RobotEvalOpsError(f"{path}: not a stress protocol")
@@ -486,6 +488,7 @@ def freeze(protocol_path: str | Path, pilot_home: str | Path) -> dict[str, Any]:
 
 def require_frozen(protocol_path: str | Path) -> dict[str, Any]:
     p = Path(protocol_path)
+    load_protocol(p)  # clear error if the protocol file itself is missing
     fp = frozen_path(p)
     if not fp.is_file():
         raise RobotEvalOpsError("protocol is not frozen: run the pilot, then `robotevalops study freeze`")

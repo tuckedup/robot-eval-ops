@@ -114,7 +114,8 @@ def _cmd(kind, cfg, home, extra=()):
 
 
 def test_port_keys_are_canonical():
-    assert canonical_port("COM3") == canonical_port("com3") == canonical_port(r"\\.\COM3")
+    forms = ["COM3", "com3", "COM3:", r"\\.\COM3", "//./COM3", " COM3 "]
+    assert len({canonical_port(f) for f in forms}) == 1
     assert hardware_lock_keys(["COM3", "com3", "COM4"]) == ["port:COM3", "port:COM4"]
     assert hardware_lock_keys(["COM3"], label="bench") == ["label:bench", "port:COM3"]
 

@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """Read-only inspection of LeRobot-compatible dataset directories + episode-level splits.
 
 Layout support is VERSION-DISPATCHED (see docs/lerobot-datasets.md):
@@ -425,3 +426,65 @@ def episode_to_trace(
         lines.append(json.dumps(row.model_dump(), allow_nan=True))
     Path(trace_path).write_text("\n".join(lines) + "\n", encoding="utf-8")
     return {"ok": True, "rows": len(df), "reason": None, "episode": ep, "source_files": srcs}
+
+
+def extract_episode_video(
+    root: str | Path, ep: EpisodeMeta, camera: str, out_path: str | Path, fps: float
+) -> dict[str, Any]:
+    """Re-encode ONLY this episode's frames of one camera into ``out_path`` (v3 shares one mp4 per camera between
+    many episodes; copying the whole file would attach other episodes' frames to this trial). Frames are chosen
+    by the episode's ``[from_timestamp, to_timestamp)`` window from metadata. Returns {"ok", "frames", ...}."""
+    ref = ep.videos.get(camera)
+    if ref is None or ref.relpath is None or ref.from_timestamp is None or ref.to_timestamp is None:
+        return {
+            "ok": False,
+            "frames": 0,
+            "reason": f"episode {ep.episode_index} has no window for camera {camera!r}",
+        }
+    src = Path(root) / ref.relpath
+    if not src.is_file():
+        return {"ok": False, "frames": 0, "reason": f"{ref.relpath} is missing"}
+    half = 0.5 / fps if fps else 0.0
+    try:
+        import av
+        import imageio_ffmpeg
+        import numpy as np
+
+        writer = None
+        n = 0
+        with av.open(str(src)) as c:
+            stream = c.streams.video[0]
+            for i, frame in enumerate(c.decode(stream)):
+                t = float(frame.pts * stream.time_base) if frame.pts is not None else i / fps
+                if t < ref.from_timestamp - half:
+                    continue
+                if t >= ref.to_timestamp - half:
+                    break
+                arr = np.ascontiguousarray(frame.to_ndarray(format="rgb24"))
+                if writer is None:
+                    h, w = arr.shape[:2]
+                    writer = imageio_ffmpeg.write_frames(
+                        str(out_path),
+                        (w, h),
+                        fps=fps,
+                        codec="libx264",
+                        pix_fmt_in="rgb24",
+                        macro_block_size=1,
+                        quality=7,
+                    )
+                    writer.send(None)
+                writer.send(arr.tobytes())
+                n += 1
+        if writer is not None:
+            writer.close()
+    except Exception as e:  # noqa: BLE001 - undecodable source is a recording failure, not a crash
+        return {"ok": False, "frames": 0, "reason": f"{type(e).__name__}: {e}"}
+    if n == 0:
+        return {"ok": False, "frames": 0, "reason": "no frames inside the episode window"}
+    return {
+        "ok": True,
+        "frames": n,
+        "camera": camera,
+        "source": ref.relpath,
+        "window": [ref.from_timestamp, ref.to_timestamp],
+    }

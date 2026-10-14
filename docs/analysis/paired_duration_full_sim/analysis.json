@@ -385,16 +385,16 @@
   ],
   "phases": {
     "scripted_baseline_a": {
-      "approach_s": 3.699999999999995,
-      "carry_s": 7.100000000000024,
-      "release_and_dwell_s": 2.600000000000037,
-      "total_s": 13.400000000000055
+      "approach_s": 3.7999999999999945,
+      "carry_s": 7.200000000000027,
+      "release_and_dwell_s": 1.900000000000027,
+      "total_s": 12.900000000000048
     },
     "scripted_baseline_b": {
-      "approach_s": 2.499999999999999,
-      "carry_s": 4.899999999999983,
-      "release_and_dwell_s": 1.9000000000000155,
-      "total_s": 9.299999999999997
+      "approach_s": 2.5999999999999988,
+      "carry_s": 4.999999999999982,
+      "release_and_dwell_s": 1.900000000000019,
+      "total_s": 9.5
     }
   },
   "controller_params": {

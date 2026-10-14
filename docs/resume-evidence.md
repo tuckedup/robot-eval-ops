@@ -9,7 +9,8 @@ re-running the linked command. Everything below is simulation/software; **no rob
    lifecycle, physics-evidence scoring, QA that fails closed) and used it for a pre-specified stress study of two scripted
    pick-and-place controllers: protocol piloted on separate seeds, frozen by hash, then 464 held-out trials with 407 verified
    successes and 57 failures categorised from simulator evidence, each linked to its video; the two controllers had different
-   failure envelopes (one fails at a 2 kg block, the other when the target is tightened to 35 mm). Reanalysed an earlier
+   failure envelopes (at a 2 kg block one succeeded 8/8 and the other 0/8; both failed once the target half-width
+   dropped to 35 mm or less). Reanalysed an earlier
    100-trial run correctly: 50 pairs are 11 distinct start scenarios, B 25.9% shorter in simulated time (95% interval
    24.4-27.4%). Evidence: `docs/stress-study/results_stress_v1/report.md`, `docs/analysis/paired_duration_full_sim/analysis.md`.
    *(Panda in PyBullet, scripted controllers; not a real-robot, throughput or learned-policy result.)*

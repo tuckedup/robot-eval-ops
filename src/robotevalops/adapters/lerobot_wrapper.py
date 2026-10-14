@@ -58,7 +58,7 @@ LEROBOT_SOURCES = {
 }
 CONFIRM_TOKEN = "I_UNDERSTAND_THIS_MOVES_THE_ROBOT"
 # Tools that connect() the arm and could auto-calibrate: launched via adapters/lerobot_guard.py
-GUARDED_TOOLS = frozenset({"lerobot-record", "lerobot-teleoperate"})
+GUARDED_TOOLS = frozenset({"lerobot-record", "lerobot-teleoperate", "lerobot-replay"})
 # The argv builders and the calibration guard were checked ONLY against these installed lerobot versions (on
 # Python 3.11, Windows). Other versions (uv.lock also resolves 0.6.1 for Python 3.12) are refused for motion.
 TESTED_LEROBOT_VERSIONS = frozenset({"0.4.4"})

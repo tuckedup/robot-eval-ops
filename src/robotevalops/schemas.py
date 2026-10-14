@@ -411,7 +411,8 @@ class QAReport(_M):
             return RecordingQuality.ERROR  # QA itself did not complete: not a verdict on the recording
         if any(f.severity == Severity.ERROR for f in self.flags):
             return RecordingQuality.FAIL
-        return RecordingQuality.FLAGGED if self.flags else RecordingQuality.PASS
+        # a rejected report (rubric reasons but no error flag, e.g. short duration) is never PASS
+        return RecordingQuality.FLAGGED if (self.flags or not self.accepted) else RecordingQuality.PASS
 
 
 class FaultResult(_M):

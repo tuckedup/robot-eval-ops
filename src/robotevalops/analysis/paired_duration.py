@@ -338,7 +338,8 @@ def analyze(
     phases: dict[str, dict[str, float]] = {}
     if run_root is not None:
         for c in (controller_a, controller_b):
-            sample = next((r for r in prow if r.controller_id == c and r.scenario == scen[0]), None)
+            nominal = next((r.scenario for r in prow if r.condition == "nominal"), scen[0])
+            sample = next((r for r in prow if r.controller_id == c and r.scenario == nominal), None)
             tr = next((t for t in ts if sample and t.trial_id == sample.trial_id), None)
             if sample and sample.trace_relpath and tr:
                 ph = trace_phases(run_root / tr.session_id / sample.trace_relpath)

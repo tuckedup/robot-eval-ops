@@ -36,8 +36,8 @@ sd = 0 means every trial in that condition replayed the same physical scenario b
 
 | controller | approach (s) | carry (s) | release + dwell (s) | trace length (s) |
 |---|---:|---:|---:|---:|
-| scripted_baseline_a | 3.70 | 7.10 | 2.60 | 13.40 |
-| scripted_baseline_b | 2.50 | 4.90 | 1.90 | 9.30 |
+| scripted_baseline_a | 3.80 | 7.20 | 1.90 | 12.90 |
+| scripted_baseline_b | 2.60 | 5.00 | 1.90 | 9.50 |
 
 ## Controller parameters (the treatments)
 

@@ -29,6 +29,7 @@ EXIT_CALIBRATION_BLOCKED = 98
 TOOL_ENTRYPOINTS: dict[str, tuple[str, str]] = {
     "lerobot-record": ("lerobot.scripts.lerobot_record", "main"),
     "lerobot-teleoperate": ("lerobot.scripts.lerobot_teleoperate", "main"),
+    "lerobot-replay": ("lerobot.scripts.lerobot_replay", "main"),  # also connect()s with calibrate=True
 }
 # (module, class) pairs whose automatic calibration / setup must be unreachable
 GUARDED_CLASSES: tuple[tuple[str, str], ...] = (

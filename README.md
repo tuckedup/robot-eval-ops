@@ -135,8 +135,25 @@ tested against a mock (moto); real-AWS verification is an opt-in test (`ROBOTEVA
 [evaluation protocol](docs/evaluation-protocol.md) · [operating procedure](docs/operating-procedure.md) ·
 [hardware setup](docs/hardware-setup.md) · [troubleshooting](docs/troubleshooting.md) ·
 [verification](docs/verification.md) · [independent findings](docs/verification-findings.md) ·
-[resume evidence](docs/resume-evidence.md) · [90-second walkthrough](docs/walkthrough-90s.md) ·
+[resume evidence](docs/resume-evidence.md) · [90-second operator demo](docs/walkthrough-90s.md) ·
+[audit remediation](docs/audit-remediation.md) · [LeRobot datasets + QA](docs/lerobot-datasets.md) ·
+[stress study](docs/stress-study/README.md) · [paired duration analysis](docs/analysis/paired_duration_full_sim/analysis.md) ·
+[independent re-audit](docs/verification-reaudit.md) ·
 templates in [docs/templates/](docs/templates) · proposed targets in `src/robotevalops/configs/targets.yaml` (goals, not results).
+
+## Added after the independent audit
+
+```bash
+robotevalops demo operator                         # ~2 min: preflight, success, physics failure, corrupt recording rejected, interrupted+recovered run, verified transfer, report
+robotevalops robot import-dataset --path <lerobot-dir> --out <dir> --source-revision <rev> --license <lic>   # v2.1/v3 content QA + split + provenance record
+robotevalops report paired-duration --a <ctrl> --b <ctrl> --home <home> --out <dir>                          # paired analysis (read-only on the source data)
+robotevalops study pilot|freeze|run|report ...     # pre-specified, frozen physics stress study (docs/stress-study/README.md)
+scripts/verify_all.sh                              # regenerates docs/verification-run.json from the current commit
+scripts/verify_wheel.sh                            # non-editable wheel in a fresh venv, demo from an unrelated directory
+```
+
+Default YAML configs ship inside the package (`robotevalops/configs`). Docker: the Dockerfile uses `uv sync --locked`;
+the image build was **not** executed (no running Docker daemon). Supported/tested: Python 3.11, Windows, lerobot 0.4.4.
 
 ## Limitations
 

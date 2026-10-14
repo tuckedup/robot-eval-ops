@@ -27,12 +27,15 @@ copy, every artifact SHA-256 was re-checked, and the source database hash was id
   scenarios** (the 4 visual/nominal conditions replay one scenario bit-for-bit). Scenario-weighted mean: A 13.15 s,
   B 9.75 s; paired difference 3.41 s (95% bootstrap interval 3.20–3.62), B shorter in 11/11 scenarios, −25.9%
   (−27.4% to −24.4%); trial-weighted −26.4%. **Simulated seconds only**, not throughput or reset time. Cost side:
-  B lifts the block 6 cm higher and lands 1.9 mm further from the target centre; its peak contact force is lower.
+  B lifts the block 6 cm higher (a commanded hover height) and lands 1.9 mm further from the target centre; its peak
+  contact force is lower (essentially its commanded grip force). The 11th scenario is the fixed nominal pose, not a
+  random draw, so the interval describes a small perturbation set only.
 * **Failure study** (`docs/stress-study/`): protocol written, piloted on separate seeds, frozen by hash, then run
   on held-out seeds: 464/464 attempted, 407 verified successes, 57 genuine task failures (48 placement outside
   target, 5 release failed, 3 dropped in transit, 1 lift failed), 0 infra failures. Envelopes differ: controller A
   fails when the target is tightened (35 mm half-width 2/8, 30 mm 0/8) and in 1/8 at friction 0.15; controller B
-  fails at a 2 kg block (0/8, its 12 N grip) and at 35/30 mm targets (0/8). Report with video/trace links per
+  fails at a 2 kg block (0/8; the cause was not isolated by ablation) and at 35/30 mm targets (0/8). Verdicts on
+  the frozen hypotheses H1-H3: `docs/stress-study/verdicts.md`. Report with video/trace links per
   failure: `docs/stress-study/results_stress_v1/report.md`.
 * **Genuine public recording** (`docs/real-data/svla_so101_pickplace/`): `lerobot/svla_so101_pickplace`
   @ `f641879e22172be7e8161d5e6c1503c2d2feb657`, Apache-2.0, 86 MB (bound 500 MB), v3.0, 50 episodes, 11,939 frames
@@ -54,4 +57,8 @@ copy, every artifact SHA-256 was re-checked, and the source database hash was id
   Edge only captured Streamlit's loading skeleton, which was discarded). Static HTML report screenshots are real:
   `docs/demo/screenshots/`.
 * Real AWS S3 was not exercised.
-* The independent re-audit of these fixes is recorded in `docs/verification-reaudit.md`.
+* `lerobot-calibrate` stays an API-only, confirm-token dry-run builder (calibration is its purpose); `lerobot-replay`
+  is now launched through the guard too.
+* The dataset used for the real-data check names `robot_type: so100_follower` in its own `info.json` even though the
+  dataset name says so101; the SO-101 and SO-100 share the follower implementation in LeRobot 0.4.4.
+* The independent re-audit of these fixes and what was done about each finding: `docs/verification-reaudit.md`.

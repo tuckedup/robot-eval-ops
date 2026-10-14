@@ -561,6 +561,14 @@ def _check_data(
                     episode=ep,
                     first_index=bad_i[0],
                 )
+            elif rep.fps and abs(float(ts[0])) > 0.5 / rep.fps:
+                ctx.error(
+                    "timestamps",
+                    QACode.NONMONOTONIC_TIMESTAMPS,
+                    f"episode {ep}: timestamps must start at 0 (per-episode); first is {float(ts[0]):.4f}s",
+                    sub,
+                    episode=ep,
+                )
             elif rep.fps and n > 1:
                 dt = np.diff(ts)
                 if not np.allclose(dt, 1.0 / rep.fps, rtol=0.5):
@@ -610,7 +618,16 @@ def _check_data(
                         " (rows are not this episode's slice)",
                         sub,
                     )
+            else:
+                ctx.error(
+                    "index_continuity",
+                    QACode.MISSING_FIELD,
+                    f"episode {ep}: no global 'index' column although the metadata declares index ranges",
+                    sub,
+                    columns=["index"],
+                )
     ctx.ran_("index_continuity")
+    _check_shards(root, rep, ctx, selected, partial)
     if not partial and ranges:
         ordered = sorted(ranges)
         if ordered[0][0] != 0:
@@ -758,3 +775,83 @@ def _check_videos(
                     sub,
                     camera=cam,
                 )
+
+
+def _is_numeric_type(t: Any) -> bool:
+    import pyarrow as pa
+
+    return bool(pa.types.is_floating(t) or pa.types.is_integer(t))
+
+
+def _check_shards(
+    root: Path, rep: DatasetReport, ctx: _Ctx, selected: list[EpisodeMeta], partial: bool
+) -> None:
+    """Shard-level checks the per-episode loop cannot see: declared column TYPES (strings/bools are not
+    numeric state/action), rows belonging to episodes absent from the metadata, shards no episode refers to,
+    and row totals that disagree with the declared episode lengths."""
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    referenced = {e.data_relpath for e in selected if e.data_relpath}
+    for rel in rep.parquet_files:
+        try:
+            schema = pq.read_schema(root / rel)
+        except Exception:  # noqa: BLE001 - unreadable shard already flagged when an episode touched it
+            if not partial:
+                ctx.error("data_readable", QACode.UNDECODABLE_FRAMES, f"{rel} cannot be read as parquet", rel)
+            continue
+        for col in ("action", "observation.state"):
+            if col in schema.names:
+                t = schema.field(col).type
+                inner = (
+                    t.value_type
+                    if (pa.types.is_list(t) or pa.types.is_large_list(t) or pa.types.is_fixed_size_list(t))
+                    else None
+                )
+                if inner is None or not _is_numeric_type(inner):
+                    ctx.error(
+                        "state_action_schema",
+                        QACode.SCHEMA_MISMATCH,
+                        f"{rel}: column {col!r} has type {t}; it must be a list of float or integer values",
+                        rel,
+                        column=col,
+                    )
+        for col in ("timestamp", "index", "frame_index", "episode_index"):
+            if col in schema.names and not _is_numeric_type(schema.field(col).type):
+                ctx.error(
+                    "state_action_schema",
+                    QACode.SCHEMA_MISMATCH,
+                    f"{rel}: column {col!r} has non-numeric type {schema.field(col).type}",
+                    rel,
+                    column=col,
+                )
+        if partial:
+            continue
+        if rel not in referenced:
+            ctx.error(
+                "data_readable",
+                QACode.SCHEMA_MISMATCH,
+                f"{rel} is not referenced by any episode's metadata (extra/orphan shard)",
+                rel,
+            )
+            continue
+        if "episode_index" not in schema.names:
+            continue
+        try:
+            ids = pq.read_table(root / rel, columns=["episode_index"]).column("episode_index").to_pylist()
+        except Exception:  # noqa: BLE001
+            continue
+        declared = {e.episode_index: e.length for e in selected if e.data_relpath == rel}
+        counts: dict[int, int] = {}
+        for i in ids:
+            counts[i] = counts.get(i, 0) + 1
+        orphan = sorted(set(counts) - set(declared))
+        if orphan:
+            ctx.error(
+                "frame_consistency",
+                QACode.LOW_COMPLETENESS,
+                f"{rel} holds {sum(counts[o] for o in orphan)} row(s) for episode(s) {orphan} the metadata "
+                "does not list for this shard",
+                rel,
+                episodes=orphan,
+            )

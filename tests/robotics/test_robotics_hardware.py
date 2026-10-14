@@ -465,3 +465,36 @@ def test_fake_video_bytes_without_parquet_leave_trace_absent_with_evidence(env, 
     assert res.recording.trace_relpath is None and not (tmp_path / "ep" / "trace.jsonl").exists()
     assert "no data" in res.evidence["trace_absent_reason"]
     assert res.recording.completeness == 0.0
+
+
+def test_recording_uses_only_the_recorded_episodes_camera_frames_from_a_v3_dataset(env, tmp_path):
+    """Audit A3: a v3 dataset shares one mp4 per camera between episodes; the trial must get ONE episode's
+    frames of ONE camera, never the whole shared file."""
+    import sys as _sys
+    from pathlib import Path as _P
+
+    _sys.path.insert(0, str(_P(__file__).resolve().parents[1] / "data"))
+    from lerobot_fixtures import make_v3_dataset
+
+    src = make_v3_dataset(
+        tmp_path / "prebuilt", episode_ids=(5, 9), lengths=(6, 8), cameras=("observation.images.front",)
+    )
+    script = tmp_path / "copy_ds.py"
+    script.write_text(
+        "import sys, shutil\nfrom pathlib import Path\n"
+        "root = [a.split('=', 1)[1] for a in sys.argv if a.startswith('--dataset.root=')][0]\n"
+        f"shutil.copytree({str(src)!r}, root, dirs_exist_ok=True)\n",
+        encoding="utf-8",
+    )
+    ov = {t: [_sys.executable, str(script)] for t in ("lerobot-record", "lerobot-teleoperate")}
+    env["ov"] = ov
+    make_calibration(env["root"], env["cfg"])
+    a = make_adapter(env, hardware_mode=True, acknowledgement=ACK, overrides=ov)
+    assert a.preflight().ok
+    res = a.run_episode(ExternalLeRobotController(TELEOP), tmp_path / "ep", 5.0, 2.0)
+    rec = res.recording
+    assert rec.trace_rows == 6 and rec.frames_written == 6 and rec.completeness == 1.0  # lowest ACTUAL id = 5
+    assert res.evidence["video_extraction"]["ok"] and res.evidence["trace_conversion"]["episode"] == 5
+    from robotevalops.qa.video_probe import probe_video
+
+    assert probe_video(tmp_path / "ep" / "video.mp4").frames == 6  # not 14
