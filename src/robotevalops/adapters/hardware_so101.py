@@ -319,7 +319,7 @@ class SO101HardwareAdapter(RobotAdapter):
                 assert meta_ep is not None
                 cam = self._pick_camera(table, meta_ep)
                 fps_v = float(self._read_fps(ds_root) or 0.0)
-                ex = (
+                ex: dict[str, Any] = (
                     extract_episode_video(ds_root, meta_ep, cam, out_dir / "video.mp4", fps_v)
                     if cam and fps_v
                     else {"ok": False, "frames": 0, "reason": "no camera feature or fps in dataset metadata"}

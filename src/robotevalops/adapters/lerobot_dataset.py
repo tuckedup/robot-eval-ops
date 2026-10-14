@@ -455,7 +455,11 @@ def extract_episode_video(
         with av.open(str(src)) as c:
             stream = c.streams.video[0]
             for i, frame in enumerate(c.decode(stream)):
-                t = float(frame.pts * stream.time_base) if frame.pts is not None else i / fps
+                t = (
+                    float(frame.pts * stream.time_base)
+                    if frame.pts is not None and stream.time_base
+                    else i / fps
+                )
                 if t < ref.from_timestamp - half:
                     continue
                 if t >= ref.to_timestamp - half:
