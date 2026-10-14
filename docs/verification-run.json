@@ -1,5 +1,5 @@
 {
-  "commit": "a7a3e4b800f0426c10db52540b974664a9b5526b",
+  "commit": "06ca1fe6e6a177c2f47ccf2413bb33e9c86e8e67",
   "uncommitted_tracked_changes": 0,
   "python": "3.11.16",
   "platform": "Windows-10-10.0.26220-SP0",
@@ -9,7 +9,7 @@
     {
       "name": "ruff_check",
       "rc": 0,
-      "seconds": 2,
+      "seconds": 1,
       "last_line": "All checks passed!"
     },
     {
@@ -20,45 +20,45 @@
     },
     {
       "name": "mypy",
-      "rc": 1,
-      "seconds": 37,
-      "last_line": "Found 3 errors in 2 files (checked 77 source files)"
+      "rc": 0,
+      "seconds": 3,
+      "last_line": "Success: no issues found in 77 source files"
     },
     {
       "name": "pytest_core",
       "rc": 0,
-      "seconds": 76,
-      "last_line": "204 passed in 72.04s (0:01:12)"
+      "seconds": 71,
+      "last_line": "204 passed in 67.87s (0:01:07)"
     },
     {
       "name": "pytest_data",
       "rc": 0,
-      "seconds": 76,
-      "last_line": "144 passed, 2 skipped, 1 deselected in 71.82s (0:01:11)"
+      "seconds": 68,
+      "last_line": "144 passed, 2 skipped, 1 deselected in 64.44s (0:01:04)"
     },
     {
       "name": "pytest_eval",
       "rc": 0,
-      "seconds": 63,
-      "last_line": "77 passed, 1 skipped in 58.38s"
+      "seconds": 57,
+      "last_line": "77 passed, 1 skipped in 53.56s"
     },
     {
       "name": "pytest_robotics",
       "rc": 0,
-      "seconds": 169,
-      "last_line": "139 passed, 29 deselected in 165.81s (0:02:45)"
+      "seconds": 153,
+      "last_line": "139 passed, 29 deselected in 146.84s (0:02:26)"
     },
     {
       "name": "pytest_verification",
       "rc": 0,
-      "seconds": 57,
-      "last_line": "230 passed, 1 skipped, 15 deselected in 54.37s"
+      "seconds": 78,
+      "last_line": "230 passed, 1 skipped, 15 deselected in 74.60s (0:01:14)"
     },
     {
       "name": "pytest_physics",
       "rc": 0,
-      "seconds": 108,
-      "last_line": "43 passed, 1 skipped, 799 deselected in 104.08s (0:01:44)"
+      "seconds": 103,
+      "last_line": "43 passed, 1 skipped, 799 deselected in 99.59s (0:01:39)"
     }
   ],
   "skips": {
