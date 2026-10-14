@@ -1,4 +1,4 @@
-"""Root fixtures. Every test gets its own data home: commands that persist sessions (hardware CLI, demo, study)
+"""Root fixtures. Every test gets its own data home: persisting commands never write into ./data."""
 must never write into the repository's ./data, and a stray database there must never change another test."""
 
 from __future__ import annotations

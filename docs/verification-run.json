@@ -1,5 +1,5 @@
 {
-  "commit": "cda5dc92975be72dfb88f6e60a77b58d2d100336",
+  "commit": "346364d8b8b9c0f8fc72fd79edd58dec93f2d9e5",
   "uncommitted_tracked_changes": 0,
   "python": "3.11.16",
   "platform": "Windows-10-10.0.26220-SP0",
@@ -8,57 +8,57 @@
   "results": [
     {
       "name": "ruff_check",
-      "rc": 0,
-      "seconds": 1,
-      "last_line": "All checks passed!"
+      "rc": 1,
+      "seconds": 2,
+      "last_line": "Found 1 error."
     },
     {
       "name": "ruff_format",
       "rc": 0,
       "seconds": 1,
-      "last_line": "154 files already formatted"
+      "last_line": "156 files already formatted"
     },
     {
       "name": "mypy",
       "rc": 0,
-      "seconds": 20,
+      "seconds": 17,
       "last_line": "Success: no issues found in 77 source files"
     },
     {
       "name": "pytest_core",
       "rc": 0,
-      "seconds": 62,
-      "last_line": "203 passed in 58.43s"
+      "seconds": 56,
+      "last_line": "203 passed in 54.87s"
     },
     {
       "name": "pytest_data",
-      "rc": 1,
-      "seconds": 67,
-      "last_line": "1 failed, 136 passed, 2 skipped, 1 deselected in 61.15s (0:01:01)"
+      "rc": 0,
+      "seconds": 75,
+      "last_line": "137 passed, 2 skipped, 1 deselected in 70.02s (0:01:10)"
     },
     {
       "name": "pytest_eval",
       "rc": 0,
-      "seconds": 58,
-      "last_line": "77 passed, 1 skipped in 53.62s"
+      "seconds": 67,
+      "last_line": "77 passed, 1 skipped in 62.29s (0:01:02)"
     },
     {
       "name": "pytest_robotics",
       "rc": 0,
-      "seconds": 135,
-      "last_line": "138 passed, 29 deselected in 132.12s (0:02:12)"
+      "seconds": 189,
+      "last_line": "138 passed, 29 deselected in 181.16s (0:03:01)"
     },
     {
       "name": "pytest_verification",
       "rc": 0,
-      "seconds": 53,
-      "last_line": "230 passed, 1 skipped, 15 deselected in 50.13s"
+      "seconds": 108,
+      "last_line": "230 passed, 1 skipped, 15 deselected in 101.65s (0:01:41)"
     },
     {
       "name": "pytest_physics",
       "rc": 0,
-      "seconds": 65,
-      "last_line": "43 passed, 1 skipped, 790 deselected in 62.80s (0:01:02)"
+      "seconds": 107,
+      "last_line": "43 passed, 1 skipped, 790 deselected in 101.58s (0:01:41)"
     }
   ],
   "skips": {
