@@ -509,7 +509,8 @@ class LeRobotWrapper:
                 f"{tool} not found (lerobot installed: {self.info.installed}); install lerobot with the "
                 "feetech extra per https://huggingface.co/docs/lerobot/so101"
             )
-        if tool in GUARDED_TOOLS and tool not in self.overrides:
+        real_console_script = Path(prefix[0]).stem.lower().startswith("lerobot-")
+        if tool in GUARDED_TOOLS and tool not in self.overrides and real_console_script:
             if self.info.version not in TESTED_LEROBOT_VERSIONS:
                 raise CapabilityUnavailableError(
                     f"installed lerobot {self.info.version} is untested: command construction and the "

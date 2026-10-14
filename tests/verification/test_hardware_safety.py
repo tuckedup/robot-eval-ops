@@ -4,6 +4,7 @@ recorder in every test (the installed lerobot 0.4.4 executables are real on this
 
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 from typing import Any
@@ -85,11 +86,20 @@ def _cfg_file(tmp_path: Path, **extra: Any) -> Path:
     return p
 
 
+_VALID_CAL = {
+    n: {"id": i, "drive_mode": 0, "homing_offset": 5 * i, "range_min": 100 * i, "range_max": 100 * i + 2000}
+    for i, n in enumerate(
+        ("shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll", "gripper"), start=1
+    )
+}
+
+
 def _calibrate(tmp_path: Path) -> None:
     for sub, name, ident in (("robots", "so_follower", "fol"), ("teleoperators", "so_leader", "lead")):
         d = tmp_path / "calib" / sub / name
         d.mkdir(parents=True, exist_ok=True)
-        (d / f"{ident}.json").write_text("{}", encoding="utf-8")
+        # structurally valid (SYNTHETIC) calibration: an empty {} file is now correctly refused
+        (d / f"{ident}.json").write_text(json.dumps(_VALID_CAL), encoding="utf-8")
 
 
 runner = CliRunner()

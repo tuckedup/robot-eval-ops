@@ -101,7 +101,7 @@ def test_schedule_is_pure_function_and_seed_independent_of_controller() -> None:
 
 # ----------------------------------------------------------------------------- mock banners in every export
 def _mock_session(home: Path) -> str:
-    cfg = Path(__file__).resolve().parents[2] / "configs" / "eval_smoke_mock.yaml"
+    cfg = configs_dir() / "eval_smoke_mock.yaml"
     r = cli.invoke(
         app, ["session", "create", "--name", "v", "--config", str(cfg), "--home", str(home), "--json"]
     )

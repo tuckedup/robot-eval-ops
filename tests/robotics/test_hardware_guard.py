@@ -7,6 +7,7 @@ from __future__ import annotations
 import builtins
 import contextlib
 import json
+import os
 import subprocess
 import sys
 from types import SimpleNamespace
@@ -240,6 +241,7 @@ def test_real_launcher_subprocess_installs_guard_then_runs_tool_help():
         text=True,
         timeout=240,
         stdin=subprocess.DEVNULL,
+        env={**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"},
     )
     assert "automatic calibration disabled" in p.stderr, p.stderr[-500:]
     assert p.returncode == 0, p.stderr[-800:]
@@ -268,3 +270,13 @@ def test_guard_exit_code_becomes_explicit_calibration_blocked_error(tmp_path):
     )
     res = execute_argv([sys.executable, str(script)], kind="record", timeout_s=30)
     assert res.status == "nonzero_exit" and "calibration blocked" in (res.error or "")
+
+
+def test_untested_lerobot_version_refuses_to_build_a_moving_command():
+    from robotevalops.errors import CapabilityUnavailableError
+
+    w = LeRobotWrapper(make_cfg(), {})
+    w.info.version = "0.6.1"  # e.g. what uv.lock resolves on Python 3.12: never tested
+    w.info.executables["lerobot-record"] = ["/usr/bin/lerobot-record"]
+    with pytest.raises(CapabilityUnavailableError, match="untested"):
+        w.build_record()

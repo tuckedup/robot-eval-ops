@@ -401,10 +401,10 @@ def render_markdown(a: Analysis) -> str:
     L.append("## By condition\n")
     L.append("| condition | pairs | distinct scenarios | mean A (s) | mean B (s) | A-B (s) | sd A | sd B |")
     L.append("|---|---:|---:|---:|---:|---:|---:|---:|")
-    for c in a.condition_table:
+    for row in a.condition_table:
         L.append(
-            f"| {c['condition']} | {c['n_pairs']} | {c['distinct_scenarios']} | {c['mean_a_s']:.3f} | "
-            f"{c['mean_b_s']:.3f} | {c['mean_diff_a_minus_b_s']:.3f} | {c['sd_a_s']:.3f} | {c['sd_b_s']:.3f} |"
+            f"| {row['condition']} | {row['n_pairs']} | {row['distinct_scenarios']} | {row['mean_a_s']:.3f} | "
+            f"{row['mean_b_s']:.3f} | {row['mean_diff_a_minus_b_s']:.3f} | {row['sd_a_s']:.3f} | {row['sd_b_s']:.3f} |"
         )
     L.append(
         "\nsd = 0 means every trial in that condition replayed the same physical scenario bit-for-bit.\n"
@@ -429,8 +429,8 @@ def render_markdown(a: Analysis) -> str:
             )
     if a.controller_params:
         L.append("\n## Controller parameters (the treatments)\n")
-        for c, p in a.controller_params.items():
-            L.append(f"- **{c}**: `{json.dumps(p, sort_keys=True)}`")
+        for c, params in a.controller_params.items():
+            L.append(f"- **{c}**: `{json.dumps(params, sort_keys=True)}`")
     L.append("\n## Limits\n")
     L += [f"- {c}" for c in a.caveats]
     if a.unpaired:

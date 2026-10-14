@@ -14,6 +14,7 @@ import pytest
 from typer.testing import CliRunner
 
 from robotevalops.cli.main import app
+from robotevalops.controllers.base import configs_dir
 from robotevalops.core.service import EvalService
 from robotevalops.errors import (
     ArtifactOverwriteError,
@@ -536,7 +537,7 @@ def test_quarantine_copies_and_never_deletes_sources(tmp_path: Path) -> None:
 # ------------------------------------------------------------------------------------ pipeline gap
 def _mock_cli_session(tmp_path: Path):
     home = tmp_path / "home"
-    cfg = Path(__file__).resolve().parents[2] / "configs" / "eval_smoke_mock.yaml"
+    cfg = configs_dir() / "eval_smoke_mock.yaml"
     r = cli.invoke(
         app, ["session", "create", "--name", "v", "--config", str(cfg), "--home", str(home), "--json"]
     )

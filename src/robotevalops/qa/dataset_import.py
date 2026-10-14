@@ -237,7 +237,7 @@ def qa_lerobot_dataset(
     table = load_episode_table(r, info)
     rep.layout, rep.codebase_version = table.layout, table.version
     _check_layout_and_episodes(rep, ctx, table)
-    feats = info.get("features") if isinstance(info.get("features"), dict) else {}
+    feats: dict[str, Any] = info["features"] if isinstance(info.get("features"), dict) else {}
     rep.feature_names = sorted(feats)
     rep.cameras = video_keys(info)
     rep.parquet_files = sorted(p.relative_to(r).as_posix() for p in (r / "data").rglob("*.parquet"))

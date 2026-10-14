@@ -14,6 +14,8 @@ def _adapter(pattern: list[bool], lift_z: float = 0.30):
     a._dwell = 0.0
     a._dwell_required = 2.0
     a._success = False
+    a._target_half = sp.TARGET_HALF
+    a._block_half = sp.BLOCK_HALF
     a._block_start = np.array([0.4, 0.0, 0.02])
     a._ev = {
         "gripper_contact_steps": 0,

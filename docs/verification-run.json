@@ -1,0 +1,81 @@
+{
+  "commit": "8a8806ffa1bae164a5764d04d2ef0d4594591f4a",
+  "uncommitted_tracked_changes": 0,
+  "python": "3.11.16",
+  "platform": "Windows-10-10.0.26220-SP0",
+  "lerobot": "0.4.4",
+  "pybullet": "3.2.7",
+  "results": [
+    {
+      "name": "ruff_check",
+      "rc": 0,
+      "seconds": 0,
+      "last_line": "All checks passed!"
+    },
+    {
+      "name": "ruff_format",
+      "rc": 0,
+      "seconds": 1,
+      "last_line": "154 files already formatted"
+    },
+    {
+      "name": "mypy",
+      "rc": 1,
+      "seconds": 68,
+      "last_line": "Found 5 errors in 3 files (checked 77 source files)"
+    },
+    {
+      "name": "pytest_core",
+      "rc": 0,
+      "seconds": 46,
+      "last_line": "203 passed in 41.63s"
+    },
+    {
+      "name": "pytest_data",
+      "rc": 1,
+      "seconds": 494,
+      "last_line": "1 failed, 136 passed, 2 skipped, 1 deselected in 470.12s (0:07:50)"
+    },
+    {
+      "name": "pytest_eval",
+      "rc": 0,
+      "seconds": 134,
+      "last_line": "77 passed, 1 skipped in 123.25s (0:02:03)"
+    },
+    {
+      "name": "pytest_robotics",
+      "rc": 1,
+      "seconds": 430,
+      "last_line": "7 failed, 130 passed, 29 deselected in 417.49s (0:06:57)"
+    },
+    {
+      "name": "pytest_verification",
+      "rc": 1,
+      "seconds": 262,
+      "last_line": "16 failed, 214 passed, 1 skipped, 15 deselected in 253.00s (0:04:13)"
+    },
+    {
+      "name": "pytest_physics",
+      "rc": 0,
+      "seconds": 231,
+      "last_line": "43 passed, 1 skipped, 789 deselected in 214.05s (0:03:34)"
+    }
+  ],
+  "skips": {
+    "pytest_core": [],
+    "pytest_data": [
+      "tests\\data\\test_package.py:115: cannot create symlinks here",
+      "tests\\data\\test_storage_local.py:115: cannot create symlinks in this environment"
+    ],
+    "pytest_eval": [
+      "tests\\eval\\test_dashboard.py:75: symlinks not permitted on this platform"
+    ],
+    "pytest_physics": [
+      "tests\\verification\\test_sim_success_audit.py:206: data/demo_sim not present"
+    ],
+    "pytest_robotics": [],
+    "pytest_verification": [
+      "tests\\verification\\test_reproducibility_and_reports.py:146: no demo_sim reports"
+    ]
+  }
+}

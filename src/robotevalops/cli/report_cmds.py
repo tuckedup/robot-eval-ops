@@ -313,7 +313,7 @@ def paired_duration(
         raise RobotEvalOpsError(
             f"{len(mism)} artifact(s) missing or hash-mismatched; refusing to analyse: {mism[:5]}"
         )
-    params = {
+    params: dict[str, Any] = {
         c: next(
             (
                 json.loads(p.read_text(encoding="utf-8"))
