@@ -31,6 +31,23 @@ to this checkout's `src` directory and `PYTHONDONTWRITEBYTECODE=1`.  An import a
   not evidence of robotics performance.  Its dependencies were made available read-only from the existing
   environment; this checks wheel contents and the entry point, not a clean dependency-resolution install.
 
+## Clean CI follow-up
+
+GitHub Actions job `118665649676` on published commit `dbe093ccee51e6e5462fadb7d287d05e3456295f` passed lint,
+format, and type checks.  Its offline pytest step reported **610 passed, 6 skipped, 7 failed**.  Five failures
+were test fixtures consulting the real optional LeRobot installation instead of their fake executables; the
+hardware lease and dry-run CLI fixtures now supply synthetic LeRobot discovery results.  The shared-v3-video
+test imported `tests/data/lerobot_fixtures.py`, which was missing from the tracked checkout; that synthetic-only
+dataset builder is now present and narrowly exempted from the runtime `data/` ignore rule.  The crash-recovery
+test killed the Python runner but could leave its ffmpeg writer child finalizing `video.mp4`; its process fixture
+now kills the owned process tree before comparing evidence bytes, while retaining the byte-preservation check.
+
+After these fixture repairs, the affected local selection passed (**10 passed**), `ruff check .` passed,
+`ruff format --check .` reported **160 files already formatted**, and `mypy src` reported **no issues in 77
+source files**.  A full offline pytest selection was started locally but interrupted at about 33% to leave full
+suite verification to clean Linux CI; it has no complete local result.  The CI run on these follow-up changes
+remains to be recorded.
+
 No hardware, real AWS, paid service, or real LeRobot command was run.
 
 ## Existing evidence, not rerun here

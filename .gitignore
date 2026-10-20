@@ -11,6 +11,8 @@ build/
 htmlcov/
 # runtime data and generated artifacts (never commit recordings/databases)
 data/
+!tests/data/
+!tests/data/lerobot_fixtures.py
 runs/
 *.db
 *.sqlite

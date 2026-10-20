@@ -10,9 +10,10 @@ import time
 from pathlib import Path
 
 import pytest
-from robotics_helpers import make_calibration, make_cfg
+from robotics_helpers import fake_info, make_calibration, make_cfg
 from typer.testing import CliRunner
 
+import robotevalops.adapters.lerobot_wrapper as lw
 import robotevalops.cli.robot_cmds as rc
 from robotevalops.adapters.hardware_so101 import SO101HardwareAdapter
 from robotevalops.core.devices import canonical_port, hardware_lock_keys
@@ -66,6 +67,13 @@ def lab(tmp_path, monkeypatch):
     quick = tmp_path / "quick.py"
     quick.write_text(QUICK, encoding="utf-8")
     release = tmp_path / "release"
+    default_fake_commands = {
+        tool: [sys.executable, str(quick), str(tmp_path / "ran-default.txt"), "0"]
+        for tool in ("lerobot-record", "lerobot-teleoperate")
+    }
+    monkeypatch.setattr(
+        lw, "discover_lerobot", lambda overrides=None: fake_info(overrides or default_fake_commands)
+    )
 
     def use(script: Path, *args: str):
         ov = {t: [sys.executable, str(script), *args] for t in ("lerobot-record", "lerobot-teleoperate")}
@@ -80,6 +88,7 @@ def lab(tmp_path, monkeypatch):
             return real(cfg, **kw)
 
         monkeypatch.setattr(rc, "SO101HardwareAdapter", factory)
+        return factory
 
     return {
         "a": cfg_a,
@@ -232,11 +241,10 @@ def test_acquire_devices_is_all_or_nothing(tmp_path):
 
 
 def test_interrupted_command_aborts_session_and_frees_lease(lab, monkeypatch):
-    lab["use"](lab["quick"], str(lab["tmp"] / "ran.txt"), "0")
-    real = rc.SO101HardwareAdapter
+    adapter_factory = lab["use"](lab["quick"], str(lab["tmp"] / "ran.txt"), "0")
 
-    def factory(cfg, **kw):
-        ad = real(cfg, **kw)
+    def interrupted_factory(cfg, **kw):
+        ad = adapter_factory(cfg, **kw)
 
         def boom(*_a, **_k):
             raise KeyboardInterrupt
@@ -244,7 +252,7 @@ def test_interrupted_command_aborts_session_and_frees_lease(lab, monkeypatch):
         monkeypatch.setattr(ad.wrapper, "run", boom)
         return ad
 
-    monkeypatch.setattr(rc, "SO101HardwareAdapter", factory)
+    monkeypatch.setattr(rc, "SO101HardwareAdapter", interrupted_factory)
     r = _cmd("record", lab["a"], lab["home"])
     assert r.exit_code != 0
     svc = EvalService(lab["home"])

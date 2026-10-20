@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import hashlib
+import os
+import signal
 import subprocess
 import sys
 import textwrap
@@ -60,7 +62,8 @@ def _cfg() -> EvalConfig:
 def _spawn_and_kill(home: Path, sid: str, svc: EvalService) -> None:
     script = home.parent / "child.py"
     script.write_text(CHILD, encoding="utf-8")
-    p = subprocess.Popen([sys.executable, str(script), str(home), sid])
+    popen_kw = {"start_new_session": True} if os.name != "nt" else {}
+    p = subprocess.Popen([sys.executable, str(script), str(home), sid], **popen_kw)
     try:
         deadline = time.time() + 60
         while time.time() < deadline:
@@ -72,7 +75,19 @@ def _spawn_and_kill(home: Path, sid: str, svc: EvalService) -> None:
         else:
             pytest.fail("child never reached RUNNING")
     finally:
-        p.kill()
+        if os.name == "nt":
+            # The recorder starts ffmpeg as a child. Kill descendants too so an encoder cannot
+            # finalize video.mp4 after the recovery test has captured its crash-state bytes.
+            subprocess.run(
+                ["taskkill", "/PID", str(p.pid), "/T", "/F"],
+                check=False,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            if p.poll() is None:
+                p.kill()
+        else:
+            os.killpg(p.pid, signal.SIGKILL)
         p.wait(timeout=20)
 
 

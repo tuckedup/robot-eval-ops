@@ -7,6 +7,7 @@ or verifies real hardware.
 from __future__ import annotations
 
 import json
+import sys
 
 import pytest
 from robotics_helpers import fake_info, make_calibration, make_cfg, overrides
@@ -333,7 +334,9 @@ def test_cli_import_dataset_without_episode_metadata_is_rejected_and_never_inven
     )  # no range(total_episodes) fabrication
 
 
-def test_cli_dry_run_prints_argv_and_does_not_execute(tmp_path):
+def test_cli_dry_run_prints_argv_and_does_not_execute(tmp_path, monkeypatch):
+    dry_run_commands = {tool: [sys.executable] for tool in ("lerobot-record", "lerobot-teleoperate")}
+    monkeypatch.setattr(lw, "discover_lerobot", lambda overrides=None: fake_info(dry_run_commands))
     r = runner.invoke(app, ["record", "--dry-run", "--json"])
     out = json.loads(r.stdout)
     assert r.exit_code == 0 and out["executed"] is False and isinstance(out["argv"], list)
