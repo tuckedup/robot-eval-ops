@@ -138,7 +138,7 @@ tested against a mock (moto); real-AWS verification is an opt-in test (`ROBOTEVA
 [resume evidence](docs/resume-evidence.md) · [90-second operator demo](docs/walkthrough-90s.md) ·
 [audit remediation](docs/audit-remediation.md) · [LeRobot datasets + QA](docs/lerobot-datasets.md) ·
 [stress study](docs/stress-study/README.md) · [paired duration analysis](docs/analysis/paired_duration_full_sim/analysis.md) ·
-[independent re-audit](docs/verification-reaudit.md) ·
+[independent re-audit](docs/verification-reaudit.md) · [current checkpoint status](docs/checkpoint.md) ·
 templates in [docs/templates/](docs/templates) · proposed targets in `src/robotevalops/configs/targets.yaml` (goals, not results).
 
 ## Added after the independent audit
