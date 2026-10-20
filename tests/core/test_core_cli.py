@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 import yaml
-from conftest import FakeAdapter, NoopController
 from typer.testing import CliRunner
 
+from conftest import FakeAdapter, NoopController
 from robotevalops.cli.session_cmds import app
 from robotevalops.core.service import EvalService
 from robotevalops.schemas import Provenance, RecordingQuality, SessionState, TrialState

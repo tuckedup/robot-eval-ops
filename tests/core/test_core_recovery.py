@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import pytest
-from conftest import FakeAdapter, NoopController, make_config
 
+from conftest import FakeAdapter, NoopController, make_config
 from robotevalops.core.fault_interrupted import run_interrupted_runner_case
 from robotevalops.core.runner import Runner
 from robotevalops.core.service import EvalService

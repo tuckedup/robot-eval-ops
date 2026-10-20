@@ -11,6 +11,12 @@ All commands below used Python 3.11.16 from `D:\robot-eval-ops\.venv\Scripts\pyt
 to this checkout's `src` directory and `PYTHONDONTWRITEBYTECODE=1`.  An import assertion confirmed that
 `robotevalops.__file__` resolved under this checkout, not under `D:\robot-eval-ops`.
 
+- CI initially stopped at `ruff check .` with five import-order (`I001`) findings in core test modules.  The
+  repair only reordered imports in `tests/core/test_core_cli.py`, `test_core_recovery.py`,
+  `test_core_runner.py`, `test_core_scheduler.py`, and `test_core_service.py`; no runtime code, checks, or CI gates
+  changed.  On the repaired checkpoint, `python -m ruff check .` passed, `python -m ruff format --check .`
+  reported **159 files already formatted**, and `python -m mypy src` reported **no issues in 77 source files**.
+
 - `python -m pytest tests\core -q` with `TEMP` and `TMP` redirected inside this checkpoint: **204 passed in
   58.49s**.
 - `python -m pytest -m physics -q` with the same isolated temporary directory: **43 passed, 1 skipped, 652
@@ -53,8 +59,8 @@ publication limitation.
 
 ## Remaining release work
 
-- Run the full offline suite, lint, and type checks on this exact head in a writable CI/clean environment; this
-  checkpoint reran the core and physics suites only.
+- Run the full offline suite on this exact head in a writable CI/clean environment; core and physics suites passed
+  before the import-only CI repair, while lint, format, and type checks passed after it.
 - Independently install the wheel with dependency resolution in a fresh environment (the local wheel demo used
   read-only existing dependencies).
 - Exercise Docker, real AWS, real LeRobot dataset import/video scoring, and physical SO-101 preflight/operation

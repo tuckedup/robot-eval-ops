@@ -4,8 +4,8 @@ import threading
 import uuid
 
 import pytest
-from conftest import make_config
 
+from conftest import make_config
 from robotevalops.core.service import EvalService
 from robotevalops.errors import (
     DeviceBusyError,

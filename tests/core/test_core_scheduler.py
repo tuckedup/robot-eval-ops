@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from conftest import make_config
-
 from robotevalops.core.scheduler import build_schedule
 from robotevalops.util import derive_seed
 

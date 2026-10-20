@@ -3,8 +3,8 @@ from __future__ import annotations
 import threading
 
 import pytest
-from conftest import VIDEO_BYTES, FakeAdapter, NoopController, make_config
 
+from conftest import VIDEO_BYTES, FakeAdapter, NoopController, make_config
 from robotevalops.core.runner import Runner
 from robotevalops.errors import DeviceBusyError, HardwareRefusedError, PreflightFailedError
 from robotevalops.schemas import (
